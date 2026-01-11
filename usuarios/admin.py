@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Usuario
+from .models import Usuario, Evento
 @admin.register(Usuario)
 class UsuarioAdmin(UserAdmin):
     """
@@ -32,5 +32,32 @@ class UsuarioAdmin(UserAdmin):
     add_fieldsets = UserAdmin.add_fieldsets + (
         ('Información del Conjunto', {
             'fields': ('casa_departamento', 'telefono', 'rol', 'foto_perfil')
+        }),
+    )
+
+
+@admin.register(Evento)
+class EventoAdmin(admin.ModelAdmin):
+    """
+    Configuración del modelo Evento en el panel de administración.
+    """
+    list_display = ['titulo', 'usuario', 'fecha_inicio', 'fecha_fin', 'color']
+    list_filter = ['usuario', 'fecha_inicio', 'color']
+    search_fields = ['titulo', 'descripcion', 'usuario__username']
+    readonly_fields = ['creado_en', 'actualizado_en']
+    
+    fieldsets = (
+        ('Información del Evento', {
+            'fields': ('usuario', 'titulo', 'descripcion')
+        }),
+        ('Fechas', {
+            'fields': ('fecha_inicio', 'fecha_fin')
+        }),
+        ('Personalizacion', {
+            'fields': ('color',)
+        }),
+        ('Timestamps', {
+            'fields': ('creado_en', 'actualizado_en'),
+            'classes': ('collapse',)
         }),
     )
