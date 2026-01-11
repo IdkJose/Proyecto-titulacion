@@ -15,16 +15,16 @@ class Usuario(AbstractUser):
     
     # Campos adicionales
     telefono = models.CharField(
-        max_length=15,
+        max_length=10,
         blank=True,
         null=True,
         help_text='Número de teléfono del usuario'
     )
     
     casa_departamento = models.CharField(
-        max_length=20,
-        blank=True,
-        null=True,
+        max_length=14,
+        blank=False,
+        null=False,
         help_text='Número de casa o departamento (ej: Casa 15, Depto 3B)'
     )
     
