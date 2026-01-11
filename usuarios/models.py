@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 # Modelo de Usuario Personalizado para el Conjunto Selva Alegre
 class Usuario(AbstractUser):
     """
@@ -14,10 +15,34 @@ class Usuario(AbstractUser):
     ]
     
     # Campos adicionales
+    email = models.EmailField(
+        unique=True,
+        blank=True,
+        help_text='Correo electrónico del usuario'
+    )
+
+    first_name = models.CharField(
+        max_length=150,
+        blank=False,
+        help_text='Nombre del usuario'
+    )
+
+    last_name = models.CharField(
+        max_length=150,
+        blank=False,
+        help_text='Apellido del usuario'
+    )
+
     telefono = models.CharField(
         max_length=10,
         blank=True,
         null=True,
+        validators=[
+            RegexValidator(
+                regex=r'^\d+$',
+                message='El teléfono solo puede contener números'
+            )
+        ],
         help_text='Número de teléfono del usuario'
     )
     

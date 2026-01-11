@@ -23,7 +23,7 @@ def login_view(request):
         
         if user is not None:
             # Si el usuario existe y está activo
-            if user.activo:
+            if user.is_active:
                 login(request, user)
                 messages.success(request, f'¡Bienvenido {user.get_full_name() or user.username}!')
                 return redirect('usuarios:dashboard')  
@@ -94,7 +94,14 @@ def dashboard_view(request):
         'mes_siguiente': mes_siguiente,
         'ano_siguiente': ano_siguiente,
     }
-    return render(request, 'usuarios/dashboard.html', context)
+    
+    # Usar template diferente según el rol del usuario
+    if request.user.es_administrador():
+        template = 'usuarios/dashboard_admin.html'
+    else:
+        template = 'usuarios/dashboard.html'
+    
+    return render(request, template, context)
 
 
 def logout_view(request):

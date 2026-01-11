@@ -7,31 +7,57 @@ class UsuarioAdmin(UserAdmin):
     Configuración del modelo Usuario en el panel de administración.
     """
     # Campos que se muestran en la lista de usuarios
-    list_display = ['username', 'email', 'casa_departamento', 'rol', 'activo', 'fecha_registro']
+    list_display = ['username', 'email', 'casa_departamento', 'rol', 'is_active', 'fecha_registro']
     
     # Filtros en la barra lateral
-    list_filter = ['rol', 'activo', 'is_staff', 'fecha_registro']
+    list_filter = ['rol', 'is_active', 'is_staff', 'fecha_registro']
     
     # Campos por los que se puede buscar
     search_fields = ['username', 'email', 'first_name', 'last_name', 'casa_departamento']
     
     # Campos editables desde la lista
-    list_editable = ['activo']
+    list_editable = ['is_active']
+    
+    # Campos de solo lectura (no editables)
+    readonly_fields = ['fecha_registro', 'last_login', 'date_joined']
     
     # Orden por defecto
     ordering = ['casa_departamento', 'last_name']
     
     # Configuración de los fieldsets (cómo se agrupan los campos al editar)
-    fieldsets = UserAdmin.fieldsets + (
+    fieldsets = (
+        ('Credenciales', {
+            'fields': ('username', 'password')
+        }),
+        ('Información Personal', {
+            'fields': ('first_name', 'last_name', 'email')
+        }),
         ('Información del Conjunto', {
-            'fields': ('casa_departamento', 'telefono', 'rol', 'foto_perfil', 'activo')
+            'fields': ('casa_departamento', 'telefono', 'rol', 'foto_perfil')
+        }),
+        ('Permisos', {
+            'fields': ('is_active', 'is_staff', 'is_superuser'),
+            'description': 'Controla el acceso y permisos del usuario en el sistema.'
+        }),
+        ('Fechas Importantes', {
+            'fields': ('last_login', 'date_joined', 'fecha_registro'),
+            'classes': ('collapse',)  # Esto hace que la sección esté colapsada por defecto
         }),
     )
     
     # Campos al crear un nuevo usuario
-    add_fieldsets = UserAdmin.add_fieldsets + (
+    add_fieldsets = (
+        ('Credenciales', {
+            'classes': ('wide',),
+            'fields': ('username', 'password1', 'password2'),
+        }),
+        ('Información Personal', {
+            'classes': ('wide',),
+            'fields': ('first_name', 'last_name', 'email'),
+        }),
         ('Información del Conjunto', {
-            'fields': ('casa_departamento', 'telefono', 'rol', 'foto_perfil')
+            'classes': ('wide',),
+            'fields': ('casa_departamento', 'telefono', 'rol', 'foto_perfil'),
         }),
     )
 

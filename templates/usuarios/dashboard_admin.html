@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Conjunto Selva Alegre</title>
+    <title>Dashboard Administrador - Conjunto Selva Alegre</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
@@ -14,7 +14,7 @@
 <body>
     <header>
         <div class="header-content">
-            <h1>🏘️ Conjunto Selva Alegre</h1>
+            <h1>🏘️ Conjunto Selva Alegre - Panel Administrador</h1>
             <div class="user-info">
                 <span><strong>{{ usuario.username }}</strong></span>
                 <link rel="stylesheet"
@@ -42,17 +42,17 @@
             <div class="dashboard-content">
                 <div class="welcome-section">
                     <h2>Bienvenido {{ usuario.get_full_name|default:usuario.username }}</h2>
-                    <p>Aquí puedes ver tu información y acceder a los servicios del conjunto 😊</p>
+                    <p>Panel de administración del conjunto residencial 😊</p>
 
                     <div class="user-card">
-                        <div class="user-card-header">📋 Información del Usuario</div>
+                        <div class="user-card-header">📋 Información del Administrador</div>
                         <div class="user-card-body">
                             <div class="user-info-row">
                                 <div class="user-info-label"><i class="material-icons">person</i> Usuario</div>
                                 <div class="user-info-value">{{ usuario.username }}</div>
                             </div>
                             <div class="user-info-row">
-                                <div class="user-info-label"><i class="material-icons">mail</i> Email</div>
+                                <div class="user-info-label"><i class="material-icons">email</i> Email</div>
                                 <div class="user-info-value">{{ usuario.email }}</div>
                             </div>
                             <div class="user-info-row">
@@ -74,23 +74,23 @@
 
                 <div class="cards-grid">
                     <div class="card">
-                        <h3>📋 Mi Perfil</h3>
-                        <p>Visualiza y edita tu información personal.</p>
+                        <h3>👥 Gestión de Usuarios</h3>
+                        <p>Administra los usuarios del conjunto.</p>
                     </div>
 
                     <div class="card">
                         <h3>📌 Solicitudes</h3>
-                        <p>Gestiona tus solicitudes y trámites.</p>
+                        <p>Revisa y gestiona solicitudes de vecinos.</p>
                     </div>
 
                     <div class="card">
                         <h3>💬 Mensajes</h3>
-                        <p>Comunicación con la administración.</p>
+                        <p>Comunicación con los vecinos.</p>
                     </div>
 
                     <div class="card">
                         <h3>📊 Reportes</h3>
-                        <p>Consulta reportes y documentos.</p>
+                        <p>Genera reportes y estadísticas.</p>
                     </div>
                 </div>
             </div>
