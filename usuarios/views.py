@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .forms import UsuarioCreationForm
+from .forms import UsuarioCreationForm, UsuarioChangeForm, EventoForm
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from datetime import datetime
@@ -50,11 +50,14 @@ def dashboard_view(request):
     cal = calendar.monthcalendar(ano, mes)
     
     # Obtener eventos del usuario para este mes
+    # Obtener eventos del usuario O eventos de administradores (globales)
+    # Filtramos por mes y año
+    from django.db.models import Q
     eventos = Evento.objects.filter(
-        usuario=request.user,
+        Q(usuario=request.user) | Q(usuario__rol='admin'),
         fecha_inicio__year=ano,
         fecha_inicio__month=mes
-    )
+    ).distinct()
     
     # Crear diccionario {día: [eventos]}
     eventos_por_dia = {}
@@ -143,3 +146,66 @@ def lista_usuarios(request):
     usuarios = Usuario.objects.all().order_by('casa_departamento')
     return render(request, 'usuarios/lista_usuarios.html', {'usuarios': usuarios})
 
+
+
+@login_required
+@user_passes_test(lambda u: u.es_administrador())
+def editar_usuario(request, user_id):
+    """
+    Vista para editar un usuario existente.
+    """
+    usuario_editar = get_object_or_404(Usuario, id=user_id)
+    
+    if request.method == 'POST':
+        form = UsuarioChangeForm(request.POST, request.FILES, instance=usuario_editar)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Usuario {usuario_editar.username} actualizado exitosamente.')
+            return redirect('usuarios:lista_usuarios')
+    else:
+        form = UsuarioChangeForm(instance=usuario_editar)
+    
+    return render(request, 'usuarios/editar_usuario.html', {'form': form, 'usuario_editar': usuario_editar})
+
+
+@login_required
+@user_passes_test(lambda u: u.es_administrador())
+def eliminar_usuario(request, user_id):
+    """
+    Vista para eliminar un usuario.
+    No permite eliminar administradores.
+    """
+    usuario_eliminar = get_object_or_404(Usuario, id=user_id)
+    
+    # Verificar si es admin
+    if usuario_eliminar.rol == 'admin':
+        messages.error(request, 'No se puede eliminar a un usuario con rol de Administrador.')
+        return redirect('usuarios:lista_usuarios')
+    
+    # Eliminar
+    nombre = usuario_eliminar.username
+    usuario_eliminar.delete()
+    messages.success(request, f'Usuario {nombre} eliminado correctamente.')
+    return redirect('usuarios:lista_usuarios')
+
+
+@login_required
+@user_passes_test(lambda u: u.es_administrador())
+def crear_evento(request):
+    """
+    Vista para crear un evento en el calendario.
+    Solo para administradores.
+    """
+    if request.method == 'POST':
+        form = EventoForm(request.POST)
+        if form.is_valid():
+            evento = form.save(commit=False)
+            evento.usuario = request.user
+            evento.save()
+            messages.success(request, 'Evento creado exitosamente.')
+            return redirect('usuarios:dashboard')
+    else:
+        # Pre-seleccionar fecha/hora actual
+        form = EventoForm(initial={'fecha_inicio': datetime.now(), 'fecha_fin': datetime.now()})
+    
+    return render(request, 'usuarios/crear_evento.html', {'form': form})

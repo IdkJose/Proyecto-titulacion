@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Nuevo Usuario - Conjunto Selva Alegre</title>
+    <title>Editar Usuario - Conjunto Selva Alegre</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
@@ -29,7 +29,8 @@
     <div class="container">
         <div class="form-container">
             <div class="form-header">
-                <h2><i class="material-icons" style="color: #667eea;">person_add</i> Crear Nuevo Usuario</h2>
+                <h2><i class="material-icons" style="color: #667eea;">edit</i> Editar Usuario: {{
+                    usuario_editar.username }}</h2>
             </div>
 
             <form method="post" novalidate enctype="multipart/form-data">
@@ -54,8 +55,8 @@
                 {% endfor %}
 
                 <div class="form-actions">
-                    <a href="{% url 'usuarios:dashboard' %}" class="btn-cancel">Cancelar</a>
-                    <button type="submit" class="btn-submit">Guardar Usuario</button>
+                    <a href="{% url 'usuarios:lista_usuarios' %}" class="btn-cancel">Cancelar</a>
+                    <button type="submit" class="btn-submit">Actualizar Usuario</button>
                 </div>
             </form>
         </div>
