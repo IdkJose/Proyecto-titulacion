@@ -76,6 +76,14 @@
                     <div class="card">
                         <h3>👥 Gestión de Usuarios</h3>
                         <p>Administra los usuarios del conjunto.</p>
+                        <div class="card-actions" style="margin-top: 15px; display: flex; gap: 10px;">
+                            <a href="{% url 'usuarios:crear_usuario' %}" class="btn-crear"
+                                style="background: #667eea; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em;">
+                                + Nuevo Usuario </a>
+                            <a href="{% url 'usuarios:lista_usuarios' %}" class="btn-ver"
+                                style="border: 1px solid #667eea; color: #667eea; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em;">
+                                Ver Lista </a>
+                        </div>
                     </div>
 
                     <div class="card">
