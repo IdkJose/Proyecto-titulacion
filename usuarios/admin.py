@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Usuario, Evento
+from .models import Usuario, Evento, Solicitud
 @admin.register(Usuario)
 class UsuarioAdmin(UserAdmin):
     """
@@ -84,6 +84,33 @@ class EventoAdmin(admin.ModelAdmin):
         }),
         ('Timestamps', {
             'fields': ('creado_en', 'actualizado_en'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(Solicitud)
+class SolicitudAdmin(admin.ModelAdmin):
+    """
+    Configuración del modelo Solicitud en el panel de administración.
+    """
+    list_display = ['titulo', 'usuario', 'tipo', 'estado', 'fecha_creacion']
+    list_filter = ['estado', 'tipo', 'fecha_creacion', 'usuario']
+    search_fields = ['titulo', 'descripcion', 'usuario__username', 'usuario__email']
+    readonly_fields = ['fecha_creacion', 'fecha_actualizacion']
+    
+    fieldsets = (
+        ('Información de la Solicitud', {
+            'fields': ('usuario', 'tipo', 'titulo', 'descripcion')
+        }),
+        ('Estado', {
+            'fields': ('estado',)
+        }),
+        ('Respuesta del Administrador', {
+            'fields': ('respuesta_admin',)
+        }),
+        ('Timestamps', {
+            'fields': ('fecha_creacion', 'fecha_actualizacion'),
             'classes': ('collapse',)
         }),
     )

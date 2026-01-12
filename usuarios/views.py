@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from datetime import datetime
 import calendar
-from .models import Evento
+from .models import Evento, Solicitud
 
 
 @require_http_methods(["GET", "POST"])
@@ -82,10 +82,14 @@ def dashboard_view(request):
     meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
              'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
     
+    # Obtener solicitudes del usuario
+    solicitudes = Solicitud.objects.filter(usuario=request.user)
+    
     context = {
         'usuario': request.user,
         'calendario': cal,
         'eventos_por_dia': eventos_por_dia,
+        'solicitudes': solicitudes,
         'mes': mes,
         'ano': ano,
         'mes_nombre': meses[mes - 1],
@@ -112,3 +116,27 @@ def logout_view(request):
     logout(request)
     messages.success(request, 'Has cerrado sesión correctamente.')
     return redirect('usuarios:login')
+
+
+@login_required(login_url='usuarios:login')
+@require_http_methods(["POST"])
+def crear_solicitud(request):
+    """
+    Vista para crear una nueva solicitud.
+    """
+    tipo = request.POST.get('tipo')
+    titulo = request.POST.get('titulo')
+    descripcion = request.POST.get('descripcion')
+    
+    if tipo and titulo and descripcion:
+        Solicitud.objects.create(
+            usuario=request.user,
+            tipo=tipo,
+            titulo=titulo,
+            descripcion=descripcion
+        )
+        messages.success(request, '¡Solicitud creada exitosamente!')
+    else:
+        messages.error(request, 'Por favor completa todos los campos.')
+    
+    return redirect('usuarios:dashboard')

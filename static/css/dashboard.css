@@ -374,3 +374,349 @@ header h1 {
         font-size: 12px;
     }
 }
+
+/* ============ TABS Y SOLICITUDES ============ */
+
+.tab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.tab-header h2 {
+    color: #333;
+    font-size: 24px;
+}
+
+.btn-nuevo {
+    background-color: #667eea;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-nuevo:hover {
+    background-color: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+}
+
+/* ============ SOLICITUDES LISTA ============ */
+
+.solicitudes-lista {
+    display: grid;
+    gap: 15px;
+}
+
+.solicitud-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-left: 5px solid #667eea;
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.solicitud-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.solicitud-card.expanded {
+    background: white;
+    border-left: 5px solid #667eea;
+}
+
+.solicitud-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.solicitud-info h3 {
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.solicitud-tipo {
+    display: inline-block;
+    background-color: #e3f2fd;
+    color: #1976d2;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.solicitud-estado {
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.estado-pendiente {
+    background-color: #fff3e0;
+    color: #e65100;
+}
+
+.estado-en_proceso {
+    background-color: #e1f5fe;
+    color: #01579b;
+}
+
+.estado-aprobada {
+    background-color: #e8f5e9;
+    color: #1b5e20;
+}
+
+.estado-rechazada {
+    background-color: #ffebee;
+    color: #b71c1c;
+}
+
+.solicitud-fecha {
+    color: #666;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+.solicitud-body {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #ddd;
+}
+
+.solicitud-body p {
+    margin-bottom: 10px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.solicitud-body strong {
+    color: #333;
+}
+
+.respuesta-admin {
+    background-color: #f0f4ff;
+    padding: 12px;
+    border-left: 3px solid #667eea;
+    border-radius: 4px;
+    margin-top: 8px;
+    color: #555;
+}
+
+.sin-solicitudes {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.sin-solicitudes p {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ff6b6b;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    font-weight: bold;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.card {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.card.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+}
+
+.card.active h3,
+.card.active p {
+    color: white;
+}
+
+.card.expanded {
+    grid-column: 1 / -1;
+    background: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.card-content {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #f0f0f0;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============ MODAL FORMULARIO ============ */
+
+.formulario-modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: none;
+    animation: fadeInModal 0.3s ease-in;
+}
+
+@keyframes fadeInModal {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.formulario-contenido {
+    background-color: white;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.cerrar {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.cerrar:hover,
+.cerrar:focus {
+    color: #000;
+}
+
+.formulario-contenido h2 {
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+}
+
+.form-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.btn-enviar,
+.btn-cancelar {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-enviar {
+    background-color: #667eea;
+    color: white;
+}
+
+.btn-enviar:hover {
+    background-color: #5568d3;
+}
+
+.btn-cancelar {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.btn-cancelar:hover {
+    background-color: #e0e0e0;
+}
+
+/* ============ PERFIL INFO ============ */
+
+.perfil-info {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    line-height: 2;
+}
+
+.perfil-info p {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 10px 0;
+}
+
+.perfil-info strong {
+    color: #667eea;
+    min-width: 150px;
+    display: inline-block;
+}

@@ -147,3 +147,79 @@ class Evento(models.Model):
     
     def __str__(self):
         return f"{self.titulo} - {self.fecha_inicio.date()}"
+
+
+class Solicitud(models.Model):
+    """
+    Modelo para gestionar solicitudes de residentes.
+    Los vecinos pueden crear solicitudes para diferentes trámites.
+    """
+    
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('en_proceso', 'En proceso'),
+        ('aprobada', 'Aprobada'),
+        ('rechazada', 'Rechazada'),
+    ]
+    
+    TIPO_CHOICES = [
+        ('mantenimiento', 'Mantenimiento'),
+        ('permiso', 'Permiso'),
+        ('queja', 'Queja'),
+        ('sugerencia', 'Sugerencia'),
+        ('otro', 'Otro'),
+    ]
+    
+    usuario = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='solicitudes',
+        help_text='Usuario que realiza la solicitud'
+    )
+    
+    tipo = models.CharField(
+        max_length=20,
+        choices=TIPO_CHOICES,
+        default='otro',
+        help_text='Tipo de solicitud'
+    )
+    
+    titulo = models.CharField(
+        max_length=200,
+        help_text='Asunto de la solicitud'
+    )
+    
+    descripcion = models.TextField(
+        help_text='Descripción detallada de la solicitud'
+    )
+    
+    estado = models.CharField(
+        max_length=15,
+        choices=ESTADO_CHOICES,
+        default='pendiente',
+        help_text='Estado actual de la solicitud'
+    )
+    
+    fecha_creacion = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Fecha de creación de la solicitud'
+    )
+    
+    fecha_actualizacion = models.DateTimeField(
+        auto_now=True,
+        help_text='Última actualización de la solicitud'
+    )
+    
+    respuesta_admin = models.TextField(
+        blank=True,
+        null=True,
+        help_text='Respuesta del administrador'
+    )
+    
+    class Meta:
+        verbose_name = 'Solicitud'
+        verbose_name_plural = 'Solicitudes'
+        ordering = ['-fecha_creacion']
+    
+    def __str__(self):
+        return f"{self.get_tipo_display()} - {self.titulo} ({self.get_estado_display()})"
