@@ -38,13 +38,13 @@
         {% endif %}
 
         <div class="dashboard-grid">
-            <!-- COLUMNA 1: Información del usuario -->
+            <!-- COLUMNA 1:  del usuario -->
             <div class="dashboard-content">
                 <div class="welcome-section">
                     <h2>Bienvenido {{ usuario.get_full_name|default:usuario.username }}</h2>
                     <p>Panel de administración del conjunto residencial 😊</p>
                     <div class="user-card">
-                        <div class="user-card-header">📋 Información del Administrador</div>
+                        <div class="user-card-header">📋  del Administrador</div>
                         <div class="user-card-body">
                             <div class="user-info-row">
                                 <div class="user-info-label"><i class="material-icons">person</i> Usuario</div>
@@ -117,6 +117,13 @@
                     📅 {{ mes_nombre }} {{ ano }}
                 </h3>
 
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <a href="{% url 'usuarios:crear_evento' %}" class="btn-crear"
+                        style="background: #667eea; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em;">
+                        + Nuevo Evento
+                    </a>
+                </div>
+
                 <table class="tabla-calendario">
                     <thead>
                         <tr>
@@ -139,8 +146,14 @@
                                 {% if eventos_por_dia|get_dict:dia %}
                                 <div class="eventos">
                                     {% for evento in eventos_por_dia|get_dict:dia %}
-                                    <span class="evento" style="background-color: {{ evento.color }}"
-                                        title="{{ evento.titulo }} - {{ evento.descripcion }}">
+                                    <span class="evento" style="background-color: {{ evento.color }}" onclick="openEventModal({
+                                            titulo: '{{ evento.titulo|escapejs }}',
+                                            fecha: '{{ evento.fecha_inicio|date:'d/m/Y' }}',
+                                            hora: '{{ evento.fecha_inicio|date:'H:i' }}',
+                                            descripcion: '{{ evento.descripcion|escapejs }}',
+                                            categoria: '{{ evento.get_categoria_display }}',
+                                            color: '{{ evento.color }}'
+                                        })">>
                                         {{ evento.titulo }}
                                     </span>
                                     {% endfor %}
@@ -160,5 +173,83 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal para mostrar detalles del evento -->
+    <div id="eventModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">
+                    <i class="material-icons" style="color: white;">event</i>
+                    <span id="modalEventTitle"></span>
+                </h3>
+                <button class="close-modal" onclick="closeEventModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="event-detail-row">
+                    <i class="material-icons event-detail-icon">calendar_today</i>
+                    <div class="event-detail-content">
+                        <div class="event-label">Fecha</div>
+                        <div class="event-value" id="modalEventDate"></div>
+                    </div>
+                </div>
+                <div class="event-detail-row">
+                    <i class="material-icons event-detail-icon">schedule</i>
+                    <div class="event-detail-content">
+                        <div class="event-label">Hora</div>
+                        <div class="event-value" id="modalEventTime"></div>
+                    </div>
+                </div>
+                <div class="event-detail-row">
+                    <i class="material-icons event-detail-icon">description</i>
+                    <div class="event-detail-content">
+                        <div class="event-label">Descripción</div>
+                        <div class="event-value" id="modalEventDescription"></div>
+                    </div>
+                </div>
+                <div class="event-detail-row">
+                    <i class="material-icons event-detail-icon">category</i>
+                    <div class="event-detail-content">
+                        <div class="event-label">Categoría</div>
+                        <div class="event-value" id="modalEventCategory"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para abrir el modal con los detalles del evento
+        function openEventModal(eventData) {
+            document.getElementById('modalEventTitle').textContent = eventData.titulo;
+            document.getElementById('modalEventDate').textContent = eventData.fecha;
+            document.getElementById('modalEventTime').textContent = eventData.hora || 'No especificada';
+            document.getElementById('modalEventDescription').textContent = eventData.descripcion || 'Sin descripción';
+            document.getElementById('modalEventCategory').textContent = eventData.categoria || 'Sin categoría';
+
+            const modal = document.getElementById('eventModal');
+            modal.style.display = 'flex';
+        }
+
+        // Función para cerrar el modal
+        function closeEventModal() {
+            const modal = document.getElementById('eventModal');
+            modal.style.display = 'none';
+        }
+
+        // Cerrar modal al hacer click fuera de él
+        document.addEventListener('click', function (event) {
+            const modal = document.getElementById('eventModal');
+            if (event.target === modal) {
+                closeEventModal();
+            }
+        });
+
+        // Cerrar modal con la tecla Escape
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeEventModal();
+            }
+        });
+    </script>
 </body>
 </html>

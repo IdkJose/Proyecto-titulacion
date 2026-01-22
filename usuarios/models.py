@@ -124,6 +124,22 @@ class Evento(models.Model):
         help_text='Fecha y hora de fin del evento'
     )
     
+    # Choices para categorías de eventos
+    CATEGORIAS = [
+        ('minga', 'Minga'),
+        ('reunion', 'Reunión'),
+        ('mantenimiento', 'Mantenimiento'),
+        ('evento_social', 'Evento Social'),
+        ('otro', 'Otro'),
+    ]
+    
+    categoria = models.CharField(
+        max_length=20,
+        choices=CATEGORIAS,
+        default='otro',
+        help_text='Categoría del evento'
+    )
+    
     color = models.CharField(
         max_length=7,
         default='#667eea',
@@ -223,3 +239,72 @@ class Solicitud(models.Model):
     
     def __str__(self):
         return f"{self.get_tipo_display()} - {self.titulo} ({self.get_estado_display()})"
+
+
+class Mascota(models.Model):
+    """
+    Modelo para registrar mascotas que habitan en el conjunto.
+    Cada mascota está asociada a una casa/departamento.
+    """
+    
+    TIPO_CHOICES = [
+        ('perro', 'Perro'),
+        ('gato', 'Gato'),
+        ('pajaro', 'Pájaro'),
+        ('conejo', 'Conejo'),
+        ('hamster', 'Hámster'),
+        ('otro', 'Otro'),
+    ]
+    
+    numero_casa = models.CharField(
+        max_length=14,
+        help_text='Número de casa o departamento donde reside la mascota'
+    )
+    
+    nombre = models.CharField(
+        max_length=100,
+        help_text='Nombre de la mascota'
+    )
+    
+    dueno = models.CharField(
+        max_length=200,
+        help_text='Nombre del dueño de la mascota'
+    )
+    
+    tipo = models.CharField(
+        max_length=20,
+        choices=TIPO_CHOICES,
+        default='otro',
+        help_text='Tipo de mascota'
+    )
+    
+    descripcion = models.TextField(
+        blank=True,
+        null=True,
+        help_text='Descripción adicional de la mascota (color, características, etc)'
+    )
+    
+    fecha_registro = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Fecha de registro de la mascota'
+    )
+    
+    activo = models.BooleanField(
+        default=True,
+        help_text='Indica si el registro de la mascota está activo'
+    )
+    
+    foto = models.ImageField(
+        upload_to='mascotas/fotos/',
+        blank=True,
+        null=True,
+        help_text='Foto de la mascota'
+    )
+    
+    class Meta:
+        verbose_name = 'Mascota'
+        verbose_name_plural = 'Mascotas'
+        ordering = ['numero_casa', 'nombre']
+    
+    def __str__(self):
+        return f"{self.nombre} ({self.get_tipo_display()}) - {self.numero_casa}"

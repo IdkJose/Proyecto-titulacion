@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Usuario, Evento, Solicitud
+from .models import Usuario, Evento, Solicitud, Mascota
 @admin.register(Usuario)
 class UsuarioAdmin(UserAdmin):
     """
@@ -111,6 +111,34 @@ class SolicitudAdmin(admin.ModelAdmin):
         }),
         ('Timestamps', {
             'fields': ('fecha_creacion', 'fecha_actualizacion'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(Mascota)
+class MascotaAdmin(admin.ModelAdmin):
+    """
+    Configuración del modelo Mascota en el panel de administración.
+    """
+    list_display = ['nombre', 'tipo', 'numero_casa', 'dueno', 'fecha_registro', 'activo']
+    list_filter = ['tipo', 'activo', 'fecha_registro', 'numero_casa']
+    search_fields = ['nombre', 'dueno', 'numero_casa', 'descripcion']
+    readonly_fields = ['fecha_registro']
+    list_editable = ['activo']
+    
+    fieldsets = (
+        ('Información de la Mascota', {
+            'fields': ('nombre', 'tipo', 'descripcion')
+        }),
+        ('Información del Propietario', {
+            'fields': ('dueno', 'numero_casa')
+        }),
+        ('Estado', {
+            'fields': ('activo',)
+        }),
+        ('Timestamps', {
+            'fields': ('fecha_registro',),
             'classes': ('collapse',)
         }),
     )

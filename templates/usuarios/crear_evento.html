@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Nuevo Usuario - Conjunto Selva Alegre</title>
+    <title>Crear Evento - Conjunto Selva Alegre</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
@@ -29,7 +29,7 @@
     <div class="container">
         <div class="form-container">
             <div class="form-header">
-                <h2><i class="material-icons" style="color: #667eea;">person_add</i> Crear Nuevo Usuario</h2>
+                <h2><i class="material-icons" style="color: #667eea;">event</i> Nuevo Evento</h2>
             </div>
 
             <form method="post" novalidate enctype="multipart/form-data">
@@ -55,7 +55,7 @@
 
                 <div class="form-actions">
                     <a href="{% url 'usuarios:dashboard' %}" class="btn-cancel">Cancelar</a>
-                    <button type="submit" class="btn-submit">Guardar Usuario</button>
+                    <button type="submit" class="btn-submit">Guardar Evento</button>
                 </div>
             </form>
         </div>

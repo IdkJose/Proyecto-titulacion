@@ -11,4 +11,8 @@ urlpatterns = [
     path('solicitudes/crear/', views.crear_solicitud, name='crear_solicitud'),
     path('crear_usuario/', views.crear_usuario, name='crear_usuario'),
     path('lista_usuarios/', views.lista_usuarios, name='lista_usuarios'),
+    path('editar_usuario/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
+    path('eliminar_usuario/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
+    path('crear_evento/', views.crear_evento, name='crear_evento'),
+    path('mascotas/crear/', views.crear_mascota, name='crear_mascota'),
 ]

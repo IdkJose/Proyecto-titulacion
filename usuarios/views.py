@@ -1,12 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .forms import UsuarioCreationForm
+from .forms import UsuarioCreationForm, UsuarioChangeForm, EventoForm
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from datetime import datetime
+from django.utils import timezone
 import calendar
-from .models import Evento, Solicitud, Usuario
+from .models import Evento, Solicitud, Usuario, Mascota
 
 
 @require_http_methods(["GET", "POST"])
@@ -50,16 +51,21 @@ def dashboard_view(request):
     cal = calendar.monthcalendar(ano, mes)
     
     # Obtener eventos del usuario para este mes
+    # Obtener eventos del usuario O eventos de administradores (globales)
+    # Filtramos por mes y año
+    from django.db.models import Q
     eventos = Evento.objects.filter(
-        usuario=request.user,
+        Q(usuario=request.user) | Q(usuario__rol='admin'),
         fecha_inicio__year=ano,
         fecha_inicio__month=mes
-    )
+    ).distinct()
     
     # Crear diccionario {día: [eventos]}
     eventos_por_dia = {}
     for evento in eventos:
-        dia = evento.fecha_inicio.day
+        # Convertir a zona horaria local antes de obtener el día
+        fecha_local = timezone.localtime(evento.fecha_inicio)
+        dia = fecha_local.day
         if dia not in eventos_por_dia:
             eventos_por_dia[dia] = []
         eventos_por_dia[dia].append(evento)
@@ -86,11 +92,19 @@ def dashboard_view(request):
     # Obtener solicitudes del usuario
     solicitudes = Solicitud.objects.filter(usuario=request.user)
     
+    # Obtener mascotas registradas
+    mascotas = Mascota.objects.filter(activo=True)
+    
+    # Obtener vehículos (si existen en el modelo)
+    vehiculos = []  # Placeholder para vehículos si se implementan después
+    
     context = {
         'usuario': request.user,
         'calendario': cal,
         'eventos_por_dia': eventos_por_dia,
         'solicitudes': solicitudes,
+        'mascotas': mascotas,
+        'vehiculos': vehiculos,
         'mes': mes,
         'ano': ano,
         'mes_nombre': meses[mes - 1],
@@ -104,7 +118,7 @@ def dashboard_view(request):
     if request.user.es_administrador():
         template = 'usuarios/dashboard_admin.html'
     else:
-        template = 'usuarios/dashboard.html'
+        template = 'usuarios/dashboard_residente.html'
     
     return render(request, template, context)
 
@@ -170,3 +184,108 @@ def lista_usuarios(request):
     """
     usuarios = Usuario.objects.all().order_by('casa_departamento')
     return render(request, 'usuarios/lista_usuarios.html', {'usuarios': usuarios})
+
+
+
+@login_required
+@user_passes_test(lambda u: u.es_administrador())
+def editar_usuario(request, user_id):
+    """
+    Vista para editar un usuario existente.
+    """
+    usuario_editar = get_object_or_404(Usuario, id=user_id)
+    
+    if request.method == 'POST':
+        form = UsuarioChangeForm(request.POST, request.FILES, instance=usuario_editar)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Usuario {usuario_editar.username} actualizado exitosamente.')
+            return redirect('usuarios:lista_usuarios')
+    else:
+        form = UsuarioChangeForm(instance=usuario_editar)
+    
+    return render(request, 'usuarios/editar_usuario.html', {'form': form, 'usuario_editar': usuario_editar})
+
+
+@login_required
+@user_passes_test(lambda u: u.es_administrador())
+def eliminar_usuario(request, user_id):
+    """
+    Vista para eliminar un usuario.
+    No permite eliminar administradores.
+    """
+    usuario_eliminar = get_object_or_404(Usuario, id=user_id)
+    
+    # Verificar si es admin
+    if usuario_eliminar.rol == 'admin':
+        messages.error(request, 'No se puede eliminar a un usuario con rol de Administrador.')
+        return redirect('usuarios:lista_usuarios')
+    
+    # Eliminar
+    nombre = usuario_eliminar.username
+    usuario_eliminar.delete()
+    messages.success(request, f'Usuario {nombre} eliminado correctamente.')
+    return redirect('usuarios:lista_usuarios')
+
+
+@login_required
+@user_passes_test(lambda u: u.es_administrador())
+def crear_evento(request):
+    """
+    Vista para crear un evento en el calendario.
+    Solo para administradores.
+    """
+    if request.method == 'POST':
+        form = EventoForm(request.POST)
+        if form.is_valid():
+            evento = form.save(commit=False)
+            evento.usuario = request.user
+            evento.save()
+            messages.success(request, 'Evento creado exitosamente.')
+            return redirect('usuarios:dashboard')
+    else:
+        # Pre-seleccionar fecha/hora actual
+        form = EventoForm(initial={'fecha_inicio': datetime.now(), 'fecha_fin': datetime.now()})
+    
+    return render(request, 'usuarios/crear_evento.html', {'form': form})
+
+
+@login_required
+@require_http_methods(["POST"])
+def crear_mascota(request):
+    """
+    Vista para crear un registro de mascota.
+    Los vecinos pueden registrar mascotas dentro del conjunto.
+    """
+    try:
+        numero_casa = request.POST.get('numero_casa', '').strip()
+        nombre = request.POST.get('nombre', '').strip()
+        dueno = request.POST.get('dueno', '').strip()
+        tipo = request.POST.get('tipo', '').strip()
+        foto = request.FILES.get('foto', None)
+        
+        # Validar que todos los campos requeridos sean proporcionados
+        if not all([numero_casa, nombre, dueno, tipo]):
+            messages.error(request, 'Por favor completa todos los campos del formulario.')
+            return redirect('usuarios:dashboard')
+        
+        # Crear la mascota
+        mascota = Mascota(
+            numero_casa=numero_casa,
+            nombre=nombre,
+            dueno=dueno,
+            tipo=tipo
+        )
+        
+        # Guardar foto si fue proporcionada
+        if foto:
+            mascota.foto = foto
+        
+        mascota.save()
+        foto_text = " con foto" if foto else ""
+        messages.success(request, f'✅ Mascota "{nombre}" registrada exitosamente{foto_text}.')
+    except Exception as e:
+        messages.error(request, f'Error al registrar la mascota: {str(e)}')
+    
+    return redirect('usuarios:dashboard')
+

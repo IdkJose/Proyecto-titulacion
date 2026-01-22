@@ -1,0 +1,92 @@
+.table-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-add {
+    background: #667eea;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+    transition: background 0.3s;
+}
+
+.btn-add:hover {
+    background: #5a67d8;
+}
+
+.btn-add i {
+    color: white !important;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 15px;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+th {
+    background-color: #f8fafc;
+    color: #4a5568;
+    font-weight: 600;
+}
+
+tr:hover {
+    background-color: #f7fafc;
+}
+
+.role-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.role-admin {
+    background-color: #e6fffa;
+    color: #319795;
+}
+
+.role-vecino {
+    background-color: #ebf8ff;
+    color: #3182ce;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-icon {
+    padding: 5px;
+    border-radius: 5px;
+    color: #718096;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    background-color: #edf2f7;
+    color: #2d3748;
+}
