@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .forms import UsuarioCreationForm
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from datetime import datetime
 import calendar
-from .models import Evento, Solicitud
+from .models import Evento, Solicitud, Usuario
 
 
 @require_http_methods(["GET", "POST"])
@@ -140,3 +141,32 @@ def crear_solicitud(request):
         messages.error(request, 'Por favor completa todos los campos.')
     
     return redirect('usuarios:dashboard')
+
+
+@login_required
+@user_passes_test(lambda u: u.es_administrador())
+def crear_usuario(request):
+    """
+    Vista para crear nuevos usuarios.
+    Solo accesible para administradores.
+    """
+    if request.method == 'POST':
+        form = UsuarioCreationForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, f'Usuario {user.username} creado exitosamente.')
+            return redirect('usuarios:dashboard')
+    else:
+        form = UsuarioCreationForm()
+    
+    return render(request, 'usuarios/crear_usuario.html', {'form': form})
+
+
+@login_required
+@user_passes_test(lambda u: u.es_administrador())
+def lista_usuarios(request):
+    """
+    Vista para listar todos los usuarios registrados.
+    """
+    usuarios = Usuario.objects.all().order_by('casa_departamento')
+    return render(request, 'usuarios/lista_usuarios.html', {'usuarios': usuarios})
