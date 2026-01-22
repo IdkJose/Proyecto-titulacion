@@ -44,6 +44,7 @@
                             <th>Casa/Depto</th>
                             <th>Teléfono</th>
                             <th>Rol</th>
+                            <th>Activo</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -59,6 +60,10 @@
                                     class="role-badge {% if usuario.rol == 'admin' %}role-admin{% else %}role-vecino{% endif %}">
                                     {{ usuario.get_rol_display }}
                                 </span>
+                            </td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" {% if usuario.is_active %}checked{% endif %} disabled
+                                    style="transform: scale(1.2); cursor: default;">
                             </td>
                             <td class="actions">
                                 <a href="{% url 'usuarios:editar_usuario' usuario.id %}" class="btn-icon"
@@ -76,7 +81,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 30px;">
+                            <td colspan="7" style="text-align: center; padding: 30px;">
                                 No hay usuarios registrados aún.
                             </td>
                         </tr>

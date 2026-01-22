@@ -26,9 +26,15 @@ class UsuarioCreationForm(UserCreationForm):
         }
 
 class UsuarioChangeForm(forms.ModelForm):
+    is_active = forms.ChoiceField(
+        choices=[(True, 'Activo'), (False, 'Inactivo')],
+        label='Estado del Usuario',
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    
     class Meta:
         model = Usuario
-        fields = ('username', 'email', 'first_name', 'last_name', 'casa_departamento', 'telefono', 'rol')
+        fields = ('username', 'email', 'first_name', 'last_name', 'casa_departamento', 'telefono', 'rol', 'is_active')
         labels = {
             'username': 'Nombre de usuario',
             'email': 'Correo electrónico',

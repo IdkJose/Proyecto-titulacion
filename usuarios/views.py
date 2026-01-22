@@ -20,17 +20,24 @@ def login_view(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         
+        # Primero verificar si el usuario existe
+        try:
+            usuario_existente = Usuario.objects.get(username=username)
+            
+            # Si existe pero está inactivo, mostrar mensaje específico
+            if not usuario_existente.is_active:
+                messages.error(request, 'Usuario inactivo. Comuníquese con el administrador.')
+                return render(request, 'usuarios/login.html')
+        except Usuario.DoesNotExist:
+            pass  # Si no existe, continuar con autenticación normal
+        
         # Autenticar al usuario
         user = authenticate(request, username=username, password=password)
         
         if user is not None:
-            # Si el usuario existe y está activo
-            if user.is_active:
-                login(request, user)
-                messages.success(request, f'¡Bienvenido {user.get_full_name() or user.username}!')
-                return redirect('usuarios:dashboard')  
-            else:
-                messages.error(request, 'Tu cuenta ha sido desactivada. Contacta al administrador.')
+            login(request, user)
+            messages.success(request, f'¡Bienvenido {user.get_full_name() or user.username}!')
+            return redirect('usuarios:dashboard')  
         else:
             messages.error(request, 'Usuario o contraseña incorrectos.')
     
