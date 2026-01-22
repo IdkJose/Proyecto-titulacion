@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import JsonResponse
 from .forms import UsuarioCreationForm, UsuarioChangeForm, EventoForm
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
@@ -286,6 +287,77 @@ def crear_mascota(request):
         messages.success(request, f'✅ Mascota "{nombre}" registrada exitosamente{foto_text}.')
     except Exception as e:
         messages.error(request, f'Error al registrar la mascota: {str(e)}')
+    
+    return redirect('usuarios:dashboard')
+
+
+@login_required
+@require_http_methods(["GET"])
+def obtener_mascota(request, mascota_id):
+    """
+    Vista para obtener datos de una mascota en formato JSON.
+    """
+    try:
+        mascota = Mascota.objects.get(id=mascota_id)
+        data = {
+            'id': mascota.id,
+            'numero_casa': mascota.numero_casa,
+            'nombre': mascota.nombre,
+            'dueno': mascota.dueno,
+            'tipo': mascota.tipo,
+            'descripcion': mascota.descripcion or '',
+        }
+        return JsonResponse(data)
+    except Mascota.DoesNotExist:
+        return JsonResponse({'error': 'Mascota no encontrada'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def editar_mascota(request, mascota_id):
+    """
+    Vista para editar una mascota existente.
+    """
+    try:
+        mascota = Mascota.objects.get(id=mascota_id)
+        
+        mascota.numero_casa = request.POST.get('numero_casa', '').strip() or mascota.numero_casa
+        mascota.nombre = request.POST.get('nombre', '').strip() or mascota.nombre
+        mascota.dueno = request.POST.get('dueno', '').strip() or mascota.dueno
+        mascota.tipo = request.POST.get('tipo', '').strip() or mascota.tipo
+        mascota.descripcion = request.POST.get('descripcion', '').strip()
+        
+        # Actualizar foto si se proporciona
+        if 'foto' in request.FILES:
+            mascota.foto = request.FILES['foto']
+        
+        mascota.save()
+        messages.success(request, f'✅ Mascota "{mascota.nombre}" actualizada exitosamente.')
+    except Mascota.DoesNotExist:
+        messages.error(request, 'La mascota no fue encontrada.')
+    except Exception as e:
+        messages.error(request, f'Error al actualizar la mascota: {str(e)}')
+    
+    return redirect('usuarios:dashboard')
+
+
+@login_required
+@require_http_methods(["POST"])
+def eliminar_mascota(request, mascota_id):
+    """
+    Vista para eliminar una mascota.
+    """
+    try:
+        mascota = Mascota.objects.get(id=mascota_id)
+        nombre = mascota.nombre
+        mascota.delete()
+        messages.success(request, f'✅ Mascota "{nombre}" eliminada exitosamente.')
+    except Mascota.DoesNotExist:
+        messages.error(request, 'La mascota no fue encontrada.')
+    except Exception as e:
+        messages.error(request, f'Error al eliminar la mascota: {str(e)}')
     
     return redirect('usuarios:dashboard')
 

@@ -354,6 +354,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="edit-descripcion">Descripción (opcional):</label>
+                        <textarea name="descripcion" id="edit-descripcion" placeholder="Características especiales de la mascota" style="width: 100%; padding: 8px 10px; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 0.9rem; resize: vertical; height: 80px;"></textarea>
+                    </div>
+
+                <div class="form-group">
                     <label for="foto-mascota">📸 Foto de la Mascota (opcional):</label>
                     <div style="position: relative;">
                         <input type="file" name="foto" id="foto-mascota" accept="image/*" onchange="previewImagenMascota(event)" style="cursor: pointer;">
@@ -534,6 +539,43 @@
                                         font-style: italic;
                                     ">{{ mascota.descripcion }}</p>
                                 {% endif %}
+
+                                <!-- Botones de acción -->
+                                <div style="
+                                    display: grid;
+                                    grid-template-columns: 1fr 1fr;
+                                    gap: 8px;
+                                    margin-top: 12px;
+                                    padding-top: 12px;
+                                    border-top: 1px solid #e0e0e0;
+                                ">
+                                    <button onclick="abrirModalEditarMascota({{ mascota.id }})" style="
+                                        background: #667eea;
+                                        color: white;
+                                        border: none;
+                                        padding: 8px 12px;
+                                        border-radius: 6px;
+                                        cursor: pointer;
+                                        font-size: 0.85rem;
+                                        font-weight: 500;
+                                        transition: all 0.2s;
+                                    " onmouseover="this.style.background='#5568d3';" onmouseout="this.style.background='#667eea';">
+                                        ✏️ Editar
+                                    </button>
+                                    <button onclick="eliminarMascota({{ mascota.id }}, '{{ mascota.nombre }}')" style="
+                                        background: #ff6b6b;
+                                        color: white;
+                                        border: none;
+                                        padding: 8px 12px;
+                                        border-radius: 6px;
+                                        cursor: pointer;
+                                        font-size: 0.85rem;
+                                        font-weight: 500;
+                                        transition: all 0.2s;
+                                    " onmouseover="this.style.background='#ff5252';" onmouseout="this.style.background='#ff6b6b';">
+                                        🗑️ Eliminar
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     {% endfor %}
@@ -553,6 +595,62 @@
             <div class="form-buttons" style="margin-top: 20px;">
                 <button type="button" class="btn-cancelar" onclick="cerrarModalVerMascotas()">Cerrar</button>
             </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR MASCOTA -->
+    <div id="modal-editar-mascota" class="formulario-modal" onclick="if(event.target === this) cerrarModalEditarMascota();">
+        <div class="formulario-contenido" onclick="event.stopPropagation();">
+            <span class="cerrar" onclick="cerrarModalEditarMascota()">&times;</span>
+            <h2>✏️ Editar Mascota</h2>
+            <form method="POST" action="" id="form-editar-mascota" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="edit-numero-casa">Número de Casa:</label>
+                    <input type="text" name="numero_casa" id="edit-numero-casa" placeholder="Ej: 10, 12A, 5B" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-nombre-mascota">Nombre de la Mascota:</label>
+                    <input type="text" name="nombre" id="edit-nombre-mascota" placeholder="Ej: Max, Luna, Fluffy" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-dueno">Dueño:</label>
+                    <input type="text" name="dueno" id="edit-dueno" placeholder="Nombre del dueño" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tipo-mascota">Tipo de Mascota:</label>
+                    <select name="tipo" id="edit-tipo-mascota" required>
+                        <option value="">-- Selecciona un tipo --</option>
+                        <option value="perro">🐕 Perro</option>
+                        <option value="gato">🐱 Gato</option>
+                        <option value="pajaro">🦜 Pájaro</option>
+                        <option value="conejo">🐰 Conejo</option>
+                        <option value="hamster">🐹 Hámster</option>
+                        <option value="otro">📝 Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-descripcion">Descripción (opcional):</label>
+                    <textarea name="descripcion" id="edit-descripcion" placeholder="Características especiales de la mascota" style="width: 100%; padding: 8px 10px; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 0.9rem; resize: vertical; height: 80px;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-foto-mascota">📸 Foto de la Mascota (opcional):</label>
+                    <input type="file" name="foto" id="edit-foto-mascota" accept="image/*">
+                    <p style="font-size: 0.8rem; color: #999; margin-top: 5px;">Déjalo en blanco para mantener la foto actual</p>
+                </div>
+
+
+                <div class="form-buttons">
+                    <button type="submit" class="btn-enviar">Guardar Cambios</button>
+                    <button type="button" class="btn-cancelar" onclick="cerrarModalEditarMascota()">Cancelar</button>
+                </div>
+            </form>
         </div>
     </div>
         </div>
@@ -716,6 +814,51 @@
         // Función para cerrar modal Ver Mascotas
         function cerrarModalVerMascotas() {
             document.getElementById('modal-ver-mascotas').style.display = 'none';
+        }
+
+        // Función para abrir modal Editar Mascota
+        function abrirModalEditarMascota(mascotaId) {
+            // Hacer fetch para obtener los datos de la mascota
+            fetch(`/mascotas/obtener/${mascotaId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('edit-numero-casa').value = data.numero_casa;
+                    document.getElementById('edit-nombre-mascota').value = data.nombre;
+                    document.getElementById('edit-dueno').value = data.dueno;
+                    document.getElementById('edit-tipo-mascota').value = data.tipo;
+                    document.getElementById('edit-descripcion').value = data.descripcion || '';
+                    
+                    // Actualizar la acción del formulario
+                    document.getElementById('form-editar-mascota').action = `/mascotas/editar/${mascotaId}/`;
+                    
+                    document.getElementById('modal-editar-mascota').style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al cargar los datos de la mascota');
+                });
+        }
+
+        // Función para cerrar modal Editar Mascota
+        function cerrarModalEditarMascota() {
+            document.getElementById('modal-editar-mascota').style.display = 'none';
+        }
+
+        // Función para eliminar mascota
+        function eliminarMascota(mascotaId, nombreMascota) {
+            if (confirm(`¿Estás seguro de que deseas eliminar a ${nombreMascota}?`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/mascotas/eliminar/${mascotaId}/`;
+                
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                if (csrfToken) {
+                    form.appendChild(csrfToken.cloneNode(true));
+                }
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
         }
 
         // Variables globales para crop
