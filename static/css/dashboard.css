@@ -478,3 +478,7 @@ header h1 {
     font-size: 1rem;
     line-height: 1.5;
 }
+
+/* Fix para evitar que las columnas del calendario se achiquen */
+.tabla-calendario { table-layout: fixed !important; }
+.tabla-calendario th, .tabla-calendario td { width: 14.28% !important; }

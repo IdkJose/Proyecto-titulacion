@@ -124,6 +124,22 @@ class Evento(models.Model):
         help_text='Fecha y hora de fin del evento'
     )
     
+    # Choices para categorías de eventos
+    CATEGORIAS = [
+        ('minga', 'Minga'),
+        ('reunion', 'Reunión'),
+        ('mantenimiento', 'Mantenimiento'),
+        ('evento_social', 'Evento Social'),
+        ('otro', 'Otro'),
+    ]
+    
+    categoria = models.CharField(
+        max_length=20,
+        choices=CATEGORIAS,
+        default='otro',
+        help_text='Categoría del evento'
+    )
+    
     color = models.CharField(
         max_length=7,
         default='#667eea',

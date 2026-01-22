@@ -5,6 +5,7 @@ from .forms import UsuarioCreationForm, UsuarioChangeForm, EventoForm
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from datetime import datetime
+from django.utils import timezone
 import calendar
 from .models import Evento, Usuario
 
@@ -62,7 +63,9 @@ def dashboard_view(request):
     # Crear diccionario {día: [eventos]}
     eventos_por_dia = {}
     for evento in eventos:
-        dia = evento.fecha_inicio.day
+        # Convertir a zona horaria local antes de obtener el día
+        fecha_local = timezone.localtime(evento.fecha_inicio)
+        dia = fecha_local.day
         if dia not in eventos_por_dia:
             eventos_por_dia[dia] = []
         eventos_por_dia[dia].append(evento)

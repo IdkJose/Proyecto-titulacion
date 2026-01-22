@@ -53,12 +53,13 @@ from .models import Evento
 class EventoForm(forms.ModelForm):
     class Meta:
         model = Evento
-        fields = ('titulo', 'descripcion', 'fecha_inicio', 'fecha_fin', 'color')
+        fields = ('titulo', 'descripcion', 'fecha_inicio', 'fecha_fin', 'categoria', 'color')
         labels = {
             'titulo': 'Título del Evento',
             'descripcion': 'Descripción',
             'fecha_inicio': 'Fecha y Hora de Inicio',
             'fecha_fin': 'Fecha y Hora de Fin',
+            'categoria': 'Categoría',
             'color': 'Color',
         }
         widgets = {
@@ -66,5 +67,7 @@ class EventoForm(forms.ModelForm):
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'fecha_inicio': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
             'fecha_fin': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
+            'categoria': forms.Select(attrs={'class': 'form-select'}),
             'color': forms.TextInput(attrs={'class': 'form-control', 'type': 'color', 'style': 'height: 40px; width: 100px;'}),
         }
+
