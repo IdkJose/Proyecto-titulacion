@@ -38,14 +38,13 @@
         {% endif %}
 
         <div class="dashboard-grid">
-            <!-- COLUMNA 1: Información del usuario -->
+            <!-- COLUMNA 1:  del usuario -->
             <div class="dashboard-content">
                 <div class="welcome-section">
                     <h2>Bienvenido {{ usuario.get_full_name|default:usuario.username }}</h2>
                     <p>Panel de administración del conjunto residencial 😊</p>
-
                     <div class="user-card">
-                        <div class="user-card-header">📋 Información del Administrador</div>
+                        <div class="user-card-header">📋  del Administrador</div>
                         <div class="user-card-body">
                             <div class="user-info-row">
                                 <div class="user-info-label"><i class="material-icons">person</i> Usuario</div>
@@ -253,5 +252,4 @@
         });
     </script>
 </body>
-
 </html>

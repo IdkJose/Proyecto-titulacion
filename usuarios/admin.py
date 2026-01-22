@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Usuario, Evento
+from .models import Usuario, Evento, Solicitud, Mascota
 @admin.register(Usuario)
 class UsuarioAdmin(UserAdmin):
     """
@@ -84,6 +84,61 @@ class EventoAdmin(admin.ModelAdmin):
         }),
         ('Timestamps', {
             'fields': ('creado_en', 'actualizado_en'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(Solicitud)
+class SolicitudAdmin(admin.ModelAdmin):
+    """
+    Configuración del modelo Solicitud en el panel de administración.
+    """
+    list_display = ['titulo', 'usuario', 'tipo', 'estado', 'fecha_creacion']
+    list_filter = ['estado', 'tipo', 'fecha_creacion', 'usuario']
+    search_fields = ['titulo', 'descripcion', 'usuario__username', 'usuario__email']
+    readonly_fields = ['fecha_creacion', 'fecha_actualizacion']
+    
+    fieldsets = (
+        ('Información de la Solicitud', {
+            'fields': ('usuario', 'tipo', 'titulo', 'descripcion')
+        }),
+        ('Estado', {
+            'fields': ('estado',)
+        }),
+        ('Respuesta del Administrador', {
+            'fields': ('respuesta_admin',)
+        }),
+        ('Timestamps', {
+            'fields': ('fecha_creacion', 'fecha_actualizacion'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(Mascota)
+class MascotaAdmin(admin.ModelAdmin):
+    """
+    Configuración del modelo Mascota en el panel de administración.
+    """
+    list_display = ['nombre', 'tipo', 'numero_casa', 'dueno', 'fecha_registro', 'activo']
+    list_filter = ['tipo', 'activo', 'fecha_registro', 'numero_casa']
+    search_fields = ['nombre', 'dueno', 'numero_casa', 'descripcion']
+    readonly_fields = ['fecha_registro']
+    list_editable = ['activo']
+    
+    fieldsets = (
+        ('Información de la Mascota', {
+            'fields': ('nombre', 'tipo', 'descripcion')
+        }),
+        ('Información del Propietario', {
+            'fields': ('dueno', 'numero_casa')
+        }),
+        ('Estado', {
+            'fields': ('activo',)
+        }),
+        ('Timestamps', {
+            'fields': ('fecha_registro',),
             'classes': ('collapse',)
         }),
     )

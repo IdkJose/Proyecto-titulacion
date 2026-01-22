@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 from datetime import datetime
 from django.utils import timezone
 import calendar
-from .models import Evento, Usuario
+from .models import Evento, Solicitud, Usuario, Mascota
 
 
 @require_http_methods(["GET", "POST"])
@@ -96,10 +96,22 @@ def dashboard_view(request):
     meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
              'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
     
+    # Obtener solicitudes del usuario
+    solicitudes = Solicitud.objects.filter(usuario=request.user)
+    
+    # Obtener mascotas registradas
+    mascotas = Mascota.objects.filter(activo=True)
+    
+    # Obtener vehículos (si existen en el modelo)
+    vehiculos = []  # Placeholder para vehículos si se implementan después
+    
     context = {
         'usuario': request.user,
         'calendario': cal,
         'eventos_por_dia': eventos_por_dia,
+        'solicitudes': solicitudes,
+        'mascotas': mascotas,
+        'vehiculos': vehiculos,
         'mes': mes,
         'ano': ano,
         'mes_nombre': meses[mes - 1],
@@ -113,7 +125,7 @@ def dashboard_view(request):
     if request.user.es_administrador():
         template = 'usuarios/dashboard_admin.html'
     else:
-        template = 'usuarios/dashboard.html'
+        template = 'usuarios/dashboard_residente.html'
     
     return render(request, template, context)
 
@@ -126,6 +138,30 @@ def logout_view(request):
     logout(request)
     messages.success(request, 'Has cerrado sesión correctamente.')
     return redirect('usuarios:login')
+
+
+@login_required(login_url='usuarios:login')
+@require_http_methods(["POST"])
+def crear_solicitud(request):
+    """
+    Vista para crear una nueva solicitud.
+    """
+    tipo = request.POST.get('tipo')
+    titulo = request.POST.get('titulo')
+    descripcion = request.POST.get('descripcion')
+    
+    if tipo and titulo and descripcion:
+        Solicitud.objects.create(
+            usuario=request.user,
+            tipo=tipo,
+            titulo=titulo,
+            descripcion=descripcion
+        )
+        messages.success(request, '¡Solicitud creada exitosamente!')
+    else:
+        messages.error(request, 'Por favor completa todos los campos.')
+    
+    return redirect('usuarios:dashboard')
 
 
 @login_required
@@ -219,3 +255,44 @@ def crear_evento(request):
         form = EventoForm(initial={'fecha_inicio': datetime.now(), 'fecha_fin': datetime.now()})
     
     return render(request, 'usuarios/crear_evento.html', {'form': form})
+
+
+@login_required
+@require_http_methods(["POST"])
+def crear_mascota(request):
+    """
+    Vista para crear un registro de mascota.
+    Los vecinos pueden registrar mascotas dentro del conjunto.
+    """
+    try:
+        numero_casa = request.POST.get('numero_casa', '').strip()
+        nombre = request.POST.get('nombre', '').strip()
+        dueno = request.POST.get('dueno', '').strip()
+        tipo = request.POST.get('tipo', '').strip()
+        foto = request.FILES.get('foto', None)
+        
+        # Validar que todos los campos requeridos sean proporcionados
+        if not all([numero_casa, nombre, dueno, tipo]):
+            messages.error(request, 'Por favor completa todos los campos del formulario.')
+            return redirect('usuarios:dashboard')
+        
+        # Crear la mascota
+        mascota = Mascota(
+            numero_casa=numero_casa,
+            nombre=nombre,
+            dueno=dueno,
+            tipo=tipo
+        )
+        
+        # Guardar foto si fue proporcionada
+        if foto:
+            mascota.foto = foto
+        
+        mascota.save()
+        foto_text = " con foto" if foto else ""
+        messages.success(request, f'✅ Mascota "{nombre}" registrada exitosamente{foto_text}.')
+    except Exception as e:
+        messages.error(request, f'Error al registrar la mascota: {str(e)}')
+    
+    return redirect('usuarios:dashboard')
+
