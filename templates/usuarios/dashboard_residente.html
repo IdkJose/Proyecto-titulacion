@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=logout" />
 </head>
 
 <body>
@@ -17,10 +19,8 @@
             <h1>🏘️ Conjunto Selva Alegre</h1>
             <div class="user-info">
                 <span><strong>{{ usuario.username }}</strong></span>
-                <link rel="stylesheet"
-                    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=home" />
-                <a href="{% url 'usuarios:home' %}" class="btn-home">
-                    <span class="material-symbols-outlined">home</span>
+                <a href="{% url 'usuarios:logout' %}" class="btn-logout">
+                    <span class="material-symbols-outlined">logout</span>
                 </a>
             </div>
         </div>
@@ -358,8 +358,10 @@
 
                 <div class="form-group">
                     <label for="edit-descripcion">Descripción (opcional):</label>
-                        <textarea name="descripcion" id="edit-descripcion" placeholder="Características especiales de la mascota" style="width: 100%; padding: 8px 10px; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 0.9rem; resize: vertical; height: 80px;"></textarea>
-                    </div>
+                    <textarea name="descripcion" id="edit-descripcion"
+                        placeholder="Características especiales de la mascota"
+                        style="width: 100%; padding: 8px 10px; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 0.9rem; resize: vertical; height: 80px;"></textarea>
+                </div>
 
                 <div class="form-group">
                     <label for="foto-mascota">📸 Foto de la Mascota (opcional):</label>
@@ -566,10 +568,10 @@
                                         color: #666;
                                         font-style: italic;
                                     ">{{ mascota.descripcion }}</p>
-                                {% endif %}
+                        {% endif %}
 
-                                <!-- Botones de acción -->
-                                <div style="
+                        <!-- Botones de acción -->
+                        <div style="
                                     display: grid;
                                     grid-template-columns: 1fr 1fr;
                                     gap: 8px;
@@ -577,7 +579,7 @@
                                     padding-top: 12px;
                                     border-top: 1px solid #e0e0e0;
                                 ">
-                                    <button onclick="abrirModalEditarMascota({{ mascota.id }})" style="
+                            <button onclick="abrirModalEditarMascota({{ mascota.id }})" style="
                                         background: #667eea;
                                         color: white;
                                         border: none;
@@ -587,10 +589,11 @@
                                         font-size: 0.85rem;
                                         font-weight: 500;
                                         transition: all 0.2s;
-                                    " onmouseover="this.style.background='#5568d3';" onmouseout="this.style.background='#667eea';">
-                                        ✏️ Editar
-                                    </button>
-                                    <button onclick="eliminarMascota({{ mascota.id }}, '{{ mascota.nombre }}')" style="
+                                    " onmouseover="this.style.background='#5568d3';"
+                                onmouseout="this.style.background='#667eea';">
+                                ✏️ Editar
+                            </button>
+                            <button onclick="eliminarMascota({{ mascota.id }}, '{{ mascota.nombre }}')" style="
                                         background: #ff6b6b;
                                         color: white;
                                         border: none;
@@ -600,41 +603,43 @@
                                         font-size: 0.85rem;
                                         font-weight: 500;
                                         transition: all 0.2s;
-                                    " onmouseover="this.style.background='#ff5252';" onmouseout="this.style.background='#ff6b6b';">
-                                        🗑️ Eliminar
-                                    </button>
-                                </div>
-                            </div>
+                                    " onmouseover="this.style.background='#ff5252';"
+                                onmouseout="this.style.background='#ff6b6b';">
+                                🗑️ Eliminar
+                            </button>
                         </div>
-                    {% endfor %}
+                    </div>
                 </div>
+                {% endfor %}
             </div>
-            {% else %}
-            <div style="
+        </div>
+        {% else %}
+        <div style="
                     text-align: center;
                     padding: 60px 20px;
                     color: #999;
                 ">
-                <p style="font-size: 3rem; margin-bottom: 15px;">🐾</p>
-                <p style="font-size: 1.1rem;">No hay mascotas registradas aún.</p>
-                <p style="font-size: 0.9rem; margin-top: 10px;">¡Sé el primero en registrar una mascota!</p>
-            </div>
-            {% endif %}
-
-            <div class="form-buttons" style="margin-top: 20px;">
-                <button type="button" class="btn-cancelar" onclick="cerrarModalVerMascotas()">Cerrar</button>
-            </div>
+            <p style="font-size: 3rem; margin-bottom: 15px;">🐾</p>
+            <p style="font-size: 1.1rem;">No hay mascotas registradas aún.</p>
+            <p style="font-size: 0.9rem; margin-top: 10px;">¡Sé el primero en registrar una mascota!</p>
         </div>
+        {% endif %}
+
+        <div class="form-buttons" style="margin-top: 20px;">
+            <button type="button" class="btn-cancelar" onclick="cerrarModalVerMascotas()">Cerrar</button>
+        </div>
+    </div>
     </div>
 
     <!-- MODAL EDITAR MASCOTA -->
-    <div id="modal-editar-mascota" class="formulario-modal" onclick="if(event.target === this) cerrarModalEditarMascota();">
+    <div id="modal-editar-mascota" class="formulario-modal"
+        onclick="if(event.target === this) cerrarModalEditarMascota();">
         <div class="formulario-contenido" onclick="event.stopPropagation();">
             <span class="cerrar" onclick="cerrarModalEditarMascota()">&times;</span>
             <h2>✏️ Editar Mascota</h2>
             <form method="POST" action="" id="form-editar-mascota" enctype="multipart/form-data">
                 {% csrf_token %}
-                
+
                 <div class="form-group">
                     <label for="edit-numero-casa">Número de Casa:</label>
                     <input type="text" name="numero_casa" id="edit-numero-casa" placeholder="Ej: 10, 12A, 5B" required>
@@ -642,7 +647,8 @@
 
                 <div class="form-group">
                     <label for="edit-nombre-mascota">Nombre de la Mascota:</label>
-                    <input type="text" name="nombre" id="edit-nombre-mascota" placeholder="Ej: Max, Luna, Fluffy" required>
+                    <input type="text" name="nombre" id="edit-nombre-mascota" placeholder="Ej: Max, Luna, Fluffy"
+                        required>
                 </div>
 
                 <div class="form-group">
@@ -665,13 +671,16 @@
 
                 <div class="form-group">
                     <label for="edit-descripcion">Descripción (opcional):</label>
-                    <textarea name="descripcion" id="edit-descripcion" placeholder="Características especiales de la mascota" style="width: 100%; padding: 8px 10px; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 0.9rem; resize: vertical; height: 80px;"></textarea>
+                    <textarea name="descripcion" id="edit-descripcion"
+                        placeholder="Características especiales de la mascota"
+                        style="width: 100%; padding: 8px 10px; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 0.9rem; resize: vertical; height: 80px;"></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="edit-foto-mascota">📸 Foto de la Mascota (opcional):</label>
                     <input type="file" name="foto" id="edit-foto-mascota" accept="image/*">
-                    <p style="font-size: 0.8rem; color: #999; margin-top: 5px;">Déjalo en blanco para mantener la foto actual</p>
+                    <p style="font-size: 0.8rem; color: #999; margin-top: 5px;">Déjalo en blanco para mantener la foto
+                        actual</p>
                 </div>
 
 
@@ -682,7 +691,7 @@
             </form>
         </div>
     </div>
-        </div>
+    </div>
     </div>
 
     <!-- MODAL NUEVA SOLICITUD -->
@@ -746,159 +755,6 @@
                 const modal = document.getElementById('eventModal');
                 modal.style.display = 'none';
             }
-
-        // Función para cambiar entre tabs
-        function cambiarTab(event, tabId) {
-            event.preventDefault();
-            event.stopPropagation();
-            
-            // Ocultar todos los tabs
-            const allTabs = document.querySelectorAll('.tab-content');
-            allTabs.forEach(tab => tab.classList.remove('active'));
-            
-            // Desactivar todos los botones
-            const allButtons = document.querySelectorAll('.tab-button');
-            allButtons.forEach(btn => btn.classList.remove('active'));
-            
-            // Mostrar tab seleccionado
-            document.getElementById(tabId).classList.add('active');
-            
-            // Activar botón seleccionado
-            event.target.classList.add('active');
-        }
-
-        // Función para expandir/contraer tarjetas
-        function expandCard(event, contentId) {
-            event.stopPropagation();
-            const content = document.getElementById(contentId + '-content');
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-            } else {
-                content.style.display = 'none';
-            }
-        }
-
-        // Función para expandir/contraer solicitud
-        function expandirSolicitud(element) {
-            const body = element.querySelector('.solicitud-body');
-            if (body.style.display === 'none') {
-                body.style.display = 'block';
-            } else {
-                body.style.display = 'none';
-            }
-        }
-
-        // Función para abrir modal Ver Solicitudes
-        function abrirModalVerSolicitudes(event) {
-            event.stopPropagation();
-            document.getElementById('modal-ver-solicitudes').style.display = 'flex';
-        }
-
-        // Función para cerrar modal Ver Solicitudes
-        function cerrarModalVerSolicitudes() {
-            document.getElementById('modal-ver-solicitudes').style.display = 'none';
-        }
-
-        // Función para abrir modal Nueva Solicitud
-        function abrirModalNuevaSolicitud(event) {
-            event.stopPropagation();
-            document.getElementById('modal-nueva-solicitud').style.display = 'flex';
-        }
-
-        // Función para cerrar modal Nueva Solicitud
-        function cerrarModalNuevaSolicitud() {
-            document.getElementById('modal-nueva-solicitud').style.display = 'none';
-        }
-
-        // Función para abrir modal Nueva Mascota
-        function abrirModalNuevaMascota(event) {
-            event.stopPropagation();
-            document.getElementById('modal-nueva-mascota').style.display = 'flex';
-        }
-
-        // Función para cerrar modal Nueva Mascota
-        function cerrarModalNuevaMascota() {
-            document.getElementById('modal-nueva-mascota').style.display = 'none';
-        }
-
-        // Función para abrir modal Ver Mascotas
-        function abrirModalVerMascotas(event) {
-            event.stopPropagation();
-            document.getElementById('modal-ver-mascotas').style.display = 'flex';
-        }
-
-        // Función para cerrar modal Ver Mascotas
-        function cerrarModalVerMascotas() {
-            document.getElementById('modal-ver-mascotas').style.display = 'none';
-        }
-
-        // Función para abrir modal Editar Mascota
-        function abrirModalEditarMascota(mascotaId) {
-            // Hacer fetch para obtener los datos de la mascota
-            fetch(`/mascotas/obtener/${mascotaId}/`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('edit-numero-casa').value = data.numero_casa;
-                    document.getElementById('edit-nombre-mascota').value = data.nombre;
-                    document.getElementById('edit-dueno').value = data.dueno;
-                    document.getElementById('edit-tipo-mascota').value = data.tipo;
-                    document.getElementById('edit-descripcion').value = data.descripcion || '';
-                    
-                    // Actualizar la acción del formulario
-                    document.getElementById('form-editar-mascota').action = `/mascotas/editar/${mascotaId}/`;
-                    
-                    document.getElementById('modal-editar-mascota').style.display = 'flex';
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error al cargar los datos de la mascota');
-                });
-        }
-
-        // Función para cerrar modal Editar Mascota
-        function cerrarModalEditarMascota() {
-            document.getElementById('modal-editar-mascota').style.display = 'none';
-        }
-
-        // Función para eliminar mascota
-        function eliminarMascota(mascotaId, nombreMascota) {
-            if (confirm(`¿Estás seguro de que deseas eliminar a ${nombreMascota}?`)) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = `/mascotas/eliminar/${mascotaId}/`;
-                
-                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
-                if (csrfToken) {
-                    form.appendChild(csrfToken.cloneNode(true));
-                }
-                
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
-
-        // Variables globales para crop
-        let isDragging = false;
-        let activeHandle = null;
-        let cropFrame = {top: 30, left: 30, width: 240, height: 240};
-        const minSize = 80;
-        const containerSize = 300;
-
-        // Inicializar handles
-        function inicializarHandles() {
-            const handles = ['tl', 'tr', 'bl', 'br'];
-            handles.forEach(handle => {
-                const el = document.getElementById(`handle-${handle}`);
-                el.addEventListener('mousedown', (e) => iniciarCropDrag(e, handle));
-                el.addEventListener('touchstart', (e) => iniciarCropDrag(e, handle));
-            });
-
-            // Cerrar modal con la tecla Escape
-            document.addEventListener('keydown', function (event) {
-                if (event.key === 'Escape') {
-                    closeEventModal();
-                }
-            });
 
             // Función para cambiar entre tabs
             function cambiarTab(event, tabId) {
@@ -985,6 +841,51 @@
                 document.getElementById('modal-ver-mascotas').style.display = 'none';
             }
 
+            // Función para abrir modal Editar Mascota
+            function abrirModalEditarMascota(mascotaId) {
+                // Hacer fetch para obtener los datos de la mascota
+                fetch(`/mascotas/obtener/${mascotaId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('edit-numero-casa').value = data.numero_casa;
+                        document.getElementById('edit-nombre-mascota').value = data.nombre;
+                        document.getElementById('edit-dueno').value = data.dueno;
+                        document.getElementById('edit-tipo-mascota').value = data.tipo;
+                        document.getElementById('edit-descripcion').value = data.descripcion || '';
+
+                        // Actualizar la acción del formulario
+                        document.getElementById('form-editar-mascota').action = `/mascotas/editar/${mascotaId}/`;
+
+                        document.getElementById('modal-editar-mascota').style.display = 'flex';
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error al cargar los datos de la mascota');
+                    });
+            }
+
+            // Función para cerrar modal Editar Mascota
+            function cerrarModalEditarMascota() {
+                document.getElementById('modal-editar-mascota').style.display = 'none';
+            }
+
+            // Función para eliminar mascota
+            function eliminarMascota(mascotaId, nombreMascota) {
+                if (confirm(`¿Estás seguro de que deseas eliminar a ${nombreMascota}?`)) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/mascotas/eliminar/${mascotaId}/`;
+
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                    if (csrfToken) {
+                        form.appendChild(csrfToken.cloneNode(true));
+                    }
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            }
+
             // Variables globales para crop
             let isDragging = false;
             let activeHandle = null;
@@ -1000,156 +901,264 @@
                     el.addEventListener('mousedown', (e) => iniciarCropDrag(e, handle));
                     el.addEventListener('touchstart', (e) => iniciarCropDrag(e, handle));
                 });
-                actualizarOpaqueOverlay();
-            }
 
-            function iniciarCropDrag(event, handle) {
-                event.preventDefault();
-                isDragging = true;
-                activeHandle = handle;
-                document.addEventListener('mousemove', moverHandle);
-                document.addEventListener('touchmove', moverHandle);
-                document.addEventListener('mouseup', detenerCropDrag);
-                document.addEventListener('touchend', detenerCropDrag);
-            }
+                // Cerrar modal con la tecla Escape
+                document.addEventListener('keydown', function (event) {
+                    if (event.key === 'Escape') {
+                        closeEventModal();
+                    }
+                });
 
-            function moverHandle(event) {
-                if (!isDragging || !activeHandle) return;
-                event.preventDefault();
+                // Función para cambiar entre tabs
+                function cambiarTab(event, tabId) {
+                    event.preventDefault();
+                    event.stopPropagation();
 
-                const container = document.getElementById('preview-container');
-                const rect = container.getBoundingClientRect();
-                let x, y;
+                    // Ocultar todos los tabs
+                    const allTabs = document.querySelectorAll('.tab-content');
+                    allTabs.forEach(tab => tab.classList.remove('active'));
 
-                if (event.touches) {
-                    x = event.touches[0].clientX - rect.left;
-                    y = event.touches[0].clientY - rect.top;
-                } else {
-                    x = event.clientX - rect.left;
-                    y = event.clientY - rect.top;
+                    // Desactivar todos los botones
+                    const allButtons = document.querySelectorAll('.tab-button');
+                    allButtons.forEach(btn => btn.classList.remove('active'));
+
+                    // Mostrar tab seleccionado
+                    document.getElementById(tabId).classList.add('active');
+
+                    // Activar botón seleccionado
+                    event.target.classList.add('active');
                 }
 
-                x = Math.max(0, Math.min(containerSize, x));
-                y = Math.max(0, Math.min(containerSize, y));
-
-                switch (activeHandle) {
-                    case 'tl':
-                        cropFrame.left = Math.min(x, cropFrame.left + cropFrame.width - minSize);
-                        cropFrame.top = Math.min(y, cropFrame.top + cropFrame.height - minSize);
-                        cropFrame.width = cropFrame.left + cropFrame.width - Math.min(x, cropFrame.left);
-                        cropFrame.height = cropFrame.top + cropFrame.height - Math.min(y, cropFrame.top);
-                        break;
-                    case 'tr':
-                        cropFrame.top = Math.min(y, cropFrame.top + cropFrame.height - minSize);
-                        cropFrame.width = Math.max(minSize, x - cropFrame.left);
-                        cropFrame.height = cropFrame.top + cropFrame.height - Math.min(y, cropFrame.top);
-                        break;
-                    case 'bl':
-                        cropFrame.left = Math.min(x, cropFrame.left + cropFrame.width - minSize);
-                        cropFrame.height = Math.max(minSize, y - cropFrame.top);
-                        cropFrame.width = cropFrame.left + cropFrame.width - Math.min(x, cropFrame.left);
-                        break;
-                    case 'br':
-                        cropFrame.width = Math.max(minSize, x - cropFrame.left);
-                        cropFrame.height = Math.max(minSize, y - cropFrame.top);
-                        break;
+                // Función para expandir/contraer tarjetas
+                function expandCard(event, contentId) {
+                    event.stopPropagation();
+                    const content = document.getElementById(contentId + '-content');
+                    if (content.style.display === 'none') {
+                        content.style.display = 'block';
+                    } else {
+                        content.style.display = 'none';
+                    }
                 }
 
-                cropFrame.left = Math.max(0, Math.min(containerSize - minSize, cropFrame.left));
-                cropFrame.top = Math.max(0, Math.min(containerSize - minSize, cropFrame.top));
-                cropFrame.width = Math.min(containerSize - cropFrame.left, cropFrame.width);
-                cropFrame.height = Math.min(containerSize - cropFrame.top, cropFrame.height);
+                // Función para expandir/contraer solicitud
+                function expandirSolicitud(element) {
+                    const body = element.querySelector('.solicitud-body');
+                    if (body.style.display === 'none') {
+                        body.style.display = 'block';
+                    } else {
+                        body.style.display = 'none';
+                    }
+                }
 
-                actualizarCropFrame();
-                actualizarOpaqueOverlay();
-            }
+                // Función para abrir modal Ver Solicitudes
+                function abrirModalVerSolicitudes(event) {
+                    event.stopPropagation();
+                    document.getElementById('modal-ver-solicitudes').style.display = 'flex';
+                }
 
-            function detenerCropDrag() {
-                isDragging = false;
-                activeHandle = null;
-                document.removeEventListener('mousemove', moverHandle);
-                document.removeEventListener('touchmove', moverHandle);
-                document.removeEventListener('mouseup', detenerCropDrag);
-                document.removeEventListener('touchend', detenerCropDrag);
-            }
+                // Función para cerrar modal Ver Solicitudes
+                function cerrarModalVerSolicitudes() {
+                    document.getElementById('modal-ver-solicitudes').style.display = 'none';
+                }
 
-            function actualizarCropFrame() {
-                const frame = document.getElementById('crop-frame');
-                const tlHandle = document.getElementById('handle-tl');
-                const trHandle = document.getElementById('handle-tr');
-                const blHandle = document.getElementById('handle-bl');
-                const brHandle = document.getElementById('handle-br');
+                // Función para abrir modal Nueva Solicitud
+                function abrirModalNuevaSolicitud(event) {
+                    event.stopPropagation();
+                    document.getElementById('modal-nueva-solicitud').style.display = 'flex';
+                }
 
-                frame.style.top = cropFrame.top + 'px';
-                frame.style.left = cropFrame.left + 'px';
-                frame.style.width = cropFrame.width + 'px';
-                frame.style.height = cropFrame.height + 'px';
+                // Función para cerrar modal Nueva Solicitud
+                function cerrarModalNuevaSolicitud() {
+                    document.getElementById('modal-nueva-solicitud').style.display = 'none';
+                }
 
-                tlHandle.style.top = (cropFrame.top - 10) + 'px';
-                tlHandle.style.left = (cropFrame.left - 10) + 'px';
+                // Función para abrir modal Nueva Mascota
+                function abrirModalNuevaMascota(event) {
+                    event.stopPropagation();
+                    document.getElementById('modal-nueva-mascota').style.display = 'flex';
+                }
 
-                trHandle.style.top = (cropFrame.top - 10) + 'px';
-                trHandle.style.right = (containerSize - cropFrame.left - cropFrame.width - 10) + 'px';
+                // Función para cerrar modal Nueva Mascota
+                function cerrarModalNuevaMascota() {
+                    document.getElementById('modal-nueva-mascota').style.display = 'none';
+                }
 
-                blHandle.style.bottom = (containerSize - cropFrame.top - cropFrame.height - 10) + 'px';
-                blHandle.style.left = (cropFrame.left - 10) + 'px';
+                // Función para abrir modal Ver Mascotas
+                function abrirModalVerMascotas(event) {
+                    event.stopPropagation();
+                    document.getElementById('modal-ver-mascotas').style.display = 'flex';
+                }
 
-                brHandle.style.bottom = (containerSize - cropFrame.top - cropFrame.height - 10) + 'px';
-                brHandle.style.right = (containerSize - cropFrame.left - cropFrame.width - 10) + 'px';
-            }
+                // Función para cerrar modal Ver Mascotas
+                function cerrarModalVerMascotas() {
+                    document.getElementById('modal-ver-mascotas').style.display = 'none';
+                }
 
-            function actualizarOpaqueOverlay() {
-                const overlayLeft = document.getElementById('overlay-left');
-                const overlayTop = document.getElementById('overlay-top');
-                const overlayRight = document.getElementById('overlay-right');
-                const overlayBottom = document.getElementById('overlay-bottom');
+                // Variables globales para crop
+                let isDragging = false;
+                let activeHandle = null;
+                let cropFrame = { top: 30, left: 30, width: 240, height: 240 };
+                const minSize = 80;
+                const containerSize = 300;
 
-                overlayLeft.style.width = cropFrame.left + 'px';
-                overlayLeft.style.height = containerSize + 'px';
+                // Inicializar handles
+                function inicializarHandles() {
+                    const handles = ['tl', 'tr', 'bl', 'br'];
+                    handles.forEach(handle => {
+                        const el = document.getElementById(`handle-${handle}`);
+                        el.addEventListener('mousedown', (e) => iniciarCropDrag(e, handle));
+                        el.addEventListener('touchstart', (e) => iniciarCropDrag(e, handle));
+                    });
+                    actualizarOpaqueOverlay();
+                }
 
-                overlayTop.style.width = containerSize + 'px';
-                overlayTop.style.height = cropFrame.top + 'px';
+                function iniciarCropDrag(event, handle) {
+                    event.preventDefault();
+                    isDragging = true;
+                    activeHandle = handle;
+                    document.addEventListener('mousemove', moverHandle);
+                    document.addEventListener('touchmove', moverHandle);
+                    document.addEventListener('mouseup', detenerCropDrag);
+                    document.addEventListener('touchend', detenerCropDrag);
+                }
 
-                overlayRight.style.width = (containerSize - cropFrame.left - cropFrame.width) + 'px';
-                overlayRight.style.height = containerSize + 'px';
-                overlayRight.style.right = '0';
+                function moverHandle(event) {
+                    if (!isDragging || !activeHandle) return;
+                    event.preventDefault();
 
-                overlayBottom.style.width = containerSize + 'px';
-                overlayBottom.style.height = (containerSize - cropFrame.top - cropFrame.height) + 'px';
-                overlayBottom.style.bottom = '0';
-            }
+                    const container = document.getElementById('preview-container');
+                    const rect = container.getBoundingClientRect();
+                    let x, y;
 
-            // Función para mostrar preview
-            function previewImagenMascota(event) {
-                const file = event.target.files[0];
-                const previewContainer = document.getElementById('preview-foto-mascota');
-                const previewImg = document.getElementById('preview-img-mascota');
+                    if (event.touches) {
+                        x = event.touches[0].clientX - rect.left;
+                        y = event.touches[0].clientY - rect.top;
+                    } else {
+                        x = event.clientX - rect.left;
+                        y = event.clientY - rect.top;
+                    }
 
-                // Resetear crop
-                cropFrame = { top: 30, left: 30, width: 240, height: 240 };
+                    x = Math.max(0, Math.min(containerSize, x));
+                    y = Math.max(0, Math.min(containerSize, y));
 
-                if (file && file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        previewImg.src = e.target.result;
-                        previewContainer.style.display = 'block';
-                        setTimeout(() => {
-                            inicializarHandles();
-                            actualizarCropFrame();
-                        }, 100);
-                    };
-                    reader.onerror = function () {
-                        console.error('Error al leer archivo');
+                    switch (activeHandle) {
+                        case 'tl':
+                            cropFrame.left = Math.min(x, cropFrame.left + cropFrame.width - minSize);
+                            cropFrame.top = Math.min(y, cropFrame.top + cropFrame.height - minSize);
+                            cropFrame.width = cropFrame.left + cropFrame.width - Math.min(x, cropFrame.left);
+                            cropFrame.height = cropFrame.top + cropFrame.height - Math.min(y, cropFrame.top);
+                            break;
+                        case 'tr':
+                            cropFrame.top = Math.min(y, cropFrame.top + cropFrame.height - minSize);
+                            cropFrame.width = Math.max(minSize, x - cropFrame.left);
+                            cropFrame.height = cropFrame.top + cropFrame.height - Math.min(y, cropFrame.top);
+                            break;
+                        case 'bl':
+                            cropFrame.left = Math.min(x, cropFrame.left + cropFrame.width - minSize);
+                            cropFrame.height = Math.max(minSize, y - cropFrame.top);
+                            cropFrame.width = cropFrame.left + cropFrame.width - Math.min(x, cropFrame.left);
+                            break;
+                        case 'br':
+                            cropFrame.width = Math.max(minSize, x - cropFrame.left);
+                            cropFrame.height = Math.max(minSize, y - cropFrame.top);
+                            break;
+                    }
+
+                    cropFrame.left = Math.max(0, Math.min(containerSize - minSize, cropFrame.left));
+                    cropFrame.top = Math.max(0, Math.min(containerSize - minSize, cropFrame.top));
+                    cropFrame.width = Math.min(containerSize - cropFrame.left, cropFrame.width);
+                    cropFrame.height = Math.min(containerSize - cropFrame.top, cropFrame.height);
+
+                    actualizarCropFrame();
+                    actualizarOpaqueOverlay();
+                }
+
+                function detenerCropDrag() {
+                    isDragging = false;
+                    activeHandle = null;
+                    document.removeEventListener('mousemove', moverHandle);
+                    document.removeEventListener('touchmove', moverHandle);
+                    document.removeEventListener('mouseup', detenerCropDrag);
+                    document.removeEventListener('touchend', detenerCropDrag);
+                }
+
+                function actualizarCropFrame() {
+                    const frame = document.getElementById('crop-frame');
+                    const tlHandle = document.getElementById('handle-tl');
+                    const trHandle = document.getElementById('handle-tr');
+                    const blHandle = document.getElementById('handle-bl');
+                    const brHandle = document.getElementById('handle-br');
+
+                    frame.style.top = cropFrame.top + 'px';
+                    frame.style.left = cropFrame.left + 'px';
+                    frame.style.width = cropFrame.width + 'px';
+                    frame.style.height = cropFrame.height + 'px';
+
+                    tlHandle.style.top = (cropFrame.top - 10) + 'px';
+                    tlHandle.style.left = (cropFrame.left - 10) + 'px';
+
+                    trHandle.style.top = (cropFrame.top - 10) + 'px';
+                    trHandle.style.right = (containerSize - cropFrame.left - cropFrame.width - 10) + 'px';
+
+                    blHandle.style.bottom = (containerSize - cropFrame.top - cropFrame.height - 10) + 'px';
+                    blHandle.style.left = (cropFrame.left - 10) + 'px';
+
+                    brHandle.style.bottom = (containerSize - cropFrame.top - cropFrame.height - 10) + 'px';
+                    brHandle.style.right = (containerSize - cropFrame.left - cropFrame.width - 10) + 'px';
+                }
+
+                function actualizarOpaqueOverlay() {
+                    const overlayLeft = document.getElementById('overlay-left');
+                    const overlayTop = document.getElementById('overlay-top');
+                    const overlayRight = document.getElementById('overlay-right');
+                    const overlayBottom = document.getElementById('overlay-bottom');
+
+                    overlayLeft.style.width = cropFrame.left + 'px';
+                    overlayLeft.style.height = containerSize + 'px';
+
+                    overlayTop.style.width = containerSize + 'px';
+                    overlayTop.style.height = cropFrame.top + 'px';
+
+                    overlayRight.style.width = (containerSize - cropFrame.left - cropFrame.width) + 'px';
+                    overlayRight.style.height = containerSize + 'px';
+                    overlayRight.style.right = '0';
+
+                    overlayBottom.style.width = containerSize + 'px';
+                    overlayBottom.style.height = (containerSize - cropFrame.top - cropFrame.height) + 'px';
+                    overlayBottom.style.bottom = '0';
+                }
+
+                // Función para mostrar preview
+                function previewImagenMascota(event) {
+                    const file = event.target.files[0];
+                    const previewContainer = document.getElementById('preview-foto-mascota');
+                    const previewImg = document.getElementById('preview-img-mascota');
+
+                    // Resetear crop
+                    cropFrame = { top: 30, left: 30, width: 240, height: 240 };
+
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            previewImg.src = e.target.result;
+                            previewContainer.style.display = 'block';
+                            setTimeout(() => {
+                                inicializarHandles();
+                                actualizarCropFrame();
+                            }, 100);
+                        };
+                        reader.onerror = function () {
+                            console.error('Error al leer archivo');
+                            previewContainer.style.display = 'none';
+                        };
+                        reader.readAsDataURL(file);
+                    } else if (file) {
+                        alert('Por favor selecciona un archivo de imagen válido.');
                         previewContainer.style.display = 'none';
-                    };
-                    reader.readAsDataURL(file);
-                } else if (file) {
-                    alert('Por favor selecciona un archivo de imagen válido.');
-                    previewContainer.style.display = 'none';
-                } else {
-                    previewContainer.style.display = 'none';
+                    } else {
+                        previewContainer.style.display = 'none';
+                    }
                 }
-            }
         </script>
 </body>
 

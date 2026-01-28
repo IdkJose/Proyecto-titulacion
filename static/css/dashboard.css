@@ -66,11 +66,37 @@ header h1 {
     justify-content: center;
 }
 
-.btn-home:hover {
+.btn-logout {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-logout:hover {
     background-color: white;
     color: #667eea;
 }
 
+.material-symbols-outlined {
+    font-size: 20px;
+    vertical-align: middle;
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+}
+
+.btn-logout .material-symbols-outlined,
 .btn-home .material-symbols-outlined {
     font-size: 20px;
 }
@@ -284,6 +310,7 @@ header h1 {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -512,6 +539,7 @@ header h1 {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -536,6 +564,7 @@ header h1 {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -837,6 +866,7 @@ header h1 {
         transform: translateY(-50px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -912,8 +942,14 @@ header h1 {
 }
 
 /* Fix para evitar que las columnas del calendario se achiquen */
-.tabla-calendario { table-layout: fixed !important; }
-.tabla-calendario th, .tabla-calendario td { width: 14.28% !important; }
+.tabla-calendario {
+    table-layout: fixed !important;
+}
+
+.tabla-calendario th,
+.tabla-calendario td {
+    width: 14.28% !important;
+}
 
 /* Estilos para input de archivo */
 input[type="file"] {
@@ -943,7 +979,7 @@ input[type="file"]:focus {
     background: #667eea;
     border: 2px solid white;
     border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     z-index: 15;
     transition: all 0.1s ease;
 }
@@ -961,6 +997,7 @@ input[type="file"]:focus {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
