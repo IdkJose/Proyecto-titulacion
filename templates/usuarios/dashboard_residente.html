@@ -207,7 +207,7 @@
                                             descripcion: '{{ evento.descripcion|escapejs }}',
                                             categoria: '{{ evento.get_categoria_display }}',
                                             color: '{{ evento.color }}'
-                                        })">>
+                                        })">
                                         {{ evento.titulo }}
                                     </span>
                                     {% endfor %}
@@ -738,45 +738,23 @@
         <p>&copy; 2025 Conjunto Residencial Selva Alegre. Todos los derechos reservados.</p>
 
         <script>
-            // Función para abrir el modal con los detalles del evento
+            // --- FUNCIONES DEL CALENDARIO Y EVENTOS ---
             function openEventModal(eventData) {
                 document.getElementById('modalEventTitle').textContent = eventData.titulo;
                 document.getElementById('modalEventDate').textContent = eventData.fecha;
                 document.getElementById('modalEventTime').textContent = eventData.hora || 'No especificada';
                 document.getElementById('modalEventDescription').textContent = eventData.descripcion || 'Sin descripción';
-                document.getElementById('modalEventCategory').textContent = eventData.categoria || 'Sin categoría';
+                document.getElementById('modalEventCategory').textContent = eventData.category || 'Sin categoría';
 
                 const modal = document.getElementById('eventModal');
                 modal.style.display = 'flex';
             }
 
-            // Función para cerrar el modal
             function closeEventModal() {
-                const modal = document.getElementById('eventModal');
-                modal.style.display = 'none';
+                document.getElementById('eventModal').style.display = 'none';
             }
 
-            // Función para cambiar entre tabs
-            function cambiarTab(event, tabId) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                // Ocultar todos los tabs
-                const allTabs = document.querySelectorAll('.tab-content');
-                allTabs.forEach(tab => tab.classList.remove('active'));
-
-                // Desactivar todos los botones
-                const allButtons = document.querySelectorAll('.tab-button');
-                allButtons.forEach(btn => btn.classList.remove('active'));
-
-                // Mostrar tab seleccionado
-                document.getElementById(tabId).classList.add('active');
-
-                // Activar botón seleccionado
-                event.target.classList.add('active');
-            }
-
-            // Función para expandir/contraer tarjetas
+            // --- FUNCIONES DE TARJETAS (CARDS) ---
             function expandCard(event, contentId) {
                 event.stopPropagation();
                 const content = document.getElementById(contentId + '-content');
@@ -787,7 +765,39 @@
                 }
             }
 
-            // Función para expandir/contraer solicitud
+            function cambiarTab(event, tabId) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const allTabs = document.querySelectorAll('.tab-content');
+                allTabs.forEach(tab => tab.classList.remove('active'));
+
+                const allButtons = document.querySelectorAll('.tab-button');
+                allButtons.forEach(btn => btn.classList.remove('active'));
+
+                document.getElementById(tabId).classList.add('active');
+                event.target.classList.add('active');
+            }
+
+            // --- FUNCIONES DE SOLICITUDES ---
+            function abrirModalVerSolicitudes(event) {
+                event.stopPropagation();
+                document.getElementById('modal-ver-solicitudes').style.display = 'flex';
+            }
+
+            function cerrarModalVerSolicitudes() {
+                document.getElementById('modal-ver-solicitudes').style.display = 'none';
+            }
+
+            function abrirModalNuevaSolicitud(event) {
+                event.stopPropagation();
+                document.getElementById('modal-nueva-solicitud').style.display = 'flex';
+            }
+
+            function cerrarModalNuevaSolicitud() {
+                document.getElementById('modal-nueva-solicitud').style.display = 'none';
+            }
+
             function expandirSolicitud(element) {
                 const body = element.querySelector('.solicitud-body');
                 if (body.style.display === 'none') {
@@ -797,53 +807,26 @@
                 }
             }
 
-            // Función para abrir modal Ver Solicitudes
-            function abrirModalVerSolicitudes(event) {
-                event.stopPropagation();
-                document.getElementById('modal-ver-solicitudes').style.display = 'flex';
-            }
-
-            // Función para cerrar modal Ver Solicitudes
-            function cerrarModalVerSolicitudes() {
-                document.getElementById('modal-ver-solicitudes').style.display = 'none';
-            }
-
-            // Función para abrir modal Nueva Solicitud
-            function abrirModalNuevaSolicitud(event) {
-                event.stopPropagation();
-                document.getElementById('modal-nueva-solicitud').style.display = 'flex';
-            }
-
-            // Función para cerrar modal Nueva Solicitud
-            function cerrarModalNuevaSolicitud() {
-                document.getElementById('modal-nueva-solicitud').style.display = 'none';
-            }
-
-            // Función para abrir modal Nueva Mascota
-            function abrirModalNuevaMascota(event) {
-                event.stopPropagation();
-                document.getElementById('modal-nueva-mascota').style.display = 'flex';
-            }
-
-            // Función para cerrar modal Nueva Mascota
-            function cerrarModalNuevaMascota() {
-                document.getElementById('modal-nueva-mascota').style.display = 'none';
-            }
-
-            // Función para abrir modal Ver Mascotas
+            // --- FUNCIONES DE MASCOTAS ---
             function abrirModalVerMascotas(event) {
                 event.stopPropagation();
                 document.getElementById('modal-ver-mascotas').style.display = 'flex';
             }
 
-            // Función para cerrar modal Ver Mascotas
             function cerrarModalVerMascotas() {
                 document.getElementById('modal-ver-mascotas').style.display = 'none';
             }
 
-            // Función para abrir modal Editar Mascota
+            function abrirModalNuevaMascota(event) {
+                event.stopPropagation();
+                document.getElementById('modal-nueva-mascota').style.display = 'flex';
+            }
+
+            function cerrarModalNuevaMascota() {
+                document.getElementById('modal-nueva-mascota').style.display = 'none';
+            }
+
             function abrirModalEditarMascota(mascotaId) {
-                // Hacer fetch para obtener los datos de la mascota
                 fetch(`/mascotas/obtener/${mascotaId}/`)
                     .then(response => response.json())
                     .then(data => {
@@ -852,10 +835,7 @@
                         document.getElementById('edit-dueno').value = data.dueno;
                         document.getElementById('edit-tipo-mascota').value = data.tipo;
                         document.getElementById('edit-descripcion').value = data.descripcion || '';
-
-                        // Actualizar la acción del formulario
                         document.getElementById('form-editar-mascota').action = `/mascotas/editar/${mascotaId}/`;
-
                         document.getElementById('modal-editar-mascota').style.display = 'flex';
                     })
                     .catch(error => {
@@ -864,301 +844,163 @@
                     });
             }
 
-            // Función para cerrar modal Editar Mascota
             function cerrarModalEditarMascota() {
                 document.getElementById('modal-editar-mascota').style.display = 'none';
             }
 
-            // Función para eliminar mascota
             function eliminarMascota(mascotaId, nombreMascota) {
                 if (confirm(`¿Estás seguro de que deseas eliminar a ${nombreMascota}?`)) {
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = `/mascotas/eliminar/${mascotaId}/`;
-
                     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
                     if (csrfToken) {
                         form.appendChild(csrfToken.cloneNode(true));
                     }
-
                     document.body.appendChild(form);
                     form.submit();
                 }
             }
 
-            // Variables globales para crop
+            // --- LÓGICA DE RECORTE DE IMAGEN (CROP) ---
             let isDragging = false;
             let activeHandle = null;
             let cropFrame = { top: 30, left: 30, width: 240, height: 240 };
             const minSize = 80;
             const containerSize = 300;
 
-            // Inicializar handles
             function inicializarHandles() {
                 const handles = ['tl', 'tr', 'bl', 'br'];
                 handles.forEach(handle => {
                     const el = document.getElementById(`handle-${handle}`);
-                    el.addEventListener('mousedown', (e) => iniciarCropDrag(e, handle));
-                    el.addEventListener('touchstart', (e) => iniciarCropDrag(e, handle));
-                });
-
-                // Cerrar modal con la tecla Escape
-                document.addEventListener('keydown', function (event) {
-                    if (event.key === 'Escape') {
-                        closeEventModal();
-                    }
-                });
-
-                // Función para cambiar entre tabs
-                function cambiarTab(event, tabId) {
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    // Ocultar todos los tabs
-                    const allTabs = document.querySelectorAll('.tab-content');
-                    allTabs.forEach(tab => tab.classList.remove('active'));
-
-                    // Desactivar todos los botones
-                    const allButtons = document.querySelectorAll('.tab-button');
-                    allButtons.forEach(btn => btn.classList.remove('active'));
-
-                    // Mostrar tab seleccionado
-                    document.getElementById(tabId).classList.add('active');
-
-                    // Activar botón seleccionado
-                    event.target.classList.add('active');
-                }
-
-                // Función para expandir/contraer tarjetas
-                function expandCard(event, contentId) {
-                    event.stopPropagation();
-                    const content = document.getElementById(contentId + '-content');
-                    if (content.style.display === 'none') {
-                        content.style.display = 'block';
-                    } else {
-                        content.style.display = 'none';
-                    }
-                }
-
-                // Función para expandir/contraer solicitud
-                function expandirSolicitud(element) {
-                    const body = element.querySelector('.solicitud-body');
-                    if (body.style.display === 'none') {
-                        body.style.display = 'block';
-                    } else {
-                        body.style.display = 'none';
-                    }
-                }
-
-                // Función para abrir modal Ver Solicitudes
-                function abrirModalVerSolicitudes(event) {
-                    event.stopPropagation();
-                    document.getElementById('modal-ver-solicitudes').style.display = 'flex';
-                }
-
-                // Función para cerrar modal Ver Solicitudes
-                function cerrarModalVerSolicitudes() {
-                    document.getElementById('modal-ver-solicitudes').style.display = 'none';
-                }
-
-                // Función para abrir modal Nueva Solicitud
-                function abrirModalNuevaSolicitud(event) {
-                    event.stopPropagation();
-                    document.getElementById('modal-nueva-solicitud').style.display = 'flex';
-                }
-
-                // Función para cerrar modal Nueva Solicitud
-                function cerrarModalNuevaSolicitud() {
-                    document.getElementById('modal-nueva-solicitud').style.display = 'none';
-                }
-
-                // Función para abrir modal Nueva Mascota
-                function abrirModalNuevaMascota(event) {
-                    event.stopPropagation();
-                    document.getElementById('modal-nueva-mascota').style.display = 'flex';
-                }
-
-                // Función para cerrar modal Nueva Mascota
-                function cerrarModalNuevaMascota() {
-                    document.getElementById('modal-nueva-mascota').style.display = 'none';
-                }
-
-                // Función para abrir modal Ver Mascotas
-                function abrirModalVerMascotas(event) {
-                    event.stopPropagation();
-                    document.getElementById('modal-ver-mascotas').style.display = 'flex';
-                }
-
-                // Función para cerrar modal Ver Mascotas
-                function cerrarModalVerMascotas() {
-                    document.getElementById('modal-ver-mascotas').style.display = 'none';
-                }
-
-                // Variables globales para crop
-                let isDragging = false;
-                let activeHandle = null;
-                let cropFrame = { top: 30, left: 30, width: 240, height: 240 };
-                const minSize = 80;
-                const containerSize = 300;
-
-                // Inicializar handles
-                function inicializarHandles() {
-                    const handles = ['tl', 'tr', 'bl', 'br'];
-                    handles.forEach(handle => {
-                        const el = document.getElementById(`handle-${handle}`);
+                    if (el) {
                         el.addEventListener('mousedown', (e) => iniciarCropDrag(e, handle));
                         el.addEventListener('touchstart', (e) => iniciarCropDrag(e, handle));
-                    });
-                    actualizarOpaqueOverlay();
-                }
-
-                function iniciarCropDrag(event, handle) {
-                    event.preventDefault();
-                    isDragging = true;
-                    activeHandle = handle;
-                    document.addEventListener('mousemove', moverHandle);
-                    document.addEventListener('touchmove', moverHandle);
-                    document.addEventListener('mouseup', detenerCropDrag);
-                    document.addEventListener('touchend', detenerCropDrag);
-                }
-
-                function moverHandle(event) {
-                    if (!isDragging || !activeHandle) return;
-                    event.preventDefault();
-
-                    const container = document.getElementById('preview-container');
-                    const rect = container.getBoundingClientRect();
-                    let x, y;
-
-                    if (event.touches) {
-                        x = event.touches[0].clientX - rect.left;
-                        y = event.touches[0].clientY - rect.top;
-                    } else {
-                        x = event.clientX - rect.left;
-                        y = event.clientY - rect.top;
                     }
+                });
+                actualizarOpaqueOverlay();
+            }
 
-                    x = Math.max(0, Math.min(containerSize, x));
-                    y = Math.max(0, Math.min(containerSize, y));
+            function iniciarCropDrag(event, handle) {
+                event.preventDefault();
+                isDragging = true;
+                activeHandle = handle;
+                document.addEventListener('mousemove', moverHandle);
+                document.addEventListener('touchmove', moverHandle);
+                document.addEventListener('mouseup', detenerCropDrag);
+                document.addEventListener('touchend', detenerCropDrag);
+            }
 
-                    switch (activeHandle) {
-                        case 'tl':
-                            cropFrame.left = Math.min(x, cropFrame.left + cropFrame.width - minSize);
-                            cropFrame.top = Math.min(y, cropFrame.top + cropFrame.height - minSize);
-                            cropFrame.width = cropFrame.left + cropFrame.width - Math.min(x, cropFrame.left);
-                            cropFrame.height = cropFrame.top + cropFrame.height - Math.min(y, cropFrame.top);
-                            break;
-                        case 'tr':
-                            cropFrame.top = Math.min(y, cropFrame.top + cropFrame.height - minSize);
-                            cropFrame.width = Math.max(minSize, x - cropFrame.left);
-                            cropFrame.height = cropFrame.top + cropFrame.height - Math.min(y, cropFrame.top);
-                            break;
-                        case 'bl':
-                            cropFrame.left = Math.min(x, cropFrame.left + cropFrame.width - minSize);
-                            cropFrame.height = Math.max(minSize, y - cropFrame.top);
-                            cropFrame.width = cropFrame.left + cropFrame.width - Math.min(x, cropFrame.left);
-                            break;
-                        case 'br':
-                            cropFrame.width = Math.max(minSize, x - cropFrame.left);
-                            cropFrame.height = Math.max(minSize, y - cropFrame.top);
-                            break;
-                    }
+            function moverHandle(event) {
+                if (!isDragging || !activeHandle) return;
+                const container = document.getElementById('preview-container');
+                const rect = container.getBoundingClientRect();
+                let x, y;
 
-                    cropFrame.left = Math.max(0, Math.min(containerSize - minSize, cropFrame.left));
-                    cropFrame.top = Math.max(0, Math.min(containerSize - minSize, cropFrame.top));
-                    cropFrame.width = Math.min(containerSize - cropFrame.left, cropFrame.width);
-                    cropFrame.height = Math.min(containerSize - cropFrame.top, cropFrame.height);
-
-                    actualizarCropFrame();
-                    actualizarOpaqueOverlay();
+                if (event.touches) {
+                    x = event.touches[0].clientX - rect.left;
+                    y = event.touches[0].clientY - rect.top;
+                } else {
+                    x = event.clientX - rect.left;
+                    y = event.clientY - rect.top;
                 }
 
-                function detenerCropDrag() {
-                    isDragging = false;
-                    activeHandle = null;
-                    document.removeEventListener('mousemove', moverHandle);
-                    document.removeEventListener('touchmove', moverHandle);
-                    document.removeEventListener('mouseup', detenerCropDrag);
-                    document.removeEventListener('touchend', detenerCropDrag);
+                x = Math.max(0, Math.min(containerSize, x));
+                y = Math.max(0, Math.min(containerSize, y));
+
+                if (activeHandle === 'tl') {
+                    cropFrame.left = Math.min(x, cropFrame.left + cropFrame.width - minSize);
+                    cropFrame.top = Math.min(y, cropFrame.top + cropFrame.height - minSize);
+                    cropFrame.width = cropFrame.left + cropFrame.width - Math.min(x, cropFrame.left);
+                    cropFrame.height = cropFrame.top + cropFrame.height - Math.min(y, cropFrame.top);
+                } else if (activeHandle === 'tr') {
+                    cropFrame.top = Math.min(y, cropFrame.top + cropFrame.height - minSize);
+                    cropFrame.width = Math.max(minSize, x - cropFrame.left);
+                    cropFrame.height = cropFrame.top + cropFrame.height - Math.min(y, cropFrame.top);
+                } else if (activeHandle === 'bl') {
+                    cropFrame.left = Math.min(x, cropFrame.left + cropFrame.width - minSize);
+                    cropFrame.height = Math.max(minSize, y - cropFrame.top);
+                    cropFrame.width = cropFrame.left + cropFrame.width - Math.min(x, cropFrame.left);
+                } else if (activeHandle === 'br') {
+                    cropFrame.width = Math.max(minSize, x - cropFrame.left);
+                    cropFrame.height = Math.max(minSize, y - cropFrame.top);
                 }
 
-                function actualizarCropFrame() {
-                    const frame = document.getElementById('crop-frame');
-                    const tlHandle = document.getElementById('handle-tl');
-                    const trHandle = document.getElementById('handle-tr');
-                    const blHandle = document.getElementById('handle-bl');
-                    const brHandle = document.getElementById('handle-br');
+                actualizarCropFrame();
+                actualizarOpaqueOverlay();
+            }
 
-                    frame.style.top = cropFrame.top + 'px';
-                    frame.style.left = cropFrame.left + 'px';
-                    frame.style.width = cropFrame.width + 'px';
-                    frame.style.height = cropFrame.height + 'px';
+            function detenerCropDrag() {
+                isDragging = false;
+                activeHandle = null;
+                document.removeEventListener('mousemove', moverHandle);
+                document.removeEventListener('touchmove', moverHandle);
+                document.removeEventListener('mouseup', detenerCropDrag);
+                document.removeEventListener('touchend', detenerCropDrag);
+            }
 
-                    tlHandle.style.top = (cropFrame.top - 10) + 'px';
-                    tlHandle.style.left = (cropFrame.left - 10) + 'px';
+            function actualizarCropFrame() {
+                const frame = document.getElementById('crop-frame');
+                if (!frame) return;
+                frame.style.top = cropFrame.top + 'px';
+                frame.style.left = cropFrame.left + 'px';
+                frame.style.width = cropFrame.width + 'px';
+                frame.style.height = cropFrame.height + 'px';
+            }
 
-                    trHandle.style.top = (cropFrame.top - 10) + 'px';
-                    trHandle.style.right = (containerSize - cropFrame.left - cropFrame.width - 10) + 'px';
+            function actualizarOpaqueOverlay() {
+                const overlayLeft = document.getElementById('overlay-left');
+                const overlayTop = document.getElementById('overlay-top');
+                const overlayRight = document.getElementById('overlay-right');
+                const overlayBottom = document.getElementById('overlay-bottom');
 
-                    blHandle.style.bottom = (containerSize - cropFrame.top - cropFrame.height - 10) + 'px';
-                    blHandle.style.left = (cropFrame.left - 10) + 'px';
+                if (overlayLeft) overlayLeft.style.width = cropFrame.left + 'px';
+                if (overlayTop) overlayTop.style.height = cropFrame.top + 'px';
+                if (overlayRight) overlayRight.style.width = (containerSize - cropFrame.left - cropFrame.width) + 'px';
+                if (overlayBottom) overlayBottom.style.height = (containerSize - cropFrame.top - cropFrame.height) + 'px';
+            }
 
-                    brHandle.style.bottom = (containerSize - cropFrame.top - cropFrame.height - 10) + 'px';
-                    brHandle.style.right = (containerSize - cropFrame.left - cropFrame.width - 10) + 'px';
+            function previewImagenMascota(event) {
+                const file = event.target.files[0];
+                const previewContainer = document.getElementById('preview-foto-mascota');
+                const previewImg = document.getElementById('preview-img-mascota');
+
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImg.src = e.target.result;
+                        previewContainer.style.display = 'block';
+                        cropFrame = { top: 30, left: 30, width: 240, height: 240 };
+                        setTimeout(() => {
+                            inicializarHandles();
+                            actualizarCropFrame();
+                            actualizarOpaqueOverlay();
+                        }, 100);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    previewContainer.style.display = 'none';
                 }
+            }
 
-                function actualizarOpaqueOverlay() {
-                    const overlayLeft = document.getElementById('overlay-left');
-                    const overlayTop = document.getElementById('overlay-top');
-                    const overlayRight = document.getElementById('overlay-right');
-                    const overlayBottom = document.getElementById('overlay-bottom');
-
-                    overlayLeft.style.width = cropFrame.left + 'px';
-                    overlayLeft.style.height = containerSize + 'px';
-
-                    overlayTop.style.width = containerSize + 'px';
-                    overlayTop.style.height = cropFrame.top + 'px';
-
-                    overlayRight.style.width = (containerSize - cropFrame.left - cropFrame.width) + 'px';
-                    overlayRight.style.height = containerSize + 'px';
-                    overlayRight.style.right = '0';
-
-                    overlayBottom.style.width = containerSize + 'px';
-                    overlayBottom.style.height = (containerSize - cropFrame.top - cropFrame.height) + 'px';
-                    overlayBottom.style.bottom = '0';
+            // --- CERRAR MODALES (CLICK EXTERIOR / ESCAPE) ---
+            window.onclick = function (event) {
+                const eventModal = document.getElementById('eventModal');
+                if (event.target === eventModal) {
+                    closeEventModal();
                 }
+            }
 
-                // Función para mostrar preview
-                function previewImagenMascota(event) {
-                    const file = event.target.files[0];
-                    const previewContainer = document.getElementById('preview-foto-mascota');
-                    const previewImg = document.getElementById('preview-img-mascota');
-
-                    // Resetear crop
-                    cropFrame = { top: 30, left: 30, width: 240, height: 240 };
-
-                    if (file && file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            previewImg.src = e.target.result;
-                            previewContainer.style.display = 'block';
-                            setTimeout(() => {
-                                inicializarHandles();
-                                actualizarCropFrame();
-                            }, 100);
-                        };
-                        reader.onerror = function () {
-                            console.error('Error al leer archivo');
-                            previewContainer.style.display = 'none';
-                        };
-                        reader.readAsDataURL(file);
-                    } else if (file) {
-                        alert('Por favor selecciona un archivo de imagen válido.');
-                        previewContainer.style.display = 'none';
-                    } else {
-                        previewContainer.style.display = 'none';
-                    }
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    closeEventModal();
+                    cerrarModalVerSolicitudes();
+                    cerrarModalNuevaSolicitud();
+                    cerrarModalVerMascotas();
+                    cerrarModalNuevaMascota();
+                    cerrarModalEditarMascota();
                 }
+            });
         </script>
 </body>
 

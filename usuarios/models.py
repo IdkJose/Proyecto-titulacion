@@ -1,6 +1,33 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import RegexValidator
+
+class UsuarioManager(BaseUserManager):
+    def create_user(self, username, email=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(username, email, password, **extra_fields)
+
+    def create_superuser(self, username, email=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('rol', 'admin')
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self._create_user(username, email, password, **extra_fields)
+
+    def _create_user(self, username, email, password, **extra_fields):
+        if not username:
+            raise ValueError('The given username must be set')
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 # Modelo de Usuario Personalizado para el Conjunto Selva Alegre
 class Usuario(AbstractUser):
     """
@@ -13,6 +40,8 @@ class Usuario(AbstractUser):
         ('admin', 'Administrador'),
         ('vecino', 'Vecino'),
     ]
+    
+    objects = UsuarioManager()
     
     # Campos adicionales
     email = models.EmailField(
@@ -90,7 +119,7 @@ class Usuario(AbstractUser):
     
     def es_administrador(self):
         """Método helper para verificar si el usuario es administrador"""
-        return self.rol == 'admin'
+        return self.rol == 'admin' or self.is_superuser
 
 
 class Evento(models.Model):
@@ -308,3 +337,44 @@ class Mascota(models.Model):
     
     def __str__(self):
         return f"{self.nombre} ({self.get_tipo_display()}) - {self.numero_casa}"
+
+
+class Mensaje(models.Model):
+    """
+    Modelo para los mensajes del chat entre Administración y Residentes.
+    """
+    remitente = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='mensajes_enviados',
+        help_text='Usuario que envía el mensaje'
+    )
+    
+    destinatario = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='mensajes_recibidos',
+        help_text='Usuario que recibe el mensaje'
+    )
+    
+    contenido = models.TextField(
+        help_text='Contenido del mensaje'
+    )
+    
+    leido = models.BooleanField(
+        default=False,
+        help_text='Indica si el mensaje ha sido leído por el destinatario'
+    )
+    
+    fecha_envio = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Fecha y hora en que se envió el mensaje'
+    )
+    
+    class Meta:
+        verbose_name = 'Mensaje'
+        verbose_name_plural = 'Mensajes'
+        ordering = ['fecha_envio']
+    
+    def __str__(self):
+        return f"De: {self.remitente} Para: {self.destinatario} - {self.fecha_envio.strftime('%d/%m/%Y %H:%M')}"
