@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensajería - Panel Administrador</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <style>
+        .chat-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 5px solid #667eea;
+        }
+
+        .chat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 24px;
+        }
+
+        .chat-info {
+            flex-grow: 1;
+        }
+
+        .chat-info h4 {
+            margin: 0;
+            color: #2d3748;
+        }
+
+        .chat-info p {
+            margin: 5px 0 0;
+            font-size: 0.9em;
+            color: #718096;
+        }
+
+        .badge {
+            background: #f56565;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🏘️ Mensajería - Panel Administrador</h1>
+            <div class="user-info">
+                <span><strong>{{ user.username }}</strong></span>
+                <a href="{% url 'usuarios:dashboard' %}" class="btn-home">
+                    <span class="material-icons">dashboard</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" style="max-width: 800px; margin: 0 auto; padding: 20px;">
+        <a href="{% url 'usuarios:dashboard' %}" class="btn-back">
+            <i class="material-icons">arrow_back</i> Volver al Dashboard
+        </a>
+
+        <div class="welcome-section">
+            <h2>Bandeja de Entrada</h2>
+            <p>Selecciona un residente para iniciar o continuar una conversación.</p>
+        </div>
+
+        <div class="chat-list">
+            {% for residente in residentes %}
+            <a href="{% url 'usuarios:chat_con_usuario' residente.id %}" class="chat-item">
+                <div class="user-avatar">
+                    <i class="material-icons">person</i>
+                </div>
+                <div class="chat-info">
+                    <h4>{{ residente.get_full_name|default:residente.username }}</h4>
+                    <p>{{ residente.casa_departamento }}</p>
+                </div>
+                {% if residente.pendientes > 0 %}
+                <div class="badge">{{ residente.pendientes }} nuevo{{ residente.pendientes|pluralize }}</div>
+                {% endif %}
+                <i class="material-icons" style="color: #cbd5e0; margin-left: 10px;">chevron_right</i>
+            </a>
+            {% empty %}
+            <div style="text-align: center; padding: 40px; background: #f7fafc; border-radius: 12px; color: #718096;">
+                <i class="material-icons"
+                    style="font-size: 48px; display: block; margin-bottom: 10px;">chat_bubble_outline</i>
+                No hay residentes registrados para chatear.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+</html>

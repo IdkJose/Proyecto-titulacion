@@ -44,7 +44,7 @@
                     <h2>Bienvenido {{ usuario.get_full_name|default:usuario.username }}</h2>
                     <p>Panel de administración del conjunto residencial 😊</p>
                     <div class="user-card">
-                        <div class="user-card-header">📋  del Administrador</div>
+                        <div class="user-card-header">📋 del Administrador</div>
                         <div class="user-card-body">
                             <div class="user-info-row">
                                 <div class="user-info-label"><i class="material-icons">person</i> Usuario</div>
@@ -93,6 +93,12 @@
                     <div class="card">
                         <h3>💬 Mensajes</h3>
                         <p>Comunicación con los vecinos.</p>
+                        <div class="card-actions" style="margin-top: 15px;">
+                            <a href="{% url 'usuarios:lista_chats' %}" class="btn-ver"
+                                style="background: #667eea; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em; display: inline-block;">
+                                Ir a Mensajes
+                            </a>
+                        </div>
                     </div>
 
                     <div class="card">
@@ -252,4 +258,5 @@
         });
     </script>
 </body>
+
 </html>

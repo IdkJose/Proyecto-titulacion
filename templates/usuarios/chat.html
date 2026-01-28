@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat con {{ otro_usuario.username }}</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <style>
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 120px);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f7fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.95em;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .message-sent {
+            align-self: flex-end;
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message-received {
+            align-self: flex-start;
+            background: #edf2f7;
+            color: #2d3748;
+            border-bottom-left-radius: 2px;
+        }
+
+        .message-time {
+            font-size: 0.7em;
+            margin-top: 5px;
+            opacity: 0.8;
+            text-align: right;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 10px;
+        }
+
+        #messageInput {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e0;
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #messageInput:focus {
+            border-color: #667eea;
+        }
+
+        .btn-send {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .btn-send:hover {
+            transform: scale(1.05);
+            background: #5a67d8;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🏘️ Chat - Selva Alegre</h1>
+            <div class="user-info">
+                <span><strong>{{ user.username }}</strong></span>
+                <a href="{% url 'usuarios:dashboard' %}" class="btn-home">
+                    <span class="material-icons">home</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" style="max-width: 900px; margin: 0 auto; padding: 20px;">
+        {% if user.es_administrador %}
+        <a href="{% url 'usuarios:lista_chats' %}" class="btn-back">
+            <i class="material-icons">arrow_back</i> Volver a la lista
+        </a>
+        {% else %}
+        <a href="{% url 'usuarios:dashboard' %}" class="btn-back">
+            <i class="material-icons">arrow_back</i> Volver al Dashboard
+        </a>
+        {% endif %}
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="material-icons">account_circle</i>
+                    <div>
+                        <div style="font-weight: bold;">{{ otro_usuario.get_full_name|default:otro_usuario.username }}
+                        </div>
+                        <div style="font-size: 0.8em; opacity: 0.9;">{{ otro_usuario.casa_departamento }}</div>
+                    </div>
+                </div>
+                <i class="material-icons">more_vert</i>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                {% for msg in mensajes %}
+                <div class="message {% if msg.remitente == user %}message-sent{% else %}message-received{% endif %}">
+                    {{ msg.contenido }}
+                    <div class="message-time">{{ msg.fecha_envio|date:"H:i" }}</div>
+                </div>
+                {% empty %}
+                <div style="text-align: center; color: #a0aec0; margin-top: 20px;">
+                    No hay mensajes previos. ¡Di hola! 👋
+                </div>
+                {% endfor %}
+            </div>
+
+            <form id="chatForm" class="chat-input-area">
+                {% csrf_token %}
+                <input type="hidden" name="destinatario_id" value="{{ otro_usuario.id }}">
+                <input type="text" id="messageInput" name="contenido" placeholder="Escribe un mensaje..."
+                    autocomplete="off" required>
+                <button type="submit" class="btn-send">
+                    <i class="material-icons">send</i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const chatForm = document.getElementById('chatForm');
+        const messageInput = document.getElementById('messageInput');
+
+        // Scroll al final al cargar
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Enviar mensaje por AJAX
+        chatForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const content = messageInput.value;
+
+            if (!content.trim()) return;
+
+            // Limpiar input inmediatamente para mejor UX
+            messageInput.value = '';
+
+            fetch("{% url 'usuarios:enviar_mensaje_ajax' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        // Añadir mensaje enviado a la interfaz
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = 'message message-sent';
+                        msgDiv.innerHTML = `${data.mensaje}<div class="message-time">${data.fecha}</div>`;
+                        chatMessages.appendChild(msgDiv);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                });
+        });
+
+        // Polling para obtener nuevos mensajes cada 3 segundos
+        function checkMessages() {
+            fetch("{% url 'usuarios:obtener_mensajes_ajax' otro_usuario.id %}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.mensajes && data.mensajes.length > 0) {
+                        data.mensajes.forEach(msg => {
+                            const msgDiv = document.createElement('div');
+                            msgDiv.className = 'message message-received';
+                            msgDiv.innerHTML = `${msg.contenido}<div class="message-time">${msg.fecha}</div>`;
+                            chatMessages.appendChild(msgDiv);
+                        });
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                });
+        }
+
+        setInterval(checkMessages, 3000);
+    </script>
+</body>
+
+</html>

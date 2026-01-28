@@ -15,4 +15,10 @@ urlpatterns = [
     path('eliminar_usuario/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
     path('crear_evento/', views.crear_evento, name='crear_evento'),
     path('mascotas/crear/', views.crear_mascota, name='crear_mascota'),
+    
+    # Mensajería / Chat
+    path('mensajes/', views.lista_chats, name='lista_chats'),
+    path('mensajes/chat/<int:user_id>/', views.chat_con_usuario, name='chat_con_usuario'),
+    path('mensajes/enviar-ajax/', views.enviar_mensaje_ajax, name='enviar_mensaje_ajax'),
+    path('mensajes/obtener-ajax/<int:user_id>/', views.obtener_mensajes_ajax, name='obtener_mensajes_ajax'),
 ]

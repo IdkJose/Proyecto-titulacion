@@ -90,7 +90,7 @@ class Usuario(AbstractUser):
     
     def es_administrador(self):
         """Método helper para verificar si el usuario es administrador"""
-        return self.rol == 'admin'
+        return self.rol == 'admin' or self.is_superuser
 
 
 class Evento(models.Model):
@@ -308,3 +308,44 @@ class Mascota(models.Model):
     
     def __str__(self):
         return f"{self.nombre} ({self.get_tipo_display()}) - {self.numero_casa}"
+
+
+class Mensaje(models.Model):
+    """
+    Modelo para los mensajes del chat entre Administración y Residentes.
+    """
+    remitente = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='mensajes_enviados',
+        help_text='Usuario que envía el mensaje'
+    )
+    
+    destinatario = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='mensajes_recibidos',
+        help_text='Usuario que recibe el mensaje'
+    )
+    
+    contenido = models.TextField(
+        help_text='Contenido del mensaje'
+    )
+    
+    leido = models.BooleanField(
+        default=False,
+        help_text='Indica si el mensaje ha sido leído por el destinatario'
+    )
+    
+    fecha_envio = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Fecha y hora en que se envió el mensaje'
+    )
+    
+    class Meta:
+        verbose_name = 'Mensaje'
+        verbose_name_plural = 'Mensajes'
+        ordering = ['fecha_envio']
+    
+    def __str__(self):
+        return f"De: {self.remitente} Para: {self.destinatario} - {self.fecha_envio.strftime('%d/%m/%Y %H:%M')}"

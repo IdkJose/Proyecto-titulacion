@@ -7,7 +7,8 @@ from django.views.decorators.http import require_http_methods
 from datetime import datetime
 from django.utils import timezone
 import calendar
-from .models import Evento, Solicitud, Usuario, Mascota
+from django.http import JsonResponse
+from .models import Evento, Solicitud, Usuario, Mascota, Mensaje
 
 
 @require_http_methods(["GET", "POST"])
@@ -296,3 +297,116 @@ def crear_mascota(request):
     
     return redirect('usuarios:dashboard')
 
+@login_required
+def lista_chats(request):
+    """
+    Vista para administradores: ver lista de residentes que han enviado mensajes.
+    Para residentes: los redirige a su chat con el administrador.
+    """
+    if not request.user.es_administrador():
+        # Buscar el primer admin para chatear con él
+        admin = Usuario.objects.filter(rol='admin').first()
+        if admin:
+            return redirect('usuarios:chat_con_usuario', user_id=admin.id)
+        else:
+            messages.error(request, 'No hay administrador disponible.')
+            return redirect('usuarios:dashboard')
+    
+    # Obtener usuarios que NO son admin (residentes)
+    residentes = Usuario.objects.filter(rol='vecino')
+    
+    # Contar mensajes no leídos por cada residente
+    from django.db.models import Count, Q
+    for residente in residentes:
+        residente.pendientes = Mensaje.objects.filter(
+            remitente=residente,
+            destinatario=request.user,
+            leido=False
+        ).count()
+        
+    return render(request, 'usuarios/lista_chats_admin.html', {'residentes': residentes})
+
+
+@login_required
+def chat_con_usuario(request, user_id):
+    """
+    Vista para el chat entre dos usuarios.
+    """
+    otro_usuario = get_object_or_404(Usuario, id=user_id)
+    
+    # Marcar mensajes como leídos
+    Mensaje.objects.filter(
+        remitente=otro_usuario,
+        destinatario=request.user,
+        leido=False
+    ).update(leido=True)
+    
+    # Obtener historial de mensajes
+    from django.db.models import Q
+    mensajes = Mensaje.objects.filter(
+        (Q(remitente=request.user) & Q(destinatario=otro_usuario)) |
+        (Q(remitente=otro_usuario) & Q(destinatario=request.user))
+    ).order_by('fecha_envio')
+    
+    context = {
+        'otro_usuario': otro_usuario,
+        'mensajes': mensajes
+    }
+    
+    return render(request, 'usuarios/chat.html', context)
+
+
+@login_required
+@require_http_methods(["POST"])
+def enviar_mensaje_ajax(request):
+    """
+    Vista AJAX para enviar mensajes sin recargar la página.
+    """
+    destinatario_id = request.POST.get('destinatario_id')
+    contenido = request.POST.get('contenido')
+    
+    if destinatario_id and contenido:
+        destinatario = get_object_or_404(Usuario, id=destinatario_id)
+        mensaje = Mensaje.objects.create(
+            remitente=request.user,
+            destinatario=destinatario,
+            contenido=contenido
+        )
+        return JsonResponse({
+            'status': 'ok',
+            'mensaje': mensaje.contenido,
+            'fecha': mensaje.fecha_envio.strftime('%H:%M'),
+            'remitente': mensaje.remitente.username
+        })
+    
+    return JsonResponse({'status': 'error', 'message': 'Datos incompletos'}, status=400)
+
+
+@login_required
+def obtener_mensajes_ajax(request, user_id):
+    """
+    Vista AJAX para obtener nuevos mensajes (Polling).
+    """
+    otro_usuario = get_object_or_404(Usuario, id=user_id)
+    
+    # Solo obtener mensajes que NO han sido leídos y que vienen del otro usuario
+    nuevos_mensajes = Mensaje.objects.filter(
+        remitente=otro_usuario,
+        destinatario=request.user,
+        leido=False
+    ).order_by('fecha_envio')
+    
+    data = []
+    for msg in nuevos_mensajes:
+        data.append({
+            'id': msg.id,
+            'contenido': msg.contenido,
+            'fecha': msg.fecha_envio.strftime('%H:%M'),
+            'remitente': msg.remitente.username,
+            'nombre_completo': msg.remitente.get_full_name() or msg.remitente.username
+        })
+        # Marcar como leído de una vez
+        msg.leido = True
+        msg.save()
+        
+    return JsonResponse({'mensajes': data})
