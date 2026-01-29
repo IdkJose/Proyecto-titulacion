@@ -520,7 +520,7 @@
                     <!-- Foto o Emoji -->
                     <div style="
                                 width: 100%;
-                                height: 160px;
+                                height: 120px;
                                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                                 display: flex;
                                 align-items: center;
@@ -535,7 +535,7 @@
                                         object-fit: cover;
                                     ">
                         {% else %}
-                        <div style="font-size: 4rem;">
+                        <div style="font-size: 3rem;">
                             {% if mascota.tipo == 'perro' %}🐕{% elif mascota.tipo == 'gato' %}🐱{% elif mascota.tipo ==
                             'pajaro' %}🦜{% elif mascota.tipo == 'conejo' %}🐰{% elif mascota.tipo == 'hamster' %}🐹{%
                             else %}🐾{% endif %}
@@ -544,19 +544,19 @@
                     </div>
 
                     <!-- Información -->
-                    <div style="padding: 15px; background: rgba(255,255,255,0.95); color: #333;">
+                    <div style="padding: 12px; background: rgba(255,255,255,0.95); color: #333;">
                         <p style="
-                                    margin: 0 0 8px 0;
+                                    margin: 0 0 6px 0;
                                     font-weight: bold;
-                                    font-size: 1.2rem;
+                                    font-size: 1rem;
                                     color: #667eea;
                                     text-align: center;
                                 ">{{ mascota.nombre }}</p>
 
-                        <div style="font-size: 0.85rem; line-height: 1.6;">
-                            <p style="margin: 4px 0;"><strong>Tipo:</strong> {{ mascota.get_tipo_display }}</p>
-                            <p style="margin: 4px 0;"><strong>Casa:</strong> {{ mascota.numero_casa }}</p>
-                            <p style="margin: 4px 0;"><strong>Dueño:</strong> {{ mascota.dueno }}</p>
+                        <div style="font-size: 0.8rem; line-height: 1.4;">
+                            <p style="margin: 3px 0;"><strong>Tipo:</strong> {{ mascota.get_tipo_display }}</p>
+                            <p style="margin: 3px 0;"><strong>Casa:</strong> {{ mascota.numero_casa }}</p>
+                            <p style="margin: 3px 0;"><strong>Dueño:</strong> {{ mascota.dueno }}</p>
                         </div>
 
                         {% if mascota.descripcion %}
@@ -734,6 +734,107 @@
         </div>
     </div>
 
+    <!-- MODAL VER VEHÍCULOS -->
+    <div id="modal-ver-vehiculos" class="formulario-modal" onclick="if(event.target === this) cerrarModalVerVehiculos();">
+        <div class="formulario-contenido" style="max-width: 900px; max-height: 90vh;" onclick="event.stopPropagation();">
+            <span class="cerrar" onclick="cerrarModalVerVehiculos()">&times;</span>
+            <h2>🚗 Vehículos Registrados</h2>
+
+            {% if vehiculos %}
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; max-height: 650px; overflow-y: auto; padding-right: 10px;">
+                {% for vehiculo in vehiculos %}
+                <div class="vehiculo-card">
+                    <div class="vehiculo-card-header">
+                        <span class="vehiculo-icon">🚗</span>
+                        <h3>{{ vehiculo.marca }} {{ vehiculo.modelo }}</h3>
+                    </div>
+                    <div class="vehiculo-card-body">
+                        <div class="vehiculo-plate-badge">{{ vehiculo.placa }}</div>
+                        <div class="vehiculo-info-grid" style="margin-top: 10px;">
+                            <div class="vehiculo-info-item">
+                                <label>🎨 Color</label>
+                                <p>{{ vehiculo.color|default:"No especificado" }}</p>
+                            </div>
+                            <div class="vehiculo-info-item">
+                                <label>👤 Dueño</label>
+                                <p>{{ vehiculo.dueno }}</p>
+                            </div>
+                            <div class="vehiculo-info-item">
+                                <label>🏠 Casa</label>
+                                <p>{{ vehiculo.numero_casa }}</p>
+                            </div>
+                            <div class="vehiculo-info-item">
+                                <label>📅 Registrado</label>
+                                <p>{{ vehiculo.fecha_registro|date:"d/m/Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="vehiculo-empty-state">
+                <div class="vehiculo-empty-icon">🚗</div>
+                <h3>Sin Vehículos Registrados</h3>
+                <p>No hay vehículos registrados aún.</p>
+                <p style="font-size: 0.85rem; margin-top: 15px; color: #bbb;">¡Sé el primero en registrar un vehículo en el conjunto!</p>
+            </div>
+            {% endif %}
+
+            <div class="form-buttons" style="margin-top: 20px;">
+                <button type="button" class="btn-cancelar" onclick="cerrarModalVerVehiculos()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NUEVA VEHÍCULO -->
+    <div id="modal-nueva-vehiculo" class="formulario-modal" onclick="if(event.target === this) cerrarModalNuevaVehiculo();">
+        <div class="formulario-contenido" onclick="event.stopPropagation();">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid #667eea;">
+                <h2 style="color: #667eea; margin: 0; font-size: 1.4rem;">🚗 Registrar Nuevo Vehículo</h2>
+                <span class="cerrar" onclick="cerrarModalNuevaVehiculo()">&times;</span>
+            </div>
+            <form method="POST" action="{% url 'usuarios:crear_vehiculo' %}" enctype="multipart/form-data" id="form-crear-vehiculo">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="numero-casa-vehiculo">🏠 Número de Casa</label>
+                    <input type="text" name="numero_casa" id="numero-casa-vehiculo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dueno-vehiculo">👤 Dueño del Vehículo</label>
+                    <input type="text" name="dueno" id="dueno-vehiculo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="placa-vehiculo">🔢 Placa del Vehículo</label>
+                    <input type="text" name="placa" id="placa-vehiculo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="marca-vehiculo">🏷️ Marca del Vehículo</label>
+                    <input type="text" name="marca" id="marca-vehiculo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="modelo-vehiculo">📌 Modelo</label>
+                    <input type="text" name="modelo" id="modelo-vehiculo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="color-vehiculo">🎨 Color</label>
+                    <input type="text" name="color" id="color-vehiculo" required>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="btn-enviar">✓ Registrar Vehículo</button>
+                    <button type="button" class="btn-cancelar" onclick="cerrarModalNuevaVehiculo()">✕ Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="footer">
         <p>&copy; 2025 Conjunto Residencial Selva Alegre. Todos los derechos reservados.</p>
 
@@ -860,6 +961,25 @@
                     document.body.appendChild(form);
                     form.submit();
                 }
+            }
+
+            // --- FUNCIONES DE VEHÍCULOS ---
+            function abrirModalVerVehiculos(event) {
+                event.stopPropagation();
+                document.getElementById('modal-ver-vehiculos').style.display = 'flex';
+            }
+
+            function cerrarModalVerVehiculos() {
+                document.getElementById('modal-ver-vehiculos').style.display = 'none';
+            }
+
+            function abrirModalNuevaVehiculo(event) {
+                event.stopPropagation();
+                document.getElementById('modal-nueva-vehiculo').style.display = 'flex';
+            }
+
+            function cerrarModalNuevaVehiculo() {
+                document.getElementById('modal-nueva-vehiculo').style.display = 'none';
             }
 
             // --- LÓGICA DE RECORTE DE IMAGEN (CROP) ---

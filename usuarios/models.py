@@ -378,3 +378,59 @@ class Mensaje(models.Model):
     
     def __str__(self):
         return f"De: {self.remitente} Para: {self.destinatario} - {self.fecha_envio.strftime('%d/%m/%Y %H:%M')}"
+
+
+class Vehiculo(models.Model):
+    """
+    Modelo para registrar vehículos de los residentes del conjunto.
+    """
+    usuario = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='vehiculos',
+        help_text='Usuario propietario del vehículo'
+    )
+    
+    numero_casa = models.CharField(
+        max_length=14,
+        help_text='Número de casa o departamento (ej: Casa 15, Depto 3B)'
+    )
+    
+    dueno = models.CharField(
+        max_length=150,
+        help_text='Nombre del propietario del vehículo'
+    )
+    
+    placa = models.CharField(
+        max_length=20,
+        unique=True,
+        help_text='Placa del vehículo (ej: ABC-1234)'
+    )
+    
+    marca = models.CharField(
+        max_length=100,
+        help_text='Marca del vehículo (ej: Toyota, Honda)'
+    )
+    
+    modelo = models.CharField(
+        max_length=100,
+        help_text='Modelo del vehículo (ej: Corolla, Civic)'
+    )
+    
+    color = models.CharField(
+        max_length=50,
+        help_text='Color del vehículo'
+    )
+    
+    fecha_registro = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Fecha y hora de registro del vehículo'
+    )
+    
+    class Meta:
+        verbose_name = 'Vehículo'
+        verbose_name_plural = 'Vehículos'
+        ordering = ['-fecha_registro']
+    
+    def __str__(self):
+        return f"{self.marca} {self.modelo} - {self.placa}"
