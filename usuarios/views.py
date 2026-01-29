@@ -97,14 +97,21 @@ def dashboard_view(request):
     meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
              'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
     
-    # Obtener solicitudes del usuario
-    solicitudes = Solicitud.objects.filter(usuario=request.user)
+    # Obtener solicitudes según el rol
+    if request.user.es_administrador():
+        solicitudes = Solicitud.objects.all().order_by('-fecha_creacion')
+    else:
+        solicitudes = Solicitud.objects.filter(usuario=request.user).order_by('-fecha_creacion')
     
     # Obtener mascotas registradas
     mascotas = Mascota.objects.filter(activo=True)
     
     # Obtener vehículos del usuario
     vehiculos = Vehiculo.objects.filter(usuario=request.user)
+    
+    # Obtener lista de vecinos (todos los usuarios activos excepto el actual)
+    # Ordenados por casa/departamento
+    vecinos = Usuario.objects.filter(activo=True).exclude(id=request.user.id).order_by('casa_departamento', 'last_name')
     
     context = {
         'usuario': request.user,
@@ -113,6 +120,7 @@ def dashboard_view(request):
         'solicitudes': solicitudes,
         'mascotas': mascotas,
         'vehiculos': vehiculos,
+        'vecinos': vecinos,
         'mes': mes,
         'ano': ano,
         'mes_nombre': meses[mes - 1],
@@ -162,6 +170,28 @@ def crear_solicitud(request):
     else:
         messages.error(request, 'Por favor completa todos los campos.')
     
+    return redirect('usuarios:dashboard')
+
+
+@login_required
+@user_passes_test(lambda u: u.es_administrador())
+@require_http_methods(["POST"])
+def gestionar_solicitud(request, solicitud_id):
+    """
+    Vista para que el administrador responda y cambie el estado de una solicitud.
+    """
+    solicitud = get_object_or_404(Solicitud, id=solicitud_id)
+    nuevo_estado = request.POST.get('estado')
+    respuesta = request.POST.get('respuesta')
+    
+    if nuevo_estado:
+        solicitud.estado = nuevo_estado
+        solicitud.respuesta_admin = respuesta
+        solicitud.save()
+        messages.success(request, f'✅ Solicitud #{solicitud.id} actualizada correctamente.')
+    else:
+        messages.error(request, 'Error al actualizar la solicitud.')
+        
     return redirect('usuarios:dashboard')
 
 

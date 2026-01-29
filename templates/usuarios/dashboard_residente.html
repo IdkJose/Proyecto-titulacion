@@ -73,17 +73,17 @@
                 </div>
 
                 <div class="cards-grid">
-                    <div class="card" onclick="expandCard(event, 'perfil')">
-                        <h3>📋 Mi Perfil</h3>
-                        <p>Visualiza y edita tu información personal.</p>
-                        <div class="card-content" id="perfil-content" style="display: none;">
-                            <h2>Mi Información Personal</h2>
-                            <div class="perfil-info">
-                                <p><strong>Usuario:</strong> {{ usuario.username }}</p>
-                                <p><strong>Nombre:</strong> {{ usuario.get_full_name }}</p>
-                                <p><strong>Email:</strong> {{ usuario.email }}</p>
-                                <p><strong>Casa/Depto:</strong> {{ usuario.casa_departamento }}</p>
-                                <p><strong>Teléfono:</strong> {{ usuario.telefono|default:"No registrado" }}</p>
+                    <div class="card" onclick="expandCard(event, 'vecinos')">
+                        <h3>👥 Mis Vecinos</h3>
+                        <p>Consulta la lista de residentes del conjunto.</p>
+                        {% if vecinos.count > 0 %}
+                        <div class="badge">{{ vecinos.count }}</div>
+                        {% endif %}
+                        <div class="card-content" id="vecinos-content" style="display: none;">
+                            <div style="margin-top: 20px;">
+                                <button class="btn-opcion" onclick="abrirModalVerVecinos(event)" style="width: 100%;">
+                                    📋 Ver Lista de Vecinos
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -267,6 +267,51 @@
                         <div class="event-value" id="modalEventCategory"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver Lista de Vecinos -->
+    <div id="modal-ver-vecinos" class="formulario-modal" style="display: none;"
+        onclick="if(event.target === this) cerrarModalVerVecinos();">
+        <div class="formulario-contenido" style="max-width: 700px;" onclick="event.stopPropagation();">
+            <span class="cerrar" onclick="cerrarModalVerVecinos()">&times;</span>
+            <h2 style="color: #667eea; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="material-icons">groups</i> Lista de Vecinos
+            </h2>
+
+            <div style="overflow-x: auto; margin-top: 20px;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #eee; color: #667eea;">
+                            <th style="padding: 12px 10px;">Nombre</th>
+                            <th style="padding: 12px 10px;">Apellido</th>
+                            <th style="padding: 12px 10px;">Casa/Dpto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vecino in vecinos %}
+                        <tr style="border-bottom: 1px solid #f5f5f5; transition: background 0.2s;"
+                            onmouseover="this.style.background='#fcfcfc'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding: 12px 10px;">{{ vecino.first_name }}</td>
+                            <td style="padding: 12px 10px;">{{ vecino.last_name }}</td>
+                            <td style="padding: 12px 10px; font-weight: bold; color: #444;">{{ vecino.casa_departamento }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" style="padding: 30px; text-align: center; color: #999;">
+                                No hay otros vecinos registrados.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 30px; text-align: center;">
+                <button type="button" class="btn-cancelar" onclick="cerrarModalVerVecinos()"
+                    style="width: auto; padding: 10px 30px;">Cerrar</button>
             </div>
         </div>
     </div>
@@ -880,6 +925,21 @@
                 event.target.classList.add('active');
             }
 
+
+
+
+
+
+            // --- FUNCIONES DE VECINOS ---
+            function abrirModalVerVecinos(event) {
+                if (event) event.stopPropagation();
+                document.getElementById('modal-ver-vecinos').style.display = 'flex';
+            }
+
+            function cerrarModalVerVecinos() {
+                document.getElementById('modal-ver-vecinos').style.display = 'none';
+            }
+
             // --- FUNCIONES DE SOLICITUDES ---
             function abrirModalVerSolicitudes(event) {
                 event.stopPropagation();
@@ -1114,6 +1174,7 @@
             document.addEventListener('keydown', function (event) {
                 if (event.key === 'Escape') {
                     closeEventModal();
+                    cerrarModalVerVecinos();
                     cerrarModalVerSolicitudes();
                     cerrarModalNuevaSolicitud();
                     cerrarModalVerMascotas();

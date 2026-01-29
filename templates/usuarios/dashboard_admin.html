@@ -38,13 +38,13 @@
         {% endif %}
 
         <div class="dashboard-grid">
-            <!-- COLUMNA 1:  del usuario -->
+            <!-- COLUMNA 1: Información del usuario -->
             <div class="dashboard-content">
                 <div class="welcome-section">
                     <h2>Bienvenido {{ usuario.get_full_name|default:usuario.username }}</h2>
                     <p>Panel de administración del conjunto residencial 😊</p>
                     <div class="user-card">
-                        <div class="user-card-header">📋 del Administrador</div>
+                        <div class="user-card-header">📋 Información del Administrador</div>
                         <div class="user-card-body">
                             <div class="user-info-row">
                                 <div class="user-info-label"><i class="material-icons">person</i> Usuario</div>
@@ -85,19 +85,66 @@
                         </div>
                     </div>
 
-                    <div class="card">
+                    <div class="card" onclick="expandCard(event, 'solicitudes')">
                         <h3>📌 Solicitudes</h3>
                         <p>Revisa y gestiona solicitudes de vecinos.</p>
+                        {% if solicitudes.count > 0 %}
+                        <div class="badge"
+                            style="background: #ff6b6b; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; position: absolute; top: 10px; right: 10px;">
+                            {{ solicitudes.count }}</div>
+                        {% endif %}
+                        <div class="card-content" id="solicitudes-content" style="display: none;">
+                            <div style="margin-top: 20px;">
+                                <button class="btn-opcion" onclick="abrirModalVerSolicitudes(event)"
+                                    style="width: 100%; background: #667eea; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
+                                    📋 Gestionar Solicitudes
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="card">
+                    <div class="card" onclick="expandCard(event, 'mensajes')">
                         <h3>💬 Mensajes</h3>
                         <p>Comunicación con los vecinos.</p>
+                        <div class="card-content" id="mensajes-content" style="display: none;">
+                            <p>Próximamente...</p>
+                        </div>
                     </div>
 
-                    <div class="card">
+                    <div class="card" onclick="expandCard(event, 'reportes')">
                         <h3>📊 Reportes</h3>
                         <p>Genera reportes y estadísticas.</p>
+                    </div>
+
+                    <div class="card" onclick="expandCard(event, 'mascotas')">
+                        <h3>🐶 Mascotas</h3>
+                        <p>Consulta las mascotas que se encuentran dentro del conjunto</p>
+                        {% if mascotas.count > 0%}
+                        <div class="badge">{{ mascotas.count }}</div>
+                        {% endif %}
+                        <div class="card-content" id="mascotas-content" style="display: none;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                                <button class="btn-opcion" onclick="abrirModalVerMascotas(event)">
+                                    📋 Ver Mascotas
+                                </button>
+                                <button class="btn-opcion" onclick="abrirModalNuevaMascota(event)">
+                                    ➕ Crear Nueva Mascota
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" onclick="expandCard(event, 'vehiculos')">
+                        <h3>🚗 Vehículos</h3>
+                        <p>Consulta los vehículos registrados dentro del conjunto</p>
+                        {% if vehiculos.count > 0%}
+                        <div class="badge">{{ vehiculos.count }}</div>
+                        {% endif %}
+                        <div class="card-content" id="vehiculos-content" style="display: none;">
+                            <div style="margin-top: 20px;">
+                                <p style="text-align: center; color: #999; font-style: italic;">Módulo en desarrollo por compañero...</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -153,7 +200,7 @@
                                             descripcion: '{{ evento.descripcion|escapejs }}',
                                             categoria: '{{ evento.get_categoria_display }}',
                                             color: '{{ evento.color }}'
-                                        })">>
+                                        })">
                                         {{ evento.titulo }}
                                     </span>
                                     {% endfor %}
@@ -171,6 +218,476 @@
                     📍 Total de eventos este mes: <strong>{{ eventos_por_dia|length }}</strong>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal para gestionar solicitudes -->
+    <div id="modal-ver-solicitudes" class="formulario-modal"
+        style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center;"
+        onclick="if(event.target === this) cerrarModalVerSolicitudes();">
+        <div class="formulario-contenido"
+            style="background-color: white; padding: 25px; border-radius: 15px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative;"
+            onclick="event.stopPropagation();">
+            <span class="cerrar" onclick="cerrarModalVerSolicitudes()"
+                style="position: absolute; right: 20px; top: 15px; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            <h2 style="color: #667eea; margin-bottom: 20px;">📋 Gestión de Solicitudes</h2>
+
+            {% if solicitudes %}
+            <div class="solicitudes-lista" style="display: flex; flex-direction: column; gap: 15px;">
+                {% for solicitud in solicitudes %}
+                <div class="solicitud-card" onclick="expandirSolicitud(this)"
+                    style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s; background: #f9f9f9;">
+                    <div class="solicitud-header"
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div class="solicitud-info">
+                            <h3 style="margin: 0; color: #333; font-size: 1.1em;">{{ solicitud.titulo }}</h3>
+                            <span class="solicitud-tipo"
+                                style="font-size: 0.8em; color: #666; background: #eee; padding: 2px 8px; border-radius: 10px;">{{ solicitud.get_tipo_display }}</span>
+                            <span style="font-size: 0.8em; color: #667eea; font-weight: bold; margin-left: 10px;">🏠
+                                Casa: {{ solicitud.usuario.casa_departamento|default:"N/A" }}</span>
+                        </div>
+                        <div class="solicitud-estado estado-{{ solicitud.estado }}" style="
+                            padding: 5px 12px;
+                            border-radius: 20px;
+                            font-size: 0.85em;
+                            font-weight: bold;
+                            {% if solicitud.estado == 'pendiente' %}background: #fff3cd; color: #856404;
+                            {% elif solicitud.estado == 'en_proceso' %}background: #d1ecf1; color: #0c5460;
+                            {% elif solicitud.estado == 'aprobada' %}background: #d4edda; color: #155724;
+                            {% elif solicitud.estado == 'rechazada' %}background: #f8d7da; color: #721c24;
+                            {% endif %}
+                        ">
+                            {{ solicitud.get_estado_display }}
+                        </div>
+                    </div>
+                    <div class="solicitud-fecha" style="font-size: 0.8em; color: #999; margin-bottom: 10px;">
+                        De: <strong>{{ solicitud.usuario.get_full_name|default:solicitud.usuario.username }}</strong> |
+                        {{ solicitud.fecha_creacion|date:"d/m/Y H:i" }}
+                    </div>
+                    <div class="solicitud-body"
+                        style="display: none; border-top: 1px solid #eee; padding-top: 15px; margin-top: 10px;">
+                        <p style="margin-bottom: 15px;"><strong>Descripción:</strong><br>{{ solicitud.descripcion }}</p>
+
+                        <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
+                            <h4 style="margin-top: 0; color: #495057; font-size: 0.95em; margin-bottom: 10px;">📝
+                                Gestionar Respuesta</h4>
+                            <form method="POST" action="{% url 'usuarios:gestionar_solicitud' solicitud.id %}"
+                                onclick="event.stopPropagation()">
+                                {% csrf_token %}
+                                <div style="margin-bottom: 10px;">
+                                    <label
+                                        style="display: block; font-size: 0.85em; color: #666; margin-bottom: 5px;">Nuevo
+                                        Estado:</label>
+                                    <select name="estado"
+                                        style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;"
+                                        required>
+                                        <option value="pendiente" {% if solicitud.estado == "pendiente" %}selected{% endif %}>Pendiente</option>
+                                        <option value="en_proceso" {% if solicitud.estado == "en_proceso" %}selected{% endif %}>En proceso</option>
+                                        <option value="aprobada" {% if solicitud.estado == "aprobada" %}selected{% endif %}>Aprobada</option>
+                                        <option value="rechazada" {% if solicitud.estado == "rechazada" %}selected{% endif %}>Rechazada</option>
+                                    </select>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <label
+                                        style="display: block; font-size: 0.85em; color: #666; margin-bottom: 5px;">Respuesta
+                                        (Opcional):</label>
+                                    <textarea name="respuesta" rows="3"
+                                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; resize: vertical;"
+                                        placeholder="Escribe aquí tu respuesta...">{{ solicitud.respuesta_admin|default:"" }}</textarea>
+                                </div>
+                                <button type="submit"
+                                    style="background: #667eea; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-size: 0.9em;">
+                                    Guardar Cambios
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 40px; color: #999;">
+                <p style="font-size: 3rem; margin-bottom: 10px;">📝</p>
+                <p>No hay solicitudes de residentes por el momento.</p>
+            </div>
+            {% endif %}
+
+            <div style="margin-top: 25px; text-align: center;">
+                <button type="button" onclick="cerrarModalVerSolicitudes()"
+                    style="background: #eee; border: none; padding: 10px 30px; border-radius: 5px; cursor: pointer;">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NUEVA MASCOTA -->
+    <div id="modal-nueva-mascota" class="formulario-modal"
+        onclick="if(event.target === this) cerrarModalNuevaMascota();">
+        <div class="formulario-contenido" onclick="event.stopPropagation();">
+            <span class="cerrar" onclick="cerrarModalNuevaMascota()">&times;</span>
+            <h2>🐶 Registrar Nueva Mascota</h2>
+            <form method="POST" action="{% url 'usuarios:crear_mascota' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="numero-casa">Número de Casa:</label>
+                    <input type="text" name="numero_casa" id="numero-casa" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="nombre-mascota">Nombre de la Mascota:</label>
+                    <input type="text" name="nombre" id="nombre-mascota" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dueno">Dueño:</label>
+                    <input type="text" name="dueno" id="dueno" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipo-mascota">Tipo de Mascota:</label>
+                    <select name="tipo" id="tipo-mascota" required>
+                        <option value="">-- Selecciona un tipo --</option>
+                        <option value="perro">🐕 Perro</option>
+                        <option value="gato">🐱 Gato</option>
+                        <option value="pajaro">🦜 Pájaro</option>
+                        <option value="conejo">🐰 Conejo</option>
+                        <option value="hamster">🐹 Hámster</option>
+                        <option value="otro">📝 Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-descripcion">Descripción (opcional):</label>
+                    <textarea name="descripcion" id="edit-descripcion"
+                        placeholder="Características especiales de la mascota"
+                        style="width: 100%; padding: 8px 10px; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 0.9rem; resize: vertical; height: 80px;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="foto-mascota">📸 Foto de la Mascota (opcional):</label>
+                    <div style="position: relative;">
+                        <input type="file" name="foto" id="foto-mascota" accept="image/*"
+                            onchange="previewImagenMascota(event)" style="cursor: pointer;">
+                    </div>
+
+                    <!-- Preview con cuadrícula ajustable -->
+                    <div id="preview-foto-mascota" style="
+                        display: none;
+                        margin-top: 15px;
+                        text-align: center;
+                    ">
+                        <div id="preview-container" style="
+                            position: relative;
+                            width: 300px;
+                            height: 300px;
+                            margin: 0 auto;
+                            overflow: hidden;
+                            border-radius: 8px;
+                            border: 3px solid #667eea;
+                            background: #f5f5f5;
+                        ">
+                            <!-- Imagen fija -->
+                            <img id="preview-img-mascota" src="" alt="Preview" style="
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                user-select: none;
+                                pointer-events: none;
+                            ">
+
+                            <!-- Área de overlay oscuro (fuera de la cuadrícula) -->
+                            <div id="overlay-left"
+                                style="position: absolute; top: 0; left: 0; background: rgba(0,0,0,0.4); z-index: 5;">
+                            </div>
+                            <div id="overlay-top"
+                                style="position: absolute; top: 0; left: 0; background: rgba(0,0,0,0.4); z-index: 5;">
+                            </div>
+                            <div id="overlay-right"
+                                style="position: absolute; top: 0; right: 0; background: rgba(0,0,0,0.4); z-index: 5;">
+                            </div>
+                            <div id="overlay-bottom"
+                                style="position: absolute; bottom: 0; left: 0; background: rgba(0,0,0,0.4); z-index: 5;">
+                            </div>
+
+                            <!-- Cuadrícula 3x3 ajustable -->
+                            <div id="crop-frame" style="
+                                position: absolute;
+                                top: 30px;
+                                left: 30px;
+                                width: 240px;
+                                height: 240px;
+                                border: 2px solid rgba(255,255,255,0.8);
+                                z-index: 10;
+                                display: grid;
+                                grid-template-columns: repeat(3, 1fr);
+                                grid-template-rows: repeat(3, 1fr);
+                                gap: 0;
+                                box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.5);
+                            ">
+                                <div
+                                    style="border-right: 1px solid rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.4);">
+                                </div>
+                                <div
+                                    style="border-right: 1px solid rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.4);">
+                                </div>
+                                <div style="border-bottom: 1px solid rgba(255,255,255,0.4);"></div>
+
+                                <div
+                                    style="border-right: 1px solid rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.4);">
+                                </div>
+                                <div
+                                    style="border-right: 1px solid rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.4);">
+                                </div>
+                                <div style="border-bottom: 1px solid rgba(255,255,255,0.4);"></div>
+
+                                <div style="border-right: 1px solid rgba(255,255,255,0.4);"></div>
+                                <div style="border-right: 1px solid rgba(255,255,255,0.4);"></div>
+                                <div></div>
+                            </div>
+
+                            <!-- Handles de esquinas -->
+                            <div id="handle-tl" class="crop-handle"
+                                style="position: absolute; top: 20px; left: 20px; cursor: nwse-resize;"></div>
+                            <div id="handle-tr" class="crop-handle"
+                                style="position: absolute; top: 20px; right: 20px; cursor: nesw-resize;"></div>
+                            <div id="handle-bl" class="crop-handle"
+                                style="position: absolute; bottom: 20px; left: 20px; cursor: nesw-resize;"></div>
+                            <div id="handle-br" class="crop-handle"
+                                style="position: absolute; bottom: 20px; right: 20px; cursor: nwse-resize;"></div>
+
+                            <!-- Indicador -->
+                            <div id="drag-hint" style="
+                                position: absolute;
+                                bottom: 10px;
+                                left: 50%;
+                                transform: translateX(-50%);
+                                background: rgba(102, 126, 234, 0.9);
+                                color: white;
+                                padding: 5px 10px;
+                                border-radius: 4px;
+                                font-size: 0.75rem;
+                                font-weight: 500;
+                                z-index: 20;
+                                pointer-events: none;
+                            ">
+                                Arrastra las esquinas para ajustar
+                            </div>
+                        </div>
+                        <p style="
+                            text-align: center;
+                            font-size: 0.85rem;
+                            color: #667eea;
+                            margin-top: 10px;
+                            font-weight: 500;
+                        ">✓ Imagen cargada - Ajusta las esquinas</p>
+                    </div>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="btn-enviar">Registrar Mascota</button>
+                    <button type="button" class="btn-cancelar" onclick="cerrarModalNuevaMascota()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL VER MASCOTAS -->
+    <div id="modal-ver-mascotas" class="formulario-modal" onclick="if(event.target === this) cerrarModalVerMascotas();">
+        <div class="formulario-contenido" style="max-width: 900px; max-height: 90vh;"
+            onclick="event.stopPropagation();">
+            <span class="cerrar" onclick="cerrarModalVerMascotas()">&times;</span>
+            <h2>🐾 Mascotas Registradas</h2>
+
+            {% if mascotas %}
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 20px; max-height: 600px; overflow-y: auto; padding-right: 10px;">
+                {% for mascota in mascotas %}
+                <div class="mascota-card" style="
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            border-radius: 15px;
+                            overflow: hidden;
+                            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+                            transition: all 0.3s ease;
+                            cursor: pointer;
+                            color: white;
+                        "
+                    onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.2)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.1)';">
+
+                    <!-- Foto o Emoji -->
+                    <div style="
+                                width: 100%;
+                                height: 160px;
+                                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                position: relative;
+                                overflow: hidden;
+                            ">
+                        {% if mascota.foto %}
+                        <img src="{{ mascota.foto.url }}" alt="{{ mascota.nombre }}" style="
+                                        width: 100%;
+                                        height: 100%;
+                                        object-fit: cover;
+                                    ">
+                        {% else %}
+                        <div style="font-size: 4rem;">
+                            {% if mascota.tipo == 'perro' %}🐕{% elif mascota.tipo == 'gato' %}🐱{% elif mascota.tipo ==
+                            'pajaro' %}🦜{% elif mascota.tipo == 'conejo' %}🐰{% elif mascota.tipo == 'hamster' %}🐹{%
+                            else %}🐾{% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Información -->
+                    <div style="padding: 15px; background: rgba(255,255,255,0.95); color: #333;">
+                        <p style="
+                                    margin: 0 0 8px 0;
+                                    font-weight: bold;
+                                    font-size: 1.2rem;
+                                    color: #667eea;
+                                    text-align: center;
+                                ">{{ mascota.nombre }}</p>
+
+                        <div style="font-size: 0.85rem; line-height: 1.6;">
+                            <p style="margin: 4px 0;"><strong>Tipo:</strong> {{ mascota.get_tipo_display }}</p>
+                            <p style="margin: 4px 0;"><strong>Casa:</strong> {{ mascota.numero_casa }}</p>
+                            <p style="margin: 4px 0;"><strong>Dueño:</strong> {{ mascota.dueno }}</p>
+                        </div>
+
+                        {% if mascota.descripcion %}
+                        <p style="
+                                        margin: 8px 0 0 0;
+                                        padding-top: 8px;
+                                        border-top: 1px solid #e0e0e0;
+                                        font-size: 0.8rem;
+                                        color: #666;
+                                        font-style: italic;
+                                    ">{{ mascota.descripcion }}</p>
+                        {% endif %}
+
+                        <!-- Botones de acción -->
+                        <div style="
+                                    display: grid;
+                                    grid-template-columns: 1fr 1fr;
+                                    gap: 8px;
+                                    margin-top: 12px;
+                                    padding-top: 12px;
+                                    border-top: 1px solid #e0e0e0;
+                                ">
+                            <button onclick="abrirModalEditarMascota({{ mascota.id }})" style="
+                                        background: #667eea;
+                                        color: white;
+                                        border: none;
+                                        padding: 8px 12px;
+                                        border-radius: 6px;
+                                        cursor: pointer;
+                                        font-size: 0.85rem;
+                                        font-weight: 500;
+                                        transition: all 0.2s;
+                                    " onmouseover="this.style.background='#5568d3';"
+                                onmouseout="this.style.background='#667eea';">
+                                ✏️ Editar
+                            </button>
+                            <button onclick="eliminarMascota({{ mascota.id }}, '{{ mascota.nombre }}')" style="
+                                        background: #ff6b6b;
+                                        color: white;
+                                        border: none;
+                                        padding: 8px 12px;
+                                        border-radius: 6px;
+                                        cursor: pointer;
+                                        font-size: 0.85rem;
+                                        font-weight: 500;
+                                        transition: all 0.2s;
+                                    " onmouseover="this.style.background='#ff5252';"
+                                onmouseout="this.style.background='#ff6b6b';">
+                                🗑️ Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="
+                        text-align: center;
+                        padding: 60px 20px;
+                        color: #999;
+                    ">
+                <p style="font-size: 3rem; margin-bottom: 15px;">🐾</p>
+                <p style="font-size: 1.1rem;">No hay mascotas registradas aún.</p>
+                <p style="font-size: 0.9rem; margin-top: 10px;">¡Sé el primero en registrar una mascota!</p>
+            </div>
+            {% endif %}
+
+            <div class="form-buttons" style="margin-top: 20px;">
+                <button type="button" class="btn-cancelar" onclick="cerrarModalVerMascotas()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR MASCOTA -->
+    <div id="modal-editar-mascota" class="formulario-modal"
+        onclick="if(event.target === this) cerrarModalEditarMascota();">
+        <div class="formulario-contenido" onclick="event.stopPropagation();">
+            <span class="cerrar" onclick="cerrarModalEditarMascota()">&times;</span>
+            <h2>✏️ Editar Mascota</h2>
+            <form method="POST" action="" id="form-editar-mascota" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="edit-numero-casa">Número de Casa:</label>
+                    <input type="text" name="numero_casa" id="edit-numero-casa" placeholder="Ej: 10, 12A, 5B" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-nombre-mascota">Nombre de la Mascota:</label>
+                    <input type="text" name="nombre" id="edit-nombre-mascota" placeholder="Ej: Max, Luna, Fluffy"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-dueno">Dueño:</label>
+                    <input type="text" name="dueno" id="edit-dueno" placeholder="Nombre del dueño" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tipo-mascota">Tipo de Mascota:</label>
+                    <select name="tipo" id="edit-tipo-mascota" required>
+                        <option value="">-- Selecciona un tipo --</option>
+                        <option value="perro">🐕 Perro</option>
+                        <option value="gato">🐱 Gato</option>
+                        <option value="pajaro">🦜 Pájaro</option>
+                        <option value="conejo">🐰 Conejo</option>
+                        <option value="hamster">🐹 Hámster</option>
+                        <option value="otro">📝 Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-descripcion-mascota">Descripción (opcional):</label>
+                    <textarea name="descripcion" id="edit-descripcion-mascota"
+                        placeholder="Características especiales de la mascota"
+                        style="width: 100%; padding: 8px 10px; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 0.9rem; resize: vertical; height: 80px;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-foto-mascota">📸 Foto de la Mascota (opcional):</label>
+                    <input type="file" name="foto" id="edit-foto-mascota" accept="image/*">
+                    <p style="font-size: 0.8rem; color: #999; margin-top: 5px;">Déjalo en blanco para mantener la foto
+                        actual</p>
+                </div>
+
+
+                <div class="form-buttons">
+                    <button type="submit" class="btn-enviar">Guardar Cambios</button>
+                    <button type="button" class="btn-cancelar" onclick="cerrarModalEditarMascota()">Cancelar</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -218,6 +735,182 @@
     </div>
 
     <script>
+        // --- FUNCIONES DE MASCOTAS ---
+        function abrirModalVerMascotas(event) {
+            event.stopPropagation();
+            document.getElementById('modal-ver-mascotas').style.display = 'flex';
+        }
+
+        function cerrarModalVerMascotas() {
+            document.getElementById('modal-ver-mascotas').style.display = 'none';
+        }
+
+        function abrirModalNuevaMascota(event) {
+            event.stopPropagation();
+            document.getElementById('modal-nueva-mascota').style.display = 'flex';
+        }
+
+        function cerrarModalNuevaMascota() {
+            document.getElementById('modal-nueva-mascota').style.display = 'none';
+        }
+
+        function abrirModalEditarMascota(mascotaId) {
+            fetch(`/mascotas/obtener/${mascotaId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('edit-numero-casa').value = data.numero_casa;
+                    document.getElementById('edit-nombre-mascota').value = data.nombre;
+                    document.getElementById('edit-dueno').value = data.dueno;
+                    document.getElementById('edit-tipo-mascota').value = data.tipo;
+                    document.getElementById('edit-descripcion-mascota').value = data.descripcion || '';
+                    document.getElementById('form-editar-mascota').action = `/mascotas/editar/${mascotaId}/`;
+                    document.getElementById('modal-editar-mascota').style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al cargar los datos de la mascota');
+                });
+        }
+
+        function cerrarModalEditarMascota() {
+            document.getElementById('modal-editar-mascota').style.display = 'none';
+        }
+
+        function eliminarMascota(mascotaId, nombreMascota) {
+            if (confirm(`¿Estás seguro de que deseas eliminar a ${nombreMascota}?`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/mascotas/eliminar/${mascotaId}/`;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                if (csrfToken) {
+                    form.appendChild(csrfToken.cloneNode(true));
+                }
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // --- LÓGICA DE RECORTE DE IMAGEN (CROP) ---
+        let isDragging = false;
+        let activeHandle = null;
+        let cropFrame = { top: 30, left: 30, width: 240, height: 240 };
+        const minSize = 80;
+        const containerSize = 300;
+
+        function inicializarHandles() {
+            const handles = ['tl', 'tr', 'bl', 'br'];
+            handles.forEach(handle => {
+                const el = document.getElementById(`handle-${handle}`);
+                if (el) {
+                    el.addEventListener('mousedown', (e) => iniciarCropDrag(e, handle));
+                    el.addEventListener('touchstart', (e) => iniciarCropDrag(e, handle));
+                }
+            });
+            actualizarOpaqueOverlay();
+        }
+
+        function iniciarCropDrag(event, handle) {
+            event.preventDefault();
+            isDragging = true;
+            activeHandle = handle;
+            document.addEventListener('mousemove', moverHandle);
+            document.addEventListener('touchmove', moverHandle);
+            document.addEventListener('mouseup', detenerCropDrag);
+            document.addEventListener('touchend', detenerCropDrag);
+        }
+
+        function moverHandle(event) {
+            if (!isDragging || !activeHandle) return;
+            const container = document.getElementById('preview-container');
+            const rect = container.getBoundingClientRect();
+            let x, y;
+
+            if (event.touches) {
+                x = event.touches[0].clientX - rect.left;
+                y = event.touches[0].clientY - rect.top;
+            } else {
+                x = event.clientX - rect.left;
+                y = event.clientY - rect.top;
+            }
+
+            x = Math.max(0, Math.min(containerSize, x));
+            y = Math.max(0, Math.min(containerSize, y));
+
+            if (activeHandle === 'tl') {
+                cropFrame.left = Math.min(x, cropFrame.left + cropFrame.width - minSize);
+                cropFrame.top = Math.min(y, cropFrame.top + cropFrame.height - minSize);
+                cropFrame.width = cropFrame.left + cropFrame.width - Math.min(x, cropFrame.left);
+                cropFrame.height = cropFrame.top + cropFrame.height - Math.min(y, cropFrame.top);
+            } else if (activeHandle === 'tr') {
+                cropFrame.top = Math.min(y, cropFrame.top + cropFrame.height - minSize);
+                cropFrame.width = Math.max(minSize, x - cropFrame.left);
+                cropFrame.height = cropFrame.top + cropFrame.height - Math.min(y, cropFrame.top);
+            } else if (activeHandle === 'bl') {
+                cropFrame.left = Math.min(x, cropFrame.left + cropFrame.width - minSize);
+                cropFrame.height = Math.max(minSize, y - cropFrame.top);
+                cropFrame.width = cropFrame.left + cropFrame.width - Math.min(x, cropFrame.left);
+            } else if (activeHandle === 'br') {
+                cropFrame.width = Math.max(minSize, x - cropFrame.left);
+                cropFrame.height = Math.max(minSize, y - cropFrame.top);
+            }
+
+            actualizarCropFrame();
+            actualizarOpaqueOverlay();
+        }
+
+        function detenerCropDrag() {
+            isDragging = false;
+            activeHandle = null;
+            document.removeEventListener('mousemove', moverHandle);
+            document.removeEventListener('touchmove', moverHandle);
+            document.removeEventListener('mouseup', detenerCropDrag);
+            document.removeEventListener('touchend', detenerCropDrag);
+        }
+
+        function actualizarCropFrame() {
+            const frame = document.getElementById('crop-frame');
+            if (!frame) return;
+            frame.style.top = cropFrame.top + 'px';
+            frame.style.left = cropFrame.left + 'px';
+            frame.style.width = cropFrame.width + 'px';
+            frame.style.height = cropFrame.height + 'px';
+        }
+
+        function actualizarOpaqueOverlay() {
+            const overlayLeft = document.getElementById('overlay-left');
+            const overlayTop = document.getElementById('overlay-top');
+            const overlayRight = document.getElementById('overlay-right');
+            const overlayBottom = document.getElementById('overlay-bottom');
+
+            if (overlayLeft) overlayLeft.style.width = cropFrame.left + 'px';
+            if (overlayTop) overlayTop.style.height = cropFrame.top + 'px';
+            if (overlayRight) overlayRight.style.width = (containerSize - cropFrame.left - cropFrame.width) + 'px';
+            if (overlayBottom) overlayBottom.style.height = (containerSize - cropFrame.top - cropFrame.height) + 'px';
+        }
+
+        function previewImagenMascota(event) {
+            const file = event.target.files[0];
+            const previewContainer = document.getElementById('preview-foto-mascota');
+            const previewImg = document.getElementById('preview-img-mascota');
+
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImg.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                    cropFrame = { top: 30, left: 30, width: 240, height: 240 };
+                    setTimeout(() => {
+                        inicializarHandles();
+                        actualizarCropFrame();
+                        actualizarOpaqueOverlay();
+                    }, 100);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        }
+
         // Función para abrir el modal con los detalles del evento
         function openEventModal(eventData) {
             document.getElementById('modalEventTitle').textContent = eventData.titulo;
@@ -236,18 +929,62 @@
             modal.style.display = 'none';
         }
 
+        // --- FUNCIONES DE SOLICITUDES (Gestión Admin) ---
+        function abrirModalVerSolicitudes(event) {
+            if (event) event.stopPropagation();
+            document.getElementById('modal-ver-solicitudes').style.display = 'flex';
+        }
+
+        function cerrarModalVerSolicitudes() {
+            document.getElementById('modal-ver-solicitudes').style.display = 'none';
+        }
+
+        function expandirSolicitud(element) {
+            const body = element.querySelector('.solicitud-body');
+            if (body.style.display === 'none') {
+                body.style.display = 'block';
+                element.style.background = '#fff';
+                element.style.boxShadow = '0 4px 8px rgba(0,0,0,0.05)';
+            } else {
+                body.style.display = 'none';
+                element.style.background = '#f9f9f9';
+                element.style.boxShadow = 'none';
+            }
+        }
+
+        function expandCard(event, contentId) {
+            event.stopPropagation();
+            const content = document.getElementById(contentId + '-content');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+            } else {
+                content.style.display = 'none';
+            }
+        }
+
         // Cerrar modal al hacer click fuera de él
         document.addEventListener('click', function (event) {
-            const modal = document.getElementById('eventModal');
-            if (event.target === modal) {
-                closeEventModal();
-            }
+            const eventModal = document.getElementById('eventModal');
+            const adminSolicitudModal = document.getElementById('modal-ver-solicitudes');
+            const verMascotasModal = document.getElementById('modal-ver-mascotas');
+            const nuevaMascotaModal = document.getElementById('modal-nueva-mascota');
+            const editarMascotaModal = document.getElementById('modal-editar-mascota');
+
+            if (event.target === eventModal) closeEventModal();
+            if (event.target === adminSolicitudModal) cerrarModalVerSolicitudes();
+            if (event.target === verMascotasModal) cerrarModalVerMascotas();
+            if (event.target === nuevaMascotaModal) cerrarModalNuevaMascota();
+            if (event.target === editarMascotaModal) cerrarModalEditarMascota();
         });
 
         // Cerrar modal con la tecla Escape
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
                 closeEventModal();
+                cerrarModalVerSolicitudes();
+                cerrarModalVerMascotas();
+                cerrarModalNuevaMascota();
+                cerrarModalEditarMascota();
             }
         });
     </script>
