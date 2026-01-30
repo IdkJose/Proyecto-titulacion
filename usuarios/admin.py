@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Usuario, Evento, Solicitud, Mascota
+from .models import Usuario, Evento, Solicitud, Mascota, Vehiculo
 @admin.register(Usuario)
 class UsuarioAdmin(UserAdmin):
     """
@@ -136,6 +136,30 @@ class MascotaAdmin(admin.ModelAdmin):
         }),
         ('Estado', {
             'fields': ('activo',)
+        }),
+        ('Timestamps', {
+            'fields': ('fecha_registro',),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(Vehiculo)
+class VehiculoAdmin(admin.ModelAdmin):
+    """
+    Configuración del modelo Vehiculo en el panel de administración.
+    """
+    list_display = ['placa', 'marca', 'modelo', 'dueno', 'numero_casa', 'usuario', 'fecha_registro']
+    list_filter = ['marca', 'fecha_registro', 'usuario']
+    search_fields = ['placa', 'marca', 'modelo', 'dueno', 'numero_casa']
+    readonly_fields = ['fecha_registro']
+    
+    fieldsets = (
+        ('Información del Vehículo', {
+            'fields': ('marca', 'modelo', 'placa', 'color')
+        }),
+        ('Información del Propietario', {
+            'fields': ('usuario', 'dueno', 'numero_casa')
         }),
         ('Timestamps', {
             'fields': ('fecha_registro',),

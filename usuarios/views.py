@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 from datetime import datetime
 from django.utils import timezone
 import calendar
-from .models import Evento, Solicitud, Usuario, Mascota, Publicacion
+from .models import Evento, Solicitud, Usuario, Mascota, Publicacion, Vehiculo
 
 
 @require_http_methods(["GET", "POST"])
@@ -109,8 +109,8 @@ def dashboard_view(request):
     # Obtener mascotas registradas
     mascotas = Mascota.objects.filter(activo=True)
     
-    # Obtener vehículos (si existen en el modelo)
-    vehiculos = []  # Placeholder para vehículos si se implementan después
+    # Obtener vehículos del usuario
+    vehiculos = Vehiculo.objects.filter(usuario=request.user)
     
     # Obtener lista de vecinos (todos los usuarios activos excepto el actual)
     # Ordenados por casa/departamento
@@ -477,3 +477,41 @@ def eliminar_mascota(request, mascota_id):
     
     return redirect('usuarios:dashboard')
 
+
+# ========== VISTAS DE VEHÍCULOS ==========
+
+@login_required(login_url='usuarios:login')
+@require_http_methods(["POST"])
+def crear_vehiculo(request):
+    """
+    Vista para crear un nuevo vehículo registrado por el usuario.
+    """
+    try:
+        numero_casa = request.POST.get('numero_casa')
+        dueno = request.POST.get('dueno')
+        placa = request.POST.get('placa')
+        marca = request.POST.get('marca')
+        modelo = request.POST.get('modelo')
+        color = request.POST.get('color')
+        
+        # Validar que no exista otro vehículo con la misma placa
+        if Vehiculo.objects.filter(placa=placa).exists():
+            messages.error(request, f'❌ Ya existe un vehículo registrado con la placa {placa}.')
+            return redirect('usuarios:dashboard')
+        
+        # Crear el vehículo
+        vehiculo = Vehiculo.objects.create(
+            usuario=request.user,
+            numero_casa=numero_casa,
+            dueno=dueno,
+            placa=placa,
+            marca=marca,
+            modelo=modelo,
+            color=color
+        )
+        
+        messages.success(request, f'✅ Vehículo "{vehiculo.marca} {vehiculo.modelo}" ({placa}) registrado exitosamente.')
+    except Exception as e:
+        messages.error(request, f'❌ Error al registrar el vehículo: {str(e)}')
+    
+    return redirect('usuarios:dashboard')

@@ -23,4 +23,5 @@ urlpatterns = [
     path('publicaciones/crear/', views.crear_publicacion, name='crear_publicacion'),
     path('publicaciones/editar/<int:pk>/', views.editar_publicacion, name='editar_publicacion'),
     path('publicaciones/eliminar/<int:pk>/', views.eliminar_publicacion, name='eliminar_publicacion'),
+    path('vehiculos/crear/', views.crear_vehiculo, name='crear_vehiculo'),
 ]

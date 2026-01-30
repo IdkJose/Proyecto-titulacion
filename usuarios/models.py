@@ -378,64 +378,59 @@ class Mensaje(models.Model):
     
     def __str__(self):
         return f"De: {self.remitente} Para: {self.destinatario} - {self.fecha_envio.strftime('%d/%m/%Y %H:%M')}"
-class Publicacion(models.Model):
-    """
-    Modelo para gestionar comunicados, noticias y reportes (estados de cuenta).
-    """
-    TIPO_CHOICES = [
-        ('comunicado', '📢 Comunicado'),
-        ('novedad', '✨ Novedad'),
-        ('finanzas', '💰 Finanzas'),
-        ('mantenimiento', '🛠️ Mantenimiento'),
-    ]
 
-    autor = models.ForeignKey(
+
+class Vehiculo(models.Model):
+    """
+    Modelo para registrar vehículos de los residentes del conjunto.
+    """
+    usuario = models.ForeignKey(
         Usuario,
         on_delete=models.CASCADE,
-        related_name='publicaciones',
-        help_text='Administrador que crea la publicación'
+        related_name='vehiculos',
+        help_text='Usuario propietario del vehículo'
     )
     
-    titulo = models.CharField(
-        max_length=200,
-        help_text='Título corto y descriptivo'
+    numero_casa = models.CharField(
+        max_length=14,
+        help_text='Número de casa o departamento (ej: Casa 15, Depto 3B)'
     )
     
-    contenido = models.TextField(
-        help_text='Cuerpo del mensaje o noticia'
+    dueno = models.CharField(
+        max_length=150,
+        help_text='Nombre del propietario del vehículo'
     )
     
-    tipo = models.CharField(
+    placa = models.CharField(
         max_length=20,
-        choices=TIPO_CHOICES,
-        default='comunicado',
-        help_text='Categoría de la publicación'
+        unique=True,
+        help_text='Placa del vehículo (ej: ABC-1234)'
     )
     
-    imagen = models.ImageField(
-        upload_to='publicaciones/imagenes/',
-        blank=True,
-        null=True,
-        help_text='Imagen ilustrativa opcional'
+    marca = models.CharField(
+        max_length=100,
+        help_text='Marca del vehículo (ej: Toyota, Honda)'
     )
     
-    archivo_pdf = models.FileField(
-        upload_to='publicaciones/documentos/',
-        blank=True,
-        null=True,
-        help_text='Documento adjunto (ej. Estado de Cuenta)'
+    modelo = models.CharField(
+        max_length=100,
+        help_text='Modelo del vehículo (ej: Corolla, Civic)'
     )
     
-    fecha_publicacion = models.DateTimeField(
+    color = models.CharField(
+        max_length=50,
+        help_text='Color del vehículo'
+    )
+    
+    fecha_registro = models.DateTimeField(
         auto_now_add=True,
-        help_text='Fecha en que se hizo pública la nota'
+        help_text='Fecha y hora de registro del vehículo'
     )
-
+    
     class Meta:
-        verbose_name = 'Publicación'
-        verbose_name_plural = 'Publicaciones'
-        ordering = ['-fecha_publicacion']
-
+        verbose_name = 'Vehículo'
+        verbose_name_plural = 'Vehículos'
+        ordering = ['-fecha_registro']
+    
     def __str__(self):
-        return f"{self.get_tipo_display()} - {self.titulo} ({self.fecha_publicacion.date()})"
-
+        return f"{self.marca} {self.modelo} - {self.placa}"

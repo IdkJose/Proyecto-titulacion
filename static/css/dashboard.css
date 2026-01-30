@@ -1003,3 +1003,296 @@ input[type="file"]:focus {
         transform: translateY(0);
     }
 }
+
+/* ========== ESTILOS PARA TARJETAS DE VEHÍCULOS ========== */
+
+.vehiculo-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.25);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: translateY(0);
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.vehiculo-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.35);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.vehiculo-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+}
+
+.vehiculo-card-header {
+    padding: 15px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vehiculo-icon {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+    display: block;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.vehiculo-card h3 {
+    margin: 8px 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
+}
+
+.vehiculo-card-body {
+    padding: 12px 15px 15px 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.vehiculo-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.vehiculo-info-item {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 8px;
+    border-left: 4px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+}
+
+.vehiculo-info-item:nth-child(odd) {
+    grid-column: 1;
+}
+
+.vehiculo-info-item label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.vehiculo-info-item p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: white;
+    word-wrap: break-word;
+}
+
+.vehiculo-plate-badge {
+    background: rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    padding: 6px 10px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1rem;
+    font-family: 'Courier New', monospace;
+    color: #ffd700;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.vehiculo-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.vehiculo-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.vehiculo-btn-edit {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.vehiculo-btn-edit:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+}
+
+.vehiculo-btn-delete {
+    background: rgba(255, 59, 48, 0.3);
+    color: #ffcccc;
+    border: 1px solid rgba(255, 59, 48, 0.5);
+}
+
+.vehiculo-btn-delete:hover {
+    background: rgba(255, 59, 48, 0.5);
+    color: white;
+    border-color: rgba(255, 59, 48, 0.8);
+    transform: scale(1.05);
+}
+
+.vehiculo-empty-state {
+    text-align: center;
+    padding: 80px 40px;
+    color: #999;
+}
+
+.vehiculo-empty-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    opacity: 0.6;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.vehiculo-empty-state h3 {
+    font-size: 1.3rem;
+    color: #666;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.vehiculo-empty-state p {
+    font-size: 0.95rem;
+    color: #aaa;
+    margin: 5px 0;
+}
+
+/* ========== ESTILOS MEJORADOS PARA FORMULARIOS DE VEHÍCULOS ========== */
+
+#form-crear-vehiculo .form-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+#form-crear-vehiculo .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #667eea;
+}
+
+#form-crear-vehiculo .form-group input,
+#form-crear-vehiculo .form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+#form-crear-vehiculo .form-group input::placeholder {
+    color: #bbb;
+}
+
+#form-crear-vehiculo .form-group input:focus,
+#form-crear-vehiculo .form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 12px rgba(102, 126, 234, 0.25);
+    background: #f8f9ff;
+}
+
+#form-crear-vehiculo .form-group input:valid {
+    border-color: #4caf50;
+    background-image: linear-gradient(to right, #f8f9ff 0%, #f8f9ff 100%);
+}
+
+/* Estilos para los botones del formulario */
+#form-crear-vehiculo .form-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.form-buttons .btn-enviar,
+.form-buttons .btn-cancelar {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.form-buttons .btn-enviar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.form-buttons .btn-enviar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.form-buttons .btn-enviar:active {
+    transform: translateY(0);
+}
+
+.form-buttons .btn-cancelar {
+    background: #f0f0f0;
+    color: #666;
+    border: 2px solid #e0e0e0;
+}
+
+.form-buttons .btn-cancelar:hover {
+    background: #e8e8e8;
+    border-color: #d0d0d0;
+    color: #333;
+}
