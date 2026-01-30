@@ -88,10 +88,10 @@
                     <div class="card" onclick="expandCard(event, 'solicitudes')">
                         <h3>📌 Solicitudes</h3>
                         <p>Revisa y gestiona solicitudes de vecinos.</p>
-                        {% if solicitudes.count > 0 %}
+                        {% if solicitudes_pendientes_count > 0 %}
                         <div class="badge"
                             style="background: #ff6b6b; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; position: absolute; top: 10px; right: 10px;">
-                            {{ solicitudes.count }}</div>
+                            {{ solicitudes_pendientes_count }}</div>
                         {% endif %}
                         <div class="card-content" id="solicitudes-content" style="display: none;">
                             <div style="margin-top: 20px;">
@@ -112,8 +112,21 @@
                     </div>
 
                     <div class="card" onclick="expandCard(event, 'reportes')">
-                        <h3>📊 Reportes</h3>
-                        <p>Genera reportes y estadísticas.</p>
+                        <h3>📊 Reportes y Anuncios</h3>
+                        <p>Publica novedades, comunicados y estados de cuenta.</p>
+                        {% if publicaciones.count > 0 %}
+                        <div class="badge" style="background: #667eea;">{{ publicaciones.count }}</div>
+                        {% endif %}
+                        <div class="card-content" id="reportes-content" style="display: none;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                                <button class="btn-opcion" onclick="abrirModalGestionarReportes(event)">
+                                    📋 Gestionar Anuncios
+                                </button>
+                                <button class="btn-opcion" onclick="abrirModalNuevoReporte(event)">
+                                    ➕ Publicar Novedad
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card" onclick="expandCard(event, 'mascotas')">
@@ -125,10 +138,10 @@
                         <div class="card-content" id="mascotas-content" style="display: none;">
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
                                 <button class="btn-opcion" onclick="abrirModalVerMascotas(event)">
-                                    📋 Ver Mascotas
+                                    📋 Administrar Mascotas
                                 </button>
                                 <button class="btn-opcion" onclick="abrirModalNuevaMascota(event)">
-                                    ➕ Crear Nueva Mascota
+                                    ➕ Agregar Nueva Mascota
                                 </button>
                             </div>
                         </div>
@@ -623,9 +636,101 @@
                 <p style="font-size: 0.9rem; margin-top: 10px;">¡Sé el primero en registrar una mascota!</p>
             </div>
             {% endif %}
+        </div>
+    </div>
 
-            <div class="form-buttons" style="margin-top: 20px;">
-                <button type="button" class="btn-cancelar" onclick="cerrarModalVerMascotas()">Cerrar</button>
+    <!-- MODAL NUEVO REPORTE / ANUNCIO -->
+    <div id="modal-nuevo-reporte" class="formulario-modal"
+        onclick="if(event.target === this) cerrarModalNuevoReporte();">
+        <div class="formulario-contenido" onclick="event.stopPropagation();">
+            <span class="cerrar" onclick="cerrarModalNuevoReporte()">&times;</span>
+            <h2 style="color: #667eea; margin-bottom: 20px;">🗞️ Publicar Novedad o Reporte</h2>
+            <form method="POST" action="{% url 'usuarios:crear_publicacion' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="titulo-publicacion">Título / Asunto:</label>
+                    <input type="text" name="titulo" id="titulo-publicacion" required placeholder="Ej: ¡Minga este sábado!">
+                </div>
+                <div class="form-group">
+                    <label for="tipo-publicacion">Categoría:</label>
+                    <select name="tipo" id="tipo-publicacion" required>
+                        <option value="comunicado">📢 Comunicado</option>
+                        <option value="novedad">✨ Novedad</option>
+                        <option value="finanzas">💰 Finanzas</option>
+                        <option value="mantenimiento">🛠️ Mantenimiento</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="contenido-publicacion">Detalle de la noticia:</label>
+                    <textarea name="contenido" id="contenido-publicacion" rows="4" required
+                        placeholder="Escribe aquí todo el visaje..."
+                        style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 5px;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="imagen-publicacion">📸 Foto opcional (JPG/PNG):</label>
+                    <input type="file" name="imagen" id="imagen-publicacion" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="pdf-publicacion">📄 PDF opcional (Estados de Cuenta):</label>
+                    <input type="file" name="archivo_pdf" id="pdf-publicacion" accept="application/pdf">
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn-enviar">Publicar Anuncio</button>
+                    <button type="button" class="btn-cancelar" onclick="cerrarModalNuevoReporte()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL GESTIONAR REPORTES -->
+    <div id="modal-gestionar-reportes" class="formulario-modal"
+        onclick="if(event.target === this) cerrarModalGestionarReportes();">
+        <div class="formulario-contenido" style="max-width: 800px; max-height: 90vh;"
+            onclick="event.stopPropagation();">
+            <span class="cerrar" onclick="cerrarModalGestionarReportes()">&times;</span>
+            <h2 style="color: #667eea; margin-bottom: 20px;">📑 Gestionar Anuncios Publicados</h2>
+            <div style="overflow-y: auto; max-height: 500px; margin-top: 20px;">
+                {% if publicaciones %}
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 12px;">Fecha</th>
+                            <th style="padding: 12px;">Título</th>
+                            <th style="padding: 12px;">Tipo</th>
+                            <th style="padding: 12px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pub in publicaciones %}
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 10px; font-size: 0.85em;">{{ pub.fecha_publicacion|date:"d/m/Y" }}</td>
+                            <td style="padding: 10px; font-weight: 500;">{{ pub.titulo }}</td>
+                            <td style="padding: 10px;">{{ pub.get_tipo_display }}</td>
+                            <td style="padding: 10px; display: flex; gap: 8px;">
+                                <button onclick="abrirModalEditarPublicacion({
+                                    id: '{{ pub.id }}',
+                                    titulo: '{{ pub.titulo|escapejs }}',
+                                    tipo: '{{ pub.tipo }}',
+                                    contenido: '{{ pub.contenido|escapejs }}'
+                                })" style="background: #667eea; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                                    ✏️
+                                </button>
+                                <form method="POST" action="{% url 'usuarios:eliminar_publicacion' pub.id %}"
+                                    onsubmit="return confirm('¿Seguro quieres borrar este anuncio?');">
+                                    {% csrf_token %}
+                                    <button type="submit" style="background: #ff6b6b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">🗑️</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p style="text-align: center; color: #999; padding: 20px;">No has publicado nada todavía, mijin.</p>
+                {% endif %}
+            </div>
+            <div style="margin-top: 20px; text-align: right;">
+                <button type="button" class="btn-cancelar" onclick="cerrarModalGestionarReportes()">Cerrar</button>
             </div>
         </div>
     </div>
@@ -686,6 +791,49 @@
                 <div class="form-buttons">
                     <button type="submit" class="btn-enviar">Guardar Cambios</button>
                     <button type="button" class="btn-cancelar" onclick="cerrarModalEditarMascota()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR PUBLICACIÓN -->
+    <div id="modal-editar-publicacion" class="formulario-modal"
+        onclick="if(event.target === this) cerrarModalEditarPublicacion();">
+        <div class="formulario-contenido" onclick="event.stopPropagation();">
+            <span class="cerrar" onclick="cerrarModalEditarPublicacion()">&times;</span>
+            <h2 style="color: #667eea; margin-bottom: 20px;">✏️ Editar Anuncio</h2>
+
+            <form method="POST" action="" id="form-editar-publicacion" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="edit-titulo-pub">Título / Asunto:</label>
+                    <input type="text" name="titulo" id="edit-titulo-pub" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-tipo-pub">Categoría:</label>
+                    <select name="tipo" id="edit-tipo-pub" required>
+                        <option value="comunicado">📢 Comunicado</option>
+                        <option value="novedad">✨ Novedad</option>
+                        <option value="finanzas">💰 Finanzas</option>
+                        <option value="mantenimiento">🛠️ Mantenimiento</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-contenido-pub">Detalle de la noticia:</label>
+                    <textarea name="contenido" id="edit-contenido-pub" rows="4" required
+                        style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 5px;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-imagen-pub">📸 Cambiar Foto (opcional):</label>
+                    <input type="file" name="imagen" id="edit-imagen-pub" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="edit-pdf-pub">📄 Cambiar PDF (opcional):</label>
+                    <input type="file" name="archivo_pdf" id="edit-pdf-pub" accept="application/pdf">
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn-enviar">Guardar Cambios</button>
+                    <button type="button" class="btn-cancelar" onclick="cerrarModalEditarPublicacion()">Cancelar</button>
                 </div>
             </form>
         </div>
@@ -774,6 +922,45 @@
 
         function cerrarModalEditarMascota() {
             document.getElementById('modal-editar-mascota').style.display = 'none';
+        }
+
+        // --- FUNCIONES PARA PUBLICACIONES / REPORTES ---
+        function abrirModalNuevoReporte(event) {
+            if (event) event.stopPropagation();
+            document.getElementById('modal-nuevo-reporte').style.display = 'flex';
+        }
+
+        function cerrarModalNuevoReporte() {
+            document.getElementById('modal-nuevo-reporte').style.display = 'none';
+        }
+
+        function abrirModalGestionarReportes(event) {
+            if (event) event.stopPropagation();
+            document.getElementById('modal-gestionar-reportes').style.display = 'flex';
+        }
+
+        function cerrarModalGestionarReportes() {
+            document.getElementById('modal-gestionar-reportes').style.display = 'none';
+        }
+
+        // --- FUNCIONES PARA EDITAR PUBLICACIONES ---
+        function abrirModalEditarPublicacion(datos) {
+            // 1. Llenamos los campos del modal con los datos recibidos
+            document.getElementById('edit-titulo-pub').value = datos.titulo;
+            document.getElementById('edit-tipo-pub').value = datos.tipo;
+            document.getElementById('edit-contenido-pub').value = datos.contenido;
+            
+            // 2. Actualizamos el action del formulario para que apunte al ID correcto
+            // Usamos una ruta absoluta para evitar problemas con las URLs relativas
+            const form = document.getElementById('form-editar-publicacion');
+            form.action = `/publicaciones/editar/${datos.id}/`;
+            
+            // 3. Mostramos el modal
+            document.getElementById('modal-editar-publicacion').style.display = 'flex';
+        }
+
+        function cerrarModalEditarPublicacion() {
+            document.getElementById('modal-editar-publicacion').style.display = 'none';
         }
 
         function eliminarMascota(mascotaId, nombreMascota) {
@@ -969,12 +1156,18 @@
             const verMascotasModal = document.getElementById('modal-ver-mascotas');
             const nuevaMascotaModal = document.getElementById('modal-nueva-mascota');
             const editarMascotaModal = document.getElementById('modal-editar-mascota');
+            const nuevoReporteModal = document.getElementById('modal-nuevo-reporte');
+            const gestionarReportesModal = document.getElementById('modal-gestionar-reportes');
+            const editarPublicacionModal = document.getElementById('modal-editar-publicacion');
 
             if (event.target === eventModal) closeEventModal();
             if (event.target === adminSolicitudModal) cerrarModalVerSolicitudes();
             if (event.target === verMascotasModal) cerrarModalVerMascotas();
             if (event.target === nuevaMascotaModal) cerrarModalNuevaMascota();
             if (event.target === editarMascotaModal) cerrarModalEditarMascota();
+            if (event.target === nuevoReporteModal) cerrarModalNuevoReporte();
+            if (event.target === gestionarReportesModal) cerrarModalGestionarReportes();
+            if (event.target === editarPublicacionModal) cerrarModalEditarPublicacion();
         });
 
         // Cerrar modal con la tecla Escape
@@ -985,6 +1178,9 @@
                 cerrarModalVerMascotas();
                 cerrarModalNuevaMascota();
                 cerrarModalEditarMascota();
+                cerrarModalNuevoReporte();
+                cerrarModalGestionarReportes();
+                cerrarModalEditarPublicacion();
             }
         });
     </script>

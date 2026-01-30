@@ -19,4 +19,8 @@ urlpatterns = [
     path('mascotas/obtener/<int:mascota_id>/', views.obtener_mascota, name='obtener_mascota'),
     path('mascotas/editar/<int:mascota_id>/', views.editar_mascota, name='editar_mascota'),
     path('mascotas/eliminar/<int:mascota_id>/', views.eliminar_mascota, name='eliminar_mascota'),
+    # Publicaciones (Comunicados/Reportes)
+    path('publicaciones/crear/', views.crear_publicacion, name='crear_publicacion'),
+    path('publicaciones/editar/<int:pk>/', views.editar_publicacion, name='editar_publicacion'),
+    path('publicaciones/eliminar/<int:pk>/', views.eliminar_publicacion, name='eliminar_publicacion'),
 ]

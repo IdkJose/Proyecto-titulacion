@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 from datetime import datetime
 from django.utils import timezone
 import calendar
-from .models import Evento, Solicitud, Usuario, Mascota
+from .models import Evento, Solicitud, Usuario, Mascota, Publicacion
 
 
 @require_http_methods(["GET", "POST"])
@@ -100,8 +100,11 @@ def dashboard_view(request):
     # Obtener solicitudes según el rol
     if request.user.es_administrador():
         solicitudes = Solicitud.objects.all().order_by('-fecha_creacion')
+        # Contador de solicitudes pendientes para el administrador
+        solicitudes_pendientes_count = solicitudes.filter(estado='pendiente').count()
     else:
         solicitudes = Solicitud.objects.filter(usuario=request.user).order_by('-fecha_creacion')
+        solicitudes_pendientes_count = 0
     
     # Obtener mascotas registradas
     mascotas = Mascota.objects.filter(activo=True)
@@ -113,14 +116,19 @@ def dashboard_view(request):
     # Ordenados por casa/departamento
     vecinos = Usuario.objects.filter(activo=True).exclude(id=request.user.id).order_by('casa_departamento', 'last_name')
     
+    # Obtener publicaciones (noticias/reportes)
+    publicaciones = Publicacion.objects.all().order_by('-fecha_publicacion')
+
     context = {
         'usuario': request.user,
         'calendario': cal,
         'eventos_por_dia': eventos_por_dia,
         'solicitudes': solicitudes,
+        'solicitudes_pendientes_count': solicitudes_pendientes_count,
         'mascotas': mascotas,
         'vehiculos': vehiculos,
         'vecinos': vecinos,
+        'publicaciones': publicaciones,
         'mes': mes,
         'ano': ano,
         'mes_nombre': meses[mes - 1],
@@ -147,6 +155,77 @@ def logout_view(request):
     logout(request)
     messages.success(request, 'Has cerrado sesión correctamente.')
     return redirect('usuarios:login')
+@login_required
+@user_passes_test(lambda u: u.es_administrador())
+@require_http_methods(["POST"])
+def crear_publicacion(request):
+    """
+    Crea una nueva publicación (comunicado o reporte).
+    """
+    titulo = request.POST.get('titulo')
+    contenido = request.POST.get('contenido')
+    tipo = request.POST.get('tipo', 'comunicado')
+    imagen = request.FILES.get('imagen')
+    archivo_pdf = request.FILES.get('archivo_pdf')
+    
+    try:
+        Publicacion.objects.create(
+            autor=request.user,
+            titulo=titulo,
+            contenido=contenido,
+            tipo=tipo,
+            imagen=imagen,
+            archivo_pdf=archivo_pdf
+        )
+        messages.success(request, '¡Publicación creada con éxito, pana! 🚀')
+    except Exception as e:
+        messages.error(request, f'Chuta, algo salió mal: {str(e)}')
+        
+    return redirect('usuarios:dashboard')
+
+
+@login_required
+@user_passes_test(lambda u: u.es_administrador())
+@require_http_methods(["POST"])
+def editar_publicacion(request, pk):
+    """
+    Edita una publicación existente.
+    """
+    publicacion = get_object_or_404(Publicacion, pk=pk)
+    
+    publicacion.titulo = request.POST.get('titulo', publicacion.titulo)
+    publicacion.contenido = request.POST.get('contenido', publicacion.contenido)
+    publicacion.tipo = request.POST.get('tipo', publicacion.tipo)
+    
+    if 'imagen' in request.FILES:
+        publicacion.imagen = request.FILES['imagen']
+    if 'archivo_pdf' in request.FILES:
+        publicacion.archivo_pdf = request.FILES['archivo_pdf']
+        
+    try:
+        publicacion.save()
+        messages.success(request, '¡Publicación actualizada! Todo bien. ✅')
+    except Exception as e:
+        messages.error(request, f'No se pudo actualizar: {str(e)}')
+        
+    return redirect('usuarios:dashboard')
+
+
+@login_required
+@user_passes_test(lambda u: u.es_administrador())
+@require_http_methods(["POST"])
+def eliminar_publicacion(request, pk):
+    """
+    Elimina una publicación.
+    """
+    publicacion = get_object_or_404(Publicacion, pk=pk)
+    try:
+        publicacion.delete()
+        messages.success(request, 'Publicación eliminada correctamente. 👍')
+    except Exception as e:
+        messages.error(request, f'No se pudo eliminar la nota: {str(e)}')
+        
+    return redirect('usuarios:dashboard')
 
 
 @login_required(login_url='usuarios:login')
