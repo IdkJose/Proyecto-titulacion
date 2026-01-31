@@ -434,3 +434,59 @@ class Vehiculo(models.Model):
     
     def __str__(self):
         return f"{self.marca} {self.modelo} - {self.placa}"
+
+
+class Publicacion(models.Model):
+    """
+    Modelo para los comunicados, novedades, finanzas y reportes de mantenimiento.
+    """
+    TIPO_CHOICES = [
+        ('comunicado', '📢 Comunicado'),
+        ('novedad', '✨ Novedad'),
+        ('finanzas', '💰 Finanzas'),
+        ('mantenimiento', '🛠️ Mantenimiento'),
+    ]
+
+    autor = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='publicaciones',
+        help_text='Administrador que crea la publicación'
+    )
+    titulo = models.CharField(
+        max_length=200,
+        help_text='Título corto y descriptivo'
+    )
+    contenido = models.TextField(
+        help_text='Cuerpo del mensaje o noticia'
+    )
+    tipo = models.CharField(
+        max_length=20,
+        choices=TIPO_CHOICES,
+        default='comunicado',
+        help_text='Categoría de la publicación'
+    )
+    imagen = models.ImageField(
+        upload_to='publicaciones/imagenes/',
+        blank=True,
+        null=True,
+        help_text='Imagen ilustrativa opcional'
+    )
+    archivo_pdf = models.FileField(
+        upload_to='publicaciones/documentos/',
+        blank=True,
+        null=True,
+        help_text='Documento adjunto (ej. Estado de Cuenta)'
+    )
+    fecha_publicacion = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Fecha en que se hizo pública la nota'
+    )
+
+    class Meta:
+        verbose_name = 'Publicación'
+        verbose_name_plural = 'Publicaciones'
+        ordering = ['-fecha_publicacion']
+
+    def __str__(self):
+        return self.titulo
