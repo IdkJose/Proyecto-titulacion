@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Usuario, Evento, Solicitud, Mascota, Vehiculo
+from .models import Usuario, Evento, Solicitud, Mascota, Vehiculo, Publicacion
 @admin.register(Usuario)
 class UsuarioAdmin(UserAdmin):
     """
@@ -139,6 +139,30 @@ class MascotaAdmin(admin.ModelAdmin):
         }),
         ('Timestamps', {
             'fields': ('fecha_registro',),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(Publicacion)
+class PublicacionAdmin(admin.ModelAdmin):
+    """
+    Configuración del modelo Publicacion en el panel de administración.
+    """
+    list_display = ['titulo', 'autor', 'tipo', 'fecha_publicacion']
+    list_filter = ['tipo', 'fecha_publicacion', 'autor']
+    search_fields = ['titulo', 'contenido']
+    readonly_fields = ['fecha_publicacion']
+    
+    fieldsets = (
+        ('Contenido de la Publicación', {
+            'fields': ('autor', 'titulo', 'contenido', 'tipo')
+        }),
+        ('Multimedia', {
+            'fields': ('imagen', 'archivo_pdf')
+        }),
+        ('Timestamps', {
+            'fields': ('fecha_publicacion',),
             'classes': ('collapse',)
         }),
     )
