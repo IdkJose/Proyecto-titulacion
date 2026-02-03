@@ -24,4 +24,9 @@ urlpatterns = [
     path('publicaciones/editar/<int:pk>/', views.editar_publicacion, name='editar_publicacion'),
     path('publicaciones/eliminar/<int:pk>/', views.eliminar_publicacion, name='eliminar_publicacion'),
     path('vehiculos/crear/', views.crear_vehiculo, name='crear_vehiculo'),
+    # Chat/Mensajería
+    path('mensajes/lista-chats/', views.lista_chats_admin, name='lista_chats'),
+    path('mensajes/chat/<int:user_id>/', views.chat_view, name='chat'),
+    path('mensajes/enviar-ajax/', views.enviar_mensaje_ajax, name='enviar_mensaje_ajax'),
+    path('mensajes/obtener-ajax/<int:user_id>/', views.obtener_mensajes_ajax, name='obtener_mensajes_ajax'),
 ]

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Administración</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <style>
+        .chat-list-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .chat-list-header {
+            padding: 20px;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .residente-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .residente-item:hover {
+            background: #f7fafc;
+        }
+
+        .residente-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-grow: 1;
+        }
+
+        .residente-icon {
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .residente-details h3 {
+            margin: 0;
+            font-size: 1em;
+            color: #2d3748;
+        }
+
+        .residente-details p {
+            margin: 5px 0 0;
+            font-size: 0.85em;
+            color: #718096;
+        }
+
+        .badge-unread {
+            background: #fc8181;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .btn-chat {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-chat:hover {
+            background: #5a67d8;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .no-residentes {
+            padding: 40px;
+            text-align: center;
+            color: #a0aec0;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🏘️ Chat - Selva Alegre</h1>
+            <div class="user-info">
+                <span><strong>{{ user.username }}</strong></span>
+                <a href="{% url 'usuarios:dashboard' %}" class="btn-home">
+                    <span class="material-icons">home</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" style="max-width: 900px; margin: 0 auto; padding: 20px;">
+        <a href="{% url 'usuarios:dashboard' %}" class="btn-back">
+            <i class="material-icons">arrow_back</i> Volver al Dashboard
+        </a>
+
+        <div class="chat-list-container">
+            <div class="chat-list-header">
+                <i class="material-icons">chat_bubble</i>
+                <h2 style="margin: 0;">Mensajes con Residentes</h2>
+            </div>
+
+            {% if residentes %}
+                {% for residente in residentes %}
+                <div class="residente-item" onclick="location.href='{% url 'usuarios:chat' residente.id %}'">
+                    <div class="residente-info">
+                        <div class="residente-icon">
+                            <i class="material-icons">person</i>
+                        </div>
+                        <div class="residente-details">
+                            <h3>{{ residente.get_full_name|default:residente.username }}</h3>
+                            <p>{{ residente.casa_departamento }}</p>
+                        </div>
+                    </div>
+                    
+                    {% if residente.mensajes_no_leidos > 0 %}
+                    <span class="badge-unread">{{ residente.mensajes_no_leidos }}</span>
+                    {% endif %}
+                    
+                    <a href="{% url 'usuarios:chat' residente.id %}" class="btn-chat">
+                        <i class="material-icons">chat</i>
+                        Chat
+                    </a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-residentes">
+                    <i class="material-icons" style="font-size: 48px; color: #cbd5e0;">people_outline</i>
+                    <p>No hay residentes registrados aún.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>

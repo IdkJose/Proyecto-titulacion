@@ -531,3 +531,134 @@ def crear_vehiculo(request):
         messages.error(request, f'❌ Error al registrar el vehículo: {str(e)}')
     
     return redirect('usuarios:dashboard')
+
+
+# ========== VISTAS DE CHAT/MENSAJERÍA ==========
+
+@login_required(login_url='usuarios:login')
+def chat_view(request, user_id):
+    """
+    Vista del chat entre dos usuarios (residente y administrador).
+    """
+    from .models import Mensaje
+    from django.db.models import Q
+    
+    otro_usuario = get_object_or_404(Usuario, id=user_id)
+    
+    # Obtener mensajes entre ambos usuarios
+    mensajes = Mensaje.objects.filter(
+        Q(remitente=request.user, destinatario=otro_usuario) |
+        Q(remitente=otro_usuario, destinatario=request.user)
+    ).order_by('fecha_envio')
+    
+    # Marcar como leídos los mensajes recibidos
+    Mensaje.objects.filter(
+        remitente=otro_usuario,
+        destinatario=request.user,
+        leido=False
+    ).update(leido=True)
+    
+    context = {
+        'otro_usuario': otro_usuario,
+        'mensajes': mensajes,
+    }
+    
+    return render(request, 'usuarios/chat.html', context)
+
+
+@login_required(login_url='usuarios:login')
+@require_http_methods(["POST"])
+def enviar_mensaje_ajax(request):
+    """
+    Vista AJAX para enviar mensajes en el chat.
+    """
+    from .models import Mensaje
+    
+    contenido = request.POST.get('contenido', '').strip()
+    destinatario_id = request.POST.get('destinatario_id')
+    
+    if not contenido or not destinatario_id:
+        return JsonResponse({'status': 'error', 'mensaje': 'Datos incompletos'}, status=400)
+    
+    try:
+        destinatario = Usuario.objects.get(id=destinatario_id)
+        mensaje = Mensaje.objects.create(
+            remitente=request.user,
+            destinatario=destinatario,
+            contenido=contenido
+        )
+        
+        return JsonResponse({
+            'status': 'ok',
+            'mensaje': mensaje.contenido,
+            'fecha': mensaje.fecha_envio.strftime('%H:%M')
+        })
+    except Usuario.DoesNotExist:
+        return JsonResponse({'status': 'error', 'mensaje': 'Usuario no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'mensaje': str(e)}, status=500)
+
+
+@login_required(login_url='usuarios:login')
+@require_http_methods(["GET"])
+def obtener_mensajes_ajax(request, user_id):
+    """
+    Vista AJAX para obtener nuevos mensajes no leídos.
+    """
+    from .models import Mensaje
+    
+    try:
+        otro_usuario = Usuario.objects.get(id=user_id)
+        
+        # Obtener mensajes no leídos del otro usuario
+        mensajes_nuevos = Mensaje.objects.filter(
+            remitente=otro_usuario,
+            destinatario=request.user,
+            leido=False
+        ).order_by('fecha_envio')
+        
+        # Marcarlos como leídos
+        mensajes_nuevos.update(leido=True)
+        
+        # Serializar mensajes
+        mensajes_data = [{
+            'contenido': msg.contenido,
+            'fecha': msg.fecha_envio.strftime('%H:%M'),
+            'remitente': msg.remitente.get_full_name() or msg.remitente.username
+        } for msg in mensajes_nuevos]
+        
+        return JsonResponse({'mensajes': mensajes_data})
+    except Usuario.DoesNotExist:
+        return JsonResponse({'mensajes': []}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required(login_url='usuarios:login')
+@user_passes_test(lambda u: u.es_administrador())
+def lista_chats_admin(request):
+    """
+    Vista para que el administrador vea la lista de residentes con los que puede chatear.
+    """
+    # Obtener todos los residentes (usuarios que no son admin)
+    residentes = Usuario.objects.filter(
+        activo=True,
+        rol='vecino'
+    ).order_by('casa_departamento', 'last_name')
+    
+    # Para cada residente, obtener el conteo de mensajes no leídos
+    from .models import Mensaje
+    from django.db.models import Count, Q
+    
+    for residente in residentes:
+        residente.mensajes_no_leidos = Mensaje.objects.filter(
+            remitente=residente,
+            destinatario=request.user,
+            leido=False
+        ).count()
+    
+    context = {
+        'residentes': residentes,
+    }
+    
+    return render(request, 'usuarios/lista_chats.html', context)
