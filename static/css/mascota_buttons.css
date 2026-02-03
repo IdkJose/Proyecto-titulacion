@@ -1,0 +1,43 @@
+/* Estilos para botones de mascotas */
+
+.btn-editar-mascota {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-editar-mascota:hover {
+    background: #5568d3;
+}
+
+.btn-eliminar-mascota {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-eliminar-mascota:hover {
+    background: #ff5252;
+}
+
+/* Contenedor de botones de mascotas */
+.mascota-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e0e0e0;
+}

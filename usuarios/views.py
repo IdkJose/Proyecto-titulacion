@@ -300,6 +300,7 @@ def crear_mascota(request):
         nombre = request.POST.get('nombre', '').strip()
         dueno = request.POST.get('dueno', '').strip()
         tipo = request.POST.get('tipo', '').strip()
+        descripcion = request.POST.get('descripcion', '').strip()
         foto = request.FILES.get('foto', None)
         
         # Validar que todos los campos requeridos sean proporcionados
@@ -309,13 +310,15 @@ def crear_mascota(request):
         
         # Crear la mascota
         mascota = Mascota(
+            usuario=request.user,  
             numero_casa=numero_casa,
             nombre=nombre,
             dueno=dueno,
-            tipo=tipo
+            tipo=tipo,
+            descripcion=descripcion  
         )
         
-        # Guardar foto si fue proporcionada
+        # Guardar foto 
         if foto:
             mascota.foto = foto
         
@@ -356,9 +359,15 @@ def obtener_mascota(request, mascota_id):
 def editar_mascota(request, mascota_id):
     """
     Vista para editar una mascota existente.
+    Solo el propietario puede editar su mascota (administrador puede editar cualquiera).
     """
     try:
         mascota = Mascota.objects.get(id=mascota_id)
+        
+        # Validar permisos: solo propietario o administrador
+        if mascota.usuario != request.user and not request.user.es_administrador():
+            messages.error(request, 'No tienes permiso para editar esta mascota.')
+            return redirect('usuarios:dashboard')
         
         mascota.numero_casa = request.POST.get('numero_casa', '').strip() or mascota.numero_casa
         mascota.nombre = request.POST.get('nombre', '').strip() or mascota.nombre
@@ -385,9 +394,16 @@ def editar_mascota(request, mascota_id):
 def eliminar_mascota(request, mascota_id):
     """
     Vista para eliminar una mascota.
+    Solo el propietario puede eliminar su mascota (administrador puede eliminar cualquiera).
     """
     try:
         mascota = Mascota.objects.get(id=mascota_id)
+        
+        # Validar permisos: solo propietario o administrador
+        if mascota.usuario != request.user and not request.user.es_administrador():
+            messages.error(request, 'No tienes permiso para eliminar esta mascota.')
+            return redirect('usuarios:dashboard')
+        
         nombre = mascota.nombre
         mascota.delete()
         messages.success(request, f'✅ Mascota "{nombre}" eliminada exitosamente.')

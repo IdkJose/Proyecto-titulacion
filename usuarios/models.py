@@ -273,7 +273,7 @@ class Solicitud(models.Model):
 class Mascota(models.Model):
     """
     Modelo para registrar mascotas que habitan en el conjunto.
-    Cada mascota está asociada a una casa/departamento.
+    Cada mascota está asociada a una casa/departamento y a un usuario propietario.
     """
     
     TIPO_CHOICES = [
@@ -284,6 +284,15 @@ class Mascota(models.Model):
         ('hamster', 'Hámster'),
         ('otro', 'Otro'),
     ]
+    
+    usuario = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='mascotas',
+        null=True,
+        blank=True,
+        help_text='Usuario propietario de la mascota'
+    )
     
     numero_casa = models.CharField(
         max_length=14,

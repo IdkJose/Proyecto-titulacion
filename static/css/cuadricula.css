@@ -1,0 +1,118 @@
+/* Estilos para el preview de imagen con cuadrícula de recorte */
+
+#preview-foto-mascota {
+    display: none;
+    margin-top: 15px;
+    text-align: center;
+}
+
+#preview-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 3px solid #667eea;
+    background: #f5f5f5;
+}
+
+#preview-img-mascota {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    user-select: none;
+    pointer-events: none;
+}
+
+#overlay-left,
+#overlay-top,
+#overlay-right,
+#overlay-bottom {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 5;
+}
+
+#overlay-left {
+    top: 0;
+    left: 0;
+}
+
+#overlay-top {
+    top: 0;
+    left: 0;
+}
+
+#overlay-right {
+    top: 0;
+    right: 0;
+}
+
+#overlay-bottom {
+    bottom: 0;
+    left: 0;
+}
+
+#crop-frame {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    width: 240px;
+    height: 240px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0;
+    box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.5);
+}
+
+#crop-frame > div {
+    border-right: 1px solid rgba(255, 255, 255, 0.4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+#crop-frame > div:nth-child(3n) {
+    border-right: none;
+}
+
+#crop-frame > div:nth-child(n+7) {
+    border-bottom: none;
+}
+
+.crop-handle {
+    width: 12px;
+    height: 12px;
+    background: #667eea;
+    border: 2px solid white;
+    border-radius: 50%;
+    z-index: 15;
+}
+
+#drag-hint {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(102, 126, 234, 0.9);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    z-index: 20;
+    pointer-events: none;
+}
+
+#preview-foto-mascota > p {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #667eea;
+    margin-top: 10px;
+    font-weight: 500;
+}

@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cuadricula.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mascota_buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mascota_cards.css' %}">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=logout" />
 </head>
@@ -149,7 +152,7 @@
                 </div>
             </div>
 
-            <!-- COLUMNA 2: Calendario -->
+            <!-- Calendario -->
             <div class="dashboard-content">
                 <div class="calendario-header">
                     <div class="calendario-header-left">
@@ -371,118 +374,42 @@
                     </div>
 
                     <!-- Preview con cuadrícula ajustable -->
-                    <div id="preview-foto-mascota" style="
-                        display: none;
-                        margin-top: 15px;
-                        text-align: center;
-                    ">
-                        <div id="preview-container" style="
-                            position: relative;
-                            width: 300px;
-                            height: 300px;
-                            margin: 0 auto;
-                            overflow: hidden;
-                            border-radius: 8px;
-                            border: 3px solid #667eea;
-                            background: #f5f5f5;
-                        ">
+                    <div id="preview-foto-mascota">
+                        <div id="preview-container">
                             <!-- Imagen fija -->
-                            <img id="preview-img-mascota" src="" alt="Preview" style="
-                                position: absolute;
-                                top: 0;
-                                left: 0;
-                                width: 100%;
-                                height: 100%;
-                                object-fit: cover;
-                                user-select: none;
-                                pointer-events: none;
-                            ">
+                            <img id="preview-img-mascota" src="" alt="Preview">
 
                             <!-- Área de overlay oscuro (fuera de la cuadrícula) -->
-                            <div id="overlay-left"
-                                style="position: absolute; top: 0; left: 0; background: rgba(0,0,0,0.4); z-index: 5;">
-                            </div>
-                            <div id="overlay-top"
-                                style="position: absolute; top: 0; left: 0; background: rgba(0,0,0,0.4); z-index: 5;">
-                            </div>
-                            <div id="overlay-right"
-                                style="position: absolute; top: 0; right: 0; background: rgba(0,0,0,0.4); z-index: 5;">
-                            </div>
-                            <div id="overlay-bottom"
-                                style="position: absolute; bottom: 0; left: 0; background: rgba(0,0,0,0.4); z-index: 5;">
-                            </div>
+                            <div id="overlay-left"></div>
+                            <div id="overlay-top"></div>
+                            <div id="overlay-right"></div>
+                            <div id="overlay-bottom"></div>
 
                             <!-- Cuadrícula 3x3 ajustable -->
-                            <div id="crop-frame" style="
-                                position: absolute;
-                                top: 30px;
-                                left: 30px;
-                                width: 240px;
-                                height: 240px;
-                                border: 2px solid rgba(255,255,255,0.8);
-                                z-index: 10;
-                                display: grid;
-                                grid-template-columns: repeat(3, 1fr);
-                                grid-template-rows: repeat(3, 1fr);
-                                gap: 0;
-                                box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.5);
-                            ">
-                                <div
-                                    style="border-right: 1px solid rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.4);">
-                                </div>
-                                <div
-                                    style="border-right: 1px solid rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.4);">
-                                </div>
-                                <div style="border-bottom: 1px solid rgba(255,255,255,0.4);"></div>
+                            <div id="crop-frame">
+                                <div></div>
+                                <div></div>
+                                <div></div>
 
-                                <div
-                                    style="border-right: 1px solid rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.4);">
-                                </div>
-                                <div
-                                    style="border-right: 1px solid rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.4);">
-                                </div>
-                                <div style="border-bottom: 1px solid rgba(255,255,255,0.4);"></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
 
-                                <div style="border-right: 1px solid rgba(255,255,255,0.4);"></div>
-                                <div style="border-right: 1px solid rgba(255,255,255,0.4);"></div>
+                                <div></div>
+                                <div></div>
                                 <div></div>
                             </div>
 
-                            <!-- Handles de esquinas -->
-                            <div id="handle-tl" class="crop-handle"
-                                style="position: absolute; top: 20px; left: 20px; cursor: nwse-resize;"></div>
-                            <div id="handle-tr" class="crop-handle"
-                                style="position: absolute; top: 20px; right: 20px; cursor: nesw-resize;"></div>
-                            <div id="handle-bl" class="crop-handle"
-                                style="position: absolute; bottom: 20px; left: 20px; cursor: nesw-resize;"></div>
-                            <div id="handle-br" class="crop-handle"
-                                style="position: absolute; bottom: 20px; right: 20px; cursor: nwse-resize;"></div>
+                            <!-- Esquinas -->
+                            <div id="handle-tl" class="crop-handle" style="cursor: nwse-resize;"></div>
+                            <div id="handle-tr" class="crop-handle" style="cursor: nesw-resize;"></div>
+                            <div id="handle-bl" class="crop-handle" style="cursor: nesw-resize;"></div>
+                            <div id="handle-br" class="crop-handle" style="cursor: nwse-resize;"></div>
 
-                            <!-- Indicador -->
-                            <div id="drag-hint" style="
-                                position: absolute;
-                                bottom: 10px;
-                                left: 50%;
-                                transform: translateX(-50%);
-                                background: rgba(102, 126, 234, 0.9);
-                                color: white;
-                                padding: 5px 10px;
-                                border-radius: 4px;
-                                font-size: 0.75rem;
-                                font-weight: 500;
-                                z-index: 20;
-                                pointer-events: none;
-                            ">
-                                Arrastra las esquinas para ajustar
-                            </div>
+                            
+                            <div id="drag-hint">Arrastra las esquinas para ajustar</div>
                         </div>
-                        <p style="
-                            text-align: center;
-                            font-size: 0.85rem;
-                            color: #667eea;
-                            margin-top: 10px;
-                            font-weight: 500;
-                        ">✓ Imagen cargada - Ajusta las esquinas</p>
+                        <p>✓ Imagen cargada - Ajusta las esquinas</p>
                     </div>
                 </div>
 
@@ -505,106 +432,38 @@
             <div
                 style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 20px; max-height: 600px; overflow-y: auto; padding-right: 10px;">
                 {% for mascota in mascotas %}
-                <div class="mascota-card" style="
-                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                            border-radius: 15px;
-                            overflow: hidden;
-                            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-                            transition: all 0.3s ease;
-                            cursor: pointer;
-                            color: white;
-                        "
-                    onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.2)';"
-                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.1)';">
-
+                <div class="mascota-card">
                     <!-- Foto o Emoji -->
-                    <div style="
-                                width: 100%;
-                                height: 160px;
-                                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                position: relative;
-                                overflow: hidden;
-                            ">
+                    <div class="mascota-card-photo" style="height: 160px;">
                         {% if mascota.foto %}
-                        <img src="{{ mascota.foto.url }}" alt="{{ mascota.nombre }}" style="
-                                        width: 100%;
-                                        height: 100%;
-                                        object-fit: cover;
-                                    ">
+                        <img src="{{ mascota.foto.url }}" alt="{{ mascota.nombre }}">
                         {% else %}
-                        <div style="font-size: 4rem;">
-                            {% if mascota.tipo == 'perro' %}🐕{% elif mascota.tipo == 'gato' %}🐱{% elif mascota.tipo ==
-                            'pajaro' %}🦜{% elif mascota.tipo == 'conejo' %}🐰{% elif mascota.tipo == 'hamster' %}🐹{%
-                            else %}🐾{% endif %}
+                        <div class="mascota-card-emoji" style="font-size: 4rem;">
+                            {%if mascota.tipo == "perro"%}🐕{%elif mascota.tipo == "gato"%}🐱{%elif mascota.tipo == "pajaro"%}🦜{%elif mascota.tipo == "conejo"%}🐰{%elif mascota.tipo == "hamster"%}🐹{%else%}🐾{%endif%}
                         </div>
                         {% endif %}
                     </div>
 
                     <!-- Información -->
-                    <div style="padding: 15px; background: rgba(255,255,255,0.95); color: #333;">
-                        <p style="
-                                    margin: 0 0 8px 0;
-                                    font-weight: bold;
-                                    font-size: 1.2rem;
-                                    color: #667eea;
-                                    text-align: center;
-                                ">{{ mascota.nombre }}</p>
+                    <div class="mascota-card-info" style="padding: 15px;">
+                        <p class="mascota-card-nombre" style="font-size: 1.2rem; margin-bottom: 8px;">{{ mascota.nombre }}</p>
 
-                        <div style="font-size: 0.85rem; line-height: 1.6;">
-                            <p style="margin: 4px 0;"><strong>Tipo:</strong> {{ mascota.get_tipo_display }}</p>
-                            <p style="margin: 4px 0;"><strong>Casa:</strong> {{ mascota.numero_casa }}</p>
-                            <p style="margin: 4px 0;"><strong>Dueño:</strong> {{ mascota.dueno }}</p>
+                        <div class="mascota-card-details" style="font-size: 0.85rem; line-height: 1.6;">
+                            <p><strong>Tipo:</strong> {{ mascota.get_tipo_display }}</p>
+                            <p><strong>Casa:</strong> {{ mascota.numero_casa }}</p>
+                            <p><strong>Dueño:</strong> {{ mascota.dueno }}</p>
                         </div>
 
                         {% if mascota.descripcion %}
-                        <p style="
-                                        margin: 8px 0 0 0;
-                                        padding-top: 8px;
-                                        border-top: 1px solid #e0e0e0;
-                                        font-size: 0.8rem;
-                                        color: #666;
-                                        font-style: italic;
-                                    ">{{ mascota.descripcion }}</p>
+                        <p class="mascota-card-descripcion">{{ mascota.descripcion }}</p>
                         {% endif %}
 
                         <!-- Botones de acción -->
-                        <div style="
-                                    display: grid;
-                                    grid-template-columns: 1fr 1fr;
-                                    gap: 8px;
-                                    margin-top: 12px;
-                                    padding-top: 12px;
-                                    border-top: 1px solid #e0e0e0;
-                                ">
-                            <button onclick="abrirModalEditarMascota({{ mascota.id }})" style="
-                                        background: #667eea;
-                                        color: white;
-                                        border: none;
-                                        padding: 8px 12px;
-                                        border-radius: 6px;
-                                        cursor: pointer;
-                                        font-size: 0.85rem;
-                                        font-weight: 500;
-                                        transition: all 0.2s;
-                                    " onmouseover="this.style.background='#5568d3';"
-                                onmouseout="this.style.background='#667eea';">
+                        <div class="mascota-actions">
+                            <button class="btn-editar-mascota" onclick="abrirModalEditarMascota({{ mascota.id }})">
                                 ✏️ Editar
                             </button>
-                            <button onclick="eliminarMascota({{ mascota.id }}, '{{ mascota.nombre }}')" style="
-                                        background: #ff6b6b;
-                                        color: white;
-                                        border: none;
-                                        padding: 8px 12px;
-                                        border-radius: 6px;
-                                        cursor: pointer;
-                                        font-size: 0.85rem;
-                                        font-weight: 500;
-                                        transition: all 0.2s;
-                                    " onmouseover="this.style.background='#ff5252';"
-                                onmouseout="this.style.background='#ff6b6b';">
+                            <button class="btn-eliminar-mascota" onclick="eliminarMascota({{ mascota.id }}, '{{ mascota.nombre }}')">
                                 🗑️ Eliminar
                             </button>
                         </div>
