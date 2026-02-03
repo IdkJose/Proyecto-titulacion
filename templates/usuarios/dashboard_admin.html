@@ -106,11 +106,14 @@
                         </div>
                     </div>
 
-                    <div class="card" onclick="expandCard(event, 'mensajes')">
+                    <div class="card">
                         <h3>💬 Mensajes</h3>
                         <p>Comunicación con los vecinos.</p>
-                        <div class="card-content" id="mensajes-content" style="display: none;">
-                            <p>Próximamente...</p>
+                        <div style="margin-top: 15px;">
+                            <a href="{% url 'usuarios:lista_chats' %}" class="btn-crear"
+                                style="background: #667eea; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em; display: inline-block;">
+                                💬 Ver Chats
+                            </a>
                         </div>
                     </div>
 

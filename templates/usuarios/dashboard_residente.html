@@ -111,8 +111,16 @@
                         <h3>💬 Mensajes</h3>
                         <p>Comunicación con la administración.</p>
                         <div class="card-content" id="mensajes-content" style="display: none;">
-                            <h2>Mensajes</h2>
-                            <p>Próximamente...</p>
+                            <div style="margin-top: 20px;">
+                                {% if primer_admin %}
+                                    <a href="{% url 'usuarios:chat' primer_admin.id %}" class="btn-opcion"
+                                        style="width: 100%; background: #667eea; color: white; border: none; padding: 10px; border-radius: 5px; text-decoration: none; display: block; text-align: center;">
+                                        💬 Chat con Administración
+                                    </a>
+                                {% else %}
+                                    <p style="text-align: center; color: #999;">No hay administradores disponibles</p>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
 

@@ -118,6 +118,9 @@ def dashboard_view(request):
     
     # Obtener publicaciones (noticias/reportes)
     publicaciones = Publicacion.objects.all().order_by('-fecha_publicacion')
+    
+    # Obtener el primer administrador para que los residentes puedan chatear
+    primer_admin = Usuario.objects.filter(rol='admin', activo=True).first()
 
     context = {
         'usuario': request.user,
@@ -129,6 +132,7 @@ def dashboard_view(request):
         'vehiculos': vehiculos,
         'vecinos': vecinos,
         'publicaciones': publicaciones,
+        'primer_admin': primer_admin,
         'mes': mes,
         'ano': ano,
         'mes_nombre': meses[mes - 1],
