@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('usuarios', '0010_alter_usuario_managers_alter_evento_actualizado_en_and_more'),
-        ('usuarios', '0010_alter_usuario_managers_mensaje_vehiculo'),
+        ('usuarios', '0010_alter_usuario_managers_mascota_usuario_mensaje_and_more'),
     ]
 
     operations = [
