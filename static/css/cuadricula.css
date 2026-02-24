@@ -13,8 +13,8 @@
     margin: 0 auto;
     overflow: hidden;
     border-radius: 8px;
-    border: 3px solid #667eea;
-    background: #f5f5f5;
+    border: 3px solid #8C95CB;
+    background: #E8F5E9;
 }
 
 #preview-img-mascota {
@@ -69,7 +69,7 @@
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
     gap: 0;
-    box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 0 0 1px rgba(212, 233, 201, 0.5);
 }
 
 #crop-frame > div {
@@ -99,7 +99,7 @@
     bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(102, 126, 234, 0.9);
+    background: rgba(102, 187, 106, 0.9);
     color: white;
     padding: 5px 10px;
     border-radius: 4px;
@@ -112,7 +112,7 @@
 #preview-foto-mascota > p {
     text-align: center;
     font-size: 0.85rem;
-    color: #667eea;
+    color: #8C95CB;
     margin-top: 10px;
     font-weight: 500;
 }

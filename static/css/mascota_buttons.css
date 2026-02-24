@@ -1,8 +1,8 @@
 /* Estilos para botones de mascotas */
 
 .btn-editar-mascota {
-    background: #667eea;
-    color: white;
+    background: #8C95CB;
+    color: #333;
     border: none;
     padding: 8px 12px;
     border-radius: 6px;
@@ -13,7 +13,7 @@
 }
 
 .btn-editar-mascota:hover {
-    background: #5568d3;
+    background: #D4A574;
 }
 
 .btn-eliminar-mascota {

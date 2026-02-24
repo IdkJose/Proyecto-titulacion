@@ -6,14 +6,14 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f5f5;
+    background-color: #F1F8F6;
 }
 
 header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #8C95CB 0%, #A8AFCF 100%);
     color: white;
     padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(212, 233, 201, 0.15);
 }
 
 .header-content {
@@ -48,7 +48,7 @@ header h1 {
 
 .btn-logout:hover {
     background-color: white;
-    color: #667eea;
+    color: #8C95CB;
 }
 
 .btn-home {
@@ -64,6 +64,11 @@ header h1 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+.btn-home:hover {
+    background-color: white;
+    color: #8C95CB;
 }
 
 .btn-logout {
@@ -149,15 +154,15 @@ header h1 {
 
 .user-card {
     background: white;
-    border: 2px solid #667eea;
+    border: 2px solid #D4A574;
     border-radius: 10px;
     overflow: hidden;
     margin-top: 15px;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    box-shadow: 0 4px 12px rgba(212, 165, 116, 0.1);
 }
 
 .user-card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(90deg, #8C95CB 0%, #A8AFCF 50%, #D4A574 100%);
     color: white;
     padding: 10px 15px;
     font-weight: 600;
@@ -186,11 +191,11 @@ header h1 {
 }
 
 .user-info-label {
-    background-color: #f0f2f5;
+    background-color: #E8F5E9;
     padding: 10px 12px;
     font-weight: 600;
-    color: #667eea;
-    border-right: 3px solid #667eea;
+    color: #D4A574;
+    border-right: 3px solid #D4A574;
     text-transform: uppercase;
     font-size: 12px;
     letter-spacing: 0.3px;
@@ -201,7 +206,7 @@ header h1 {
 
 .material-icons {
     font-size: 18px;
-    color: #667eea;
+    color: #D4A574;
 }
 
 .user-info-value {
@@ -221,11 +226,11 @@ header h1 {
 }
 
 .info-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #8C95CB 0%, #D4A574 100%);
     color: white;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(212, 233, 201, 0.2);
     transition: all 0.3s;
 }
 
@@ -239,7 +244,7 @@ header h1 {
 
 .card {
     background: white;
-    border: 2px solid #e0e0e0;
+    border: 2px solid #D4A574;
     border-radius: 10px;
     padding: 20px;
     transition: all 0.3s;
@@ -249,12 +254,12 @@ header h1 {
 }
 
 .card:hover {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    border-color: #667eea;
+    box-shadow: 0 5px 15px rgba(212, 233, 201, 0.2);
+    border-color: #8C95CB;
 }
 
 .card h3 {
-    color: #667eea;
+    color: #8C95CB;
     margin-bottom: 10px;
 }
 
@@ -272,7 +277,7 @@ header h1 {
 .tabs-header {
     display: flex;
     gap: 10px;
-    border-bottom: 2px solid #e0e0e0;
+    border-bottom: 3px solid #D4A574;
     margin-bottom: 20px;
 }
 
@@ -289,12 +294,13 @@ header h1 {
 }
 
 .tab-button:hover {
-    color: #667eea;
+    color: #D4A574;
 }
 
 .tab-button.active {
-    color: #667eea;
-    border-bottom-color: #667eea;
+    color: #8C95CB;
+    border-bottom-color: #D4A574;
+    border-bottom-width: 4px;
 }
 
 .tab-content {
@@ -322,7 +328,7 @@ header h1 {
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid #D4A574;
 }
 
 .tab-header h2 {
@@ -331,8 +337,8 @@ header h1 {
 }
 
 .btn-nuevo {
-    background-color: #667eea;
-    color: white;
+    background-color: #8C95CB;
+    color: #333;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -342,9 +348,9 @@ header h1 {
 }
 
 .btn-nuevo:hover {
-    background-color: #5568d3;
+    background-color: #D4A574;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 8px rgba(212, 233, 201, 0.35);
 }
 
 /* ============ SOLICITUDES LISTA ============ */
@@ -355,8 +361,8 @@ header h1 {
 }
 
 .solicitud-card {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    border-left: 5px solid #667eea;
+    background: linear-gradient(135deg, #E8F5E9 0%, #F1F8F6 100%);
+    border-left: 5px solid #D4A574;
     border-radius: 8px;
     padding: 15px;
     cursor: pointer;
@@ -365,12 +371,12 @@ header h1 {
 
 .solicitud-card:hover {
     transform: translateX(5px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(212, 165, 116, 0.25);
 }
 
 .solicitud-card.expanded {
     background: white;
-    border-left: 5px solid #667eea;
+    border-left: 5px solid #D4A574;
 }
 
 .solicitud-header {
@@ -445,12 +451,12 @@ header h1 {
 }
 
 .respuesta-admin {
-    background-color: #f0f4ff;
+    background-color: #E8F5E9;
     padding: 12px;
-    border-left: 3px solid #667eea;
+    border-left: 3px solid #D4A574;
     border-radius: 4px;
     margin-top: 8px;
-    color: #555;
+    color: #333;
 }
 
 .sin-solicitudes {
@@ -482,8 +488,8 @@ header h1 {
 
 /* Botones de opciones en solicitudes */
 .btn-opcion {
-    background-color: #667eea;
-    color: white;
+    background-color: #8C95CB;
+    color: #333;
     border: none;
     padding: 15px 20px;
     border-radius: 8px;
@@ -498,9 +504,9 @@ header h1 {
 }
 
 .btn-opcion:hover {
-    background-color: #5568d3;
+    background-color: #D4A574;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(212, 233, 201, 0.3);
 }
 
 .card {
@@ -510,14 +516,15 @@ header h1 {
 }
 
 .card.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #8C95CB 0%, #A8AFCF 100%);
+    color: #333;
+    box-shadow: 0 6px 15px rgba(212, 233, 201, 0.35);
+    border-color: #D4A574;
 }
 
 .card.active h3,
 .card.active p {
-    color: white;
+    color: #333;
 }
 
 .card.expanded {
@@ -598,7 +605,7 @@ header h1 {
 .formulario-contenido h2 {
     color: #333;
     margin-bottom: 20px;
-    border-bottom: 2px solid #667eea;
+    border-bottom: 2px solid #8C95CB;
     padding-bottom: 10px;
 }
 
@@ -629,8 +636,8 @@ header h1 {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+    border-color: #8C95CB;
+    box-shadow: 0 0 5px rgba(212, 233, 201, 0.3);
 }
 
 .form-buttons {
@@ -651,12 +658,12 @@ header h1 {
 }
 
 .btn-enviar {
-    background-color: #667eea;
-    color: white;
+    background-color: #8C95CB;
+    color: #333;
 }
 
 .btn-enviar:hover {
-    background-color: #5568d3;
+    background-color: #D4A574;
 }
 
 .btn-cancelar {
@@ -669,7 +676,7 @@ header h1 {
 }
 
 .form-nueva-solicitud {
-    background-color: #f9f9f9;
+    background-color: #E8F5E9;
     padding: 20px;
     border-radius: 8px;
 }
@@ -689,7 +696,7 @@ header h1 {
 }
 
 .perfil-info strong {
-    color: #667eea;
+    color: #66BB6A;
     min-width: 150px;
     display: inline-block;
 }
@@ -701,7 +708,7 @@ header h1 {
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 2px solid #e0e0e0;
+    border-bottom: 2px solid #D4A574;
 }
 
 .calendario-header-left {
@@ -715,8 +722,8 @@ header h1 {
 }
 
 .calendario-header a {
-    background: #667eea;
-    color: white;
+    background: #8C95CB;
+    color: #333;
     padding: 8px 12px;
     border-radius: 5px;
     text-decoration: none;
@@ -726,7 +733,7 @@ header h1 {
 }
 
 .calendario-header a:hover {
-    background: #764ba2;
+    background: #D4A574;
 }
 
 .tabla-calendario {
@@ -736,8 +743,8 @@ header h1 {
 }
 
 .tabla-calendario th {
-    background: #667eea;
-    color: white;
+    background: #8C95CB;
+    color: #333;
     padding: 12px;
     text-align: center;
     font-weight: 600;
@@ -770,8 +777,8 @@ header h1 {
 }
 
 .evento {
-    background: #667eea;
-    color: white;
+    background: #8C95CB;
+    color: #333;
     padding: 3px 6px;
     border-radius: 3px;
     font-size: 11px;
@@ -875,7 +882,7 @@ header h1 {
 
 .modal-header {
     padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #8C95CB 0%, #A8AFCF 100%);
     color: white;
     display: flex;
     justify-content: space-between;
@@ -893,7 +900,7 @@ header h1 {
 .close-modal {
     background: none;
     border: none;
-    color: white;
+    color: #333;
     font-size: 24px;
     cursor: pointer;
     padding: 0;
@@ -918,7 +925,7 @@ header h1 {
 }
 
 .event-detail-icon {
-    color: #667eea;
+    color: #8C95CB;
     font-size: 20px;
     margin-top: 2px;
 }
@@ -963,8 +970,8 @@ input[type="file"] {
 
 input[type="file"]:focus {
     outline: none;
-    border-color: #667eea;
-    background-color: #f9f7ff;
+    border-color: #8C95CB;
+    background-color: #E8F5E9;
 }
 
 /* Preview de imagen */
@@ -976,10 +983,10 @@ input[type="file"]:focus {
 .crop-handle {
     width: 20px;
     height: 20px;
-    background: #667eea;
+    background: #8C95CB;
     border: 2px solid white;
     border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(212, 233, 201, 0.3);
     z-index: 15;
     transition: all 0.1s ease;
 }
@@ -989,7 +996,7 @@ input[type="file"]:focus {
     height: 24px;
     margin-left: -2px;
     margin-top: -2px;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+    box-shadow: 0 4px 12px rgba(212, 233, 201, 0.6);
 }
 
 @keyframes fadeIn {
@@ -1007,20 +1014,20 @@ input[type="file"]:focus {
 /* ========== TARJETAS DE VEHÍCULOS ========== */
 
 .vehiculo-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #8C95CB 0%, #A8AFCF 100%);
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.25);
+    box-shadow: 0 10px 30px rgba(212, 233, 201, 0.25);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     transform: translateY(0);
     position: relative;
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(212, 165, 116, 0.2);
 }
 
 .vehiculo-card:hover {
     transform: translateY(-12px);
-    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.35);
-    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 20px 40px rgba(212, 233, 201, 0.35);
+    border-color: rgba(212, 165, 116, 0.5);
 }
 
 .vehiculo-card::before {
@@ -1063,8 +1070,8 @@ input[type="file"]:focus {
     margin: 8px 0;
     font-size: 1.1rem;
     font-weight: 700;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: #333;
+    text-shadow: 0 2px 4px rgba(212, 233, 201, 0.2);
     letter-spacing: 0.5px;
 }
 
@@ -1081,10 +1088,10 @@ input[type="file"]:focus {
 }
 
 .vehiculo-info-item {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(212, 165, 116, 0.15);
     border-radius: 10px;
     padding: 8px;
-    border-left: 4px solid rgba(255, 255, 255, 0.4);
+    border-left: 4px solid #D4A574;
     backdrop-filter: blur(10px);
 }
 
@@ -1096,7 +1103,7 @@ input[type="file"]:focus {
     display: block;
     font-size: 0.75rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.7);
+    color: #D4A574;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 4px;
@@ -1217,7 +1224,7 @@ input[type="file"]:focus {
     font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 0.3px;
-    color: #667eea;
+    color: #8C95CB;
 }
 
 #form-crear-vehiculo .form-group input,
@@ -1239,9 +1246,9 @@ input[type="file"]:focus {
 #form-crear-vehiculo .form-group input:focus,
 #form-crear-vehiculo .form-group select:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 12px rgba(102, 126, 234, 0.25);
-    background: #f8f9ff;
+    border-color: #8C95CB;
+    box-shadow: 0 0 12px rgba(212, 233, 201, 0.25);
+    background: #E8F5E9;
 }
 
 #form-crear-vehiculo .form-group input:valid {
@@ -1271,14 +1278,14 @@ input[type="file"]:focus {
 }
 
 .form-buttons .btn-enviar {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    background: linear-gradient(135deg, #8C95CB 0%, #D4A574 100%);
+    color: #333;
+    box-shadow: 0 4px 12px rgba(212, 233, 201, 0.3);
 }
 
 .form-buttons .btn-enviar:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 6px 20px rgba(212, 233, 201, 0.4);
 }
 
 .form-buttons .btn-enviar:active {
