@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #CDF8EE 100%);
+    background: linear-gradient(135deg, #8C95CB 0%, #A8AFCF 100%);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -14,17 +14,20 @@ body {
 }
 
 .login-container {
-    background: white;
+    background: #FAFBFA;
     border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 25px rgba(212, 165, 116, 0.12);
     width: 100%;
     max-width: 400px;
     padding: 40px;
+    border-left: 5px solid #D4A574;
 }
 
 .login-header {
     text-align: center;
     margin-bottom: 30px;
+    border-bottom: 2px solid #D4A574;
+    padding-bottom: 15px;
 }
 
 .login-header h1 {
@@ -54,22 +57,25 @@ input[type="text"],
 input[type="password"] {
     width: 100%;
     padding: 12px 15px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid #c8e0bc;
     border-radius: 5px;
     font-size: 14px;
     transition: border-color 0.3s;
+    background-color: #F1F8F6;
 }
 
 input[type="text"]:focus,
 input[type="password"]:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #8C95CB;
+    background-color: white;
+    box-shadow: 0 0 8px rgba(212, 233, 201, 0.3);
 }
 
 .btn-login {
     width: 100%;
     padding: 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #8C95CB 0%, #D4A574 100%);
     color: white;
     border: none;
     border-radius: 5px;
@@ -82,7 +88,7 @@ input[type="password"]:focus {
 
 .btn-login:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 15px rgba(212, 233, 201, 0.35);
 }
 
 .btn-login:active {
