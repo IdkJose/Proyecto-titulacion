@@ -2,6 +2,11 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import RegexValidator
 
+validador_ecuador = RegexValidator(
+    regex=r'^09\d{8}$',
+    message="El número de teléfono debe empezar con '09' y tener 10 dígitos en total (ej: 0991234567)."
+)
+
 class UsuarioManager(BaseUserManager):
     def create_user(self, username, email=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', False)
@@ -47,7 +52,7 @@ class Usuario(AbstractUser):
     email = models.EmailField(
         unique=True,
         blank=True,
-        help_text='Correo electrÃ³nico del usuario'
+        help_text='Correo electrónico del usuario'
     )
 
     first_name = models.CharField(
@@ -63,28 +68,21 @@ class Usuario(AbstractUser):
     )
 
     telefono = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        validators=[
-            RegexValidator(
-                regex=r'^\d+$',
-                message='El telÃ©fono solo puede contener nÃºmeros'
-            )
-        ],
-        help_text='NÃºmero de telÃ©fono del usuario'
+        validators=[validador_ecuador],
+        max_length=10, 
+        help_text='El teléfono es obligatorio y debe tener un formato ecuatoriano válido.'
     )
     
     casa_departamento = models.CharField(
-        max_length=14,
-        blank=False,
-        null=False,
-        help_text='NÃºmero de casa o departamento (ej: Casa 15, Depto 3B)'
+        max_length=50, 
+        blank=True, 
+        null=True,
+        help_text='Número o identificador de la casa/departamento (ej: Casa 15, Dpto 3B)'
     )
     
     rol = models.CharField(
-        max_length=10,
-        choices=ROLES,
+        max_length=20, 
+        choices=ROLES, 
         default='vecino',
         help_text='Rol del usuario en el sistema'
     )
@@ -98,7 +96,7 @@ class Usuario(AbstractUser):
     
     activo = models.BooleanField(
         default=True,
-        help_text='Indica si el usuario estÃ¡ activo en el conjunto'
+        help_text='Indica si el usuario está activo en el conjunto'
     )
     
     fecha_registro = models.DateTimeField(

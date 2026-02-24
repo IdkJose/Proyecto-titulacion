@@ -109,8 +109,11 @@ def dashboard_view(request):
     # Obtener mascotas registradas
     mascotas = Mascota.objects.filter(activo=True)
     
-    # Obtener vehículos del usuario
-    vehiculos = Vehiculo.objects.filter(usuario=request.user)
+    # Obtener vehículos del usuario o todos si es admin
+    if request.user.es_administrador():
+        vehiculos = Vehiculo.objects.all().order_by('-fecha_registro')
+    else:
+        vehiculos = Vehiculo.objects.filter(usuario=request.user).order_by('-fecha_registro')
     
     # Obtener lista de vecinos (todos los usuarios activos excepto el actual)
     # Ordenados por casa/departamento
