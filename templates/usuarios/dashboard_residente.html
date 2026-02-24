@@ -388,7 +388,7 @@
         <div class="formulario-contenido" onclick="event.stopPropagation();">
             <span class="cerrar" onclick="cerrarModalNuevaMascota()">&times;</span>
             <h2>🐶 Registrar Nueva Mascota</h2>
-            <form method="POST" action="{% url 'usuarios:crear_mascota' %}" enctype="multipart/form-data">
+            <form id="form-crear-mascota" method="POST" action="{% url 'usuarios:crear_mascota' %}" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <div class="form-group">
@@ -521,33 +521,12 @@
                             <div id="handle-br" class="crop-handle"
                                 style="position: absolute; bottom: 20px; right: 20px; cursor: nwse-resize;"></div>
 
-                            <!-- Indicador -->
-                            <div id="drag-hint" style="
-                                position: absolute;
-                                bottom: 10px;
-                                left: 50%;
-                                transform: translateX(-50%);
-                                background: rgba(102, 126, 234, 0.9);
-                                color: white;
-                                padding: 5px 10px;
-                                border-radius: 4px;
-                                font-size: 0.75rem;
-                                font-weight: 500;
-                                z-index: 20;
-                                pointer-events: none;
-                            ">
-                                Arrastra las esquinas para ajustar
-                            </div>
                         </div>
-                        <p style="
-                            text-align: center;
-                            font-size: 0.85rem;
-                            color: #667eea;
-                            margin-top: 10px;
-                            font-weight: 500;
-                        ">✓ Imagen cargada - Ajusta las esquinas</p>
                     </div>
                 </div>
+
+                <!-- Campos ocultos para guardar coordenadas del crop -->
+                <input type="hidden" id="crop-data" name="crop_data" value="">
 
                 <div class="form-buttons">
                     <button type="submit" class="btn-enviar">Registrar Mascota</button>
@@ -565,43 +544,55 @@
             <h2>🐾 Mascotas Registradas</h2>
 
             {% if mascotas %}
-            <div
-                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 20px; max-height: 600px; overflow-y: auto; padding-right: 10px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 15px; max-height: 650px; overflow-y: auto; padding-right: 10px;">
                 {% for mascota in mascotas %}
                 <div class="mascota-card">
-                    <!-- Foto o Emoji -->
-                    <div class="mascota-card-photo">
-                        {% if mascota.foto %}
+                    {% if mascota.foto %}
+                    <div class="mascota-card-header with-photo">
                         <img src="{{ mascota.foto.url }}" alt="{{ mascota.nombre }}">
-                        {% else %}
-                        <div class="mascota-card-emoji">
-                            {%if mascota.tipo == "perro"%}🐕{%elif mascota.tipo == "gato"%}🐱{%elif mascota.tipo == "pajaro"%}🦜{%elif mascota.tipo == "conejo"%}🐰{%elif mascota.tipo == "hamster"%}🐹{%else%}🐾{%endif%}
-                        </div>
-                        {% endif %}
+                        <h3>{{ mascota.nombre }}</h3>
                     </div>
-
-                    <!-- Información -->
-                    <div class="mascota-card-info">
-                        <p class="mascota-card-nombre">{{ mascota.nombre }}</p>
-
-                        <div class="mascota-card-details">
-                            <p><strong>Tipo:</strong> {{ mascota.get_tipo_display }}</p>
-                            <p><strong>Casa:</strong> {{ mascota.numero_casa }}</p>
-                            <p><strong>Dueño:</strong> {{ mascota.dueno }}</p>
+                    {% else %}
+                    <div class="mascota-card-header">
+                        <span class="mascota-card-icon">
+                            {%if mascota.tipo == "perro"%}🐕{%elif mascota.tipo == "gato"%}🐱{%elif mascota.tipo == "pajaro"%}🦜{%elif mascota.tipo == "conejo"%}🐰{%elif mascota.tipo == "hamster"%}🐹{%else%}🐾{%endif%}
+                        </span>
+                        <h3>{{ mascota.nombre }}</h3>
+                    </div>
+                    {% endif %}
+                    <div class="mascota-card-body">
+                        <div class="mascota-tipo-badge">{{ mascota.get_tipo_display }}</div>
+                        <div class="mascota-info-grid" style="margin-top: 10px;">
+                            <div class="mascota-info-item">
+                                <label>🏠 Casa / Dpto</label>
+                                <p>{{ mascota.numero_casa }}</p>
+                            </div>
+                            <div class="mascota-info-item">
+                                <label>👤 Dueño</label>
+                                <p>{{ mascota.dueno }}</p>
+                            </div>
                         </div>
 
                         {% if mascota.descripcion %}
                         <p class="mascota-card-descripcion">{{ mascota.descripcion }}</p>
                         {% endif %}
 
-                        <!-- Botones de acción -->
+                        <!-- Creador del Registro -->
+                        <div class="mascota-creator">
+                            <span>Registrado por:</span>
+                            <div class="mascota-creator-badge">
+                                👤 {{ mascota.usuario.get_full_name|default:mascota.usuario.username }}
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción -->
                         <div class="mascota-actions">
                             {% if mascota.usuario == usuario or usuario.es_administrador %}
-                            <button onclick="abrirModalEditarMascota({{ mascota.id }})" class="btn-editar-mascota">
-                                ✏️ Editar
+                            <button type="button" class="mascota-btn mascota-btn-edit" title="Editar" onclick="abrirModalEditarMascota({{ mascota.id }})">
+                                ✏️
                             </button>
-                            <button onclick="eliminarMascota({{ mascota.id }}, '{{ mascota.nombre }}')" class="btn-eliminar-mascota">
-                                🗑️ Eliminar
+                            <button type="button" class="mascota-btn mascota-btn-delete" title="Eliminar" onclick="eliminarMascota({{ mascota.id }}, '{{ mascota.nombre }}')">
+                                🗑️
                             </button>
                             {% else %}
                             <p class="mascota-card-no-access">
@@ -615,14 +606,10 @@
             </div>
         </div>
         {% else %}
-        <div style="
-                    text-align: center;
-                    padding: 60px 20px;
-                    color: #999;
-                ">
-            <p style="font-size: 3rem; margin-bottom: 15px;">🐾</p>
-            <p style="font-size: 1.1rem;">No hay mascotas registradas aún.</p>
-            <p style="font-size: 0.9rem; margin-top: 10px;">¡Sé el primero en registrar una mascota!</p>
+        <div class="mascota-empty-state">
+            <div class="mascota-empty-icon">🐾</div>
+            <h3>Sin Mascotas Registradas</h3>
+            <p>¡Sé el primero en registrar una mascota!</p>
         </div>
         {% endif %}
     </div>
@@ -994,6 +981,22 @@
                 document.getElementById('modal-nueva-vehiculo').style.display = 'none';
             }
 
+            // Capturar el submit del formulario de mascota para guardar coordenadas del crop
+            const formCrearMascota = document.getElementById('form-crear-mascota');
+            if (formCrearMascota) {
+                formCrearMascota.addEventListener('submit', function(e) {
+                    // Guardar las coordenadas del crop en el campo oculto
+                    if (typeof cropFrame !== 'undefined') {
+                        document.getElementById('crop-data').value = JSON.stringify({
+                            top: cropFrame.top,
+                            left: cropFrame.left,
+                            width: cropFrame.width,
+                            height: cropFrame.height
+                        });
+                    }
+                });
+            }
+
             // --- LÓGICA DE RECORTE DE IMAGEN (CROP) ---
             let isDragging = false;
             let activeHandle = null;
@@ -1078,6 +1081,33 @@
                 frame.style.left = cropFrame.left + 'px';
                 frame.style.width = cropFrame.width + 'px';
                 frame.style.height = cropFrame.height + 'px';
+
+                // Actualizar posicion de los handles
+                const offset = 10;
+                const tl = document.getElementById('handle-tl');
+                if (tl) {
+                    tl.style.top = (cropFrame.top - offset) + 'px';
+                    tl.style.left = (cropFrame.left - offset) + 'px';
+                }
+                const tr = document.getElementById('handle-tr');
+                if (tr) {
+                    tr.style.top = (cropFrame.top - offset) + 'px';
+                    tr.style.left = (cropFrame.left + cropFrame.width - offset) + 'px';
+                    tr.style.right = 'auto';
+                }
+                const bl = document.getElementById('handle-bl');
+                if (bl) {
+                    bl.style.top = (cropFrame.top + cropFrame.height - offset) + 'px';
+                    bl.style.left = (cropFrame.left - offset) + 'px';
+                    bl.style.bottom = 'auto';
+                }
+                const br = document.getElementById('handle-br');
+                if (br) {
+                    br.style.top = (cropFrame.top + cropFrame.height - offset) + 'px';
+                    br.style.left = (cropFrame.left + cropFrame.width - offset) + 'px';
+                    br.style.bottom = 'auto';
+                    br.style.right = 'auto';
+                }
             }
 
             function actualizarOpaqueOverlay() {

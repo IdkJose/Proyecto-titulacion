@@ -378,12 +378,18 @@ def crear_mascota(request):
     Los vecinos pueden registrar mascotas dentro del conjunto.
     """
     try:
+        from PIL import Image
+        import json
+        import io
+        from django.core.files.uploadedfile import InMemoryUploadedFile
+        
         numero_casa = request.POST.get('numero_casa', '').strip()
         nombre = request.POST.get('nombre', '').strip()
         dueno = request.POST.get('dueno', '').strip()
         tipo = request.POST.get('tipo', '').strip()
         descripcion = request.POST.get('descripcion', '').strip()
         foto = request.FILES.get('foto', None)
+        crop_data = request.POST.get('crop_data', '')
         
         # Validar que todos los campos requeridos sean proporcionados
         if not all([numero_casa, nombre, dueno, tipo]):
@@ -400,9 +406,63 @@ def crear_mascota(request):
             descripcion=descripcion  
         )
         
-        # Guardar foto 
+        # Guardar foto con crop aplicado
         if foto:
-            mascota.foto = foto
+            try:
+                # Procesar el crop si existe
+                if crop_data:
+                    crop_coords = json.loads(crop_data)
+                    img = Image.open(foto)
+                    
+                    # Asegurarse de que la imagen esté en RGB si es necesario
+                    if img.mode in ('RGBA', 'LA', 'P'):
+                        img = img.convert('RGB')
+                    
+                    # Obtener coordenadas del crop (vienen del contenedor de 300x300px)
+                    left_preview = int(crop_coords.get('left', 0))
+                    top_preview = int(crop_coords.get('top', 0))
+                    width_preview = int(crop_coords.get('width', 300))
+                    height_preview = int(crop_coords.get('height', 300))
+                    
+                    # Calcular la escala entre el preview (300px) y la imagen real
+                    preview_size = 300
+                    scale_x = img.width / preview_size
+                    scale_y = img.height / preview_size
+                    
+                    # Convertir las coordenadas del preview a coordenadas de la imagen real
+                    left = int(left_preview * scale_x)
+                    top = int(top_preview * scale_y)
+                    right = int((left_preview + width_preview) * scale_x)
+                    bottom = int((top_preview + height_preview) * scale_y)
+                    
+                    # Asegurar que las coordenadas estén dentro de los límites de la imagen
+                    left = max(0, min(left, img.width))
+                    top = max(0, min(top, img.height))
+                    right = max(0, min(right, img.width))
+                    bottom = max(0, min(bottom, img.height))
+                    
+                    img_cropped = img.crop((left, top, right, bottom))
+                    
+                    # Guardar la imagen recortada en memoria
+                    img_io = io.BytesIO()
+                    img_cropped.save(img_io, format='JPEG', quality=90)
+                    img_io.seek(0)
+                    
+                    # Crear un archivo subido en memoria
+                    foto_croppada = InMemoryUploadedFile(
+                        img_io,
+                        'ImageField',
+                        f'{nombre}_cropped.jpg',
+                        'image/jpeg',
+                        img_io.getbuffer().nbytes,
+                        None
+                    )
+                    mascota.foto = foto_croppada
+                else:
+                    mascota.foto = foto
+            except Exception as e:
+                print(f'Error al procesar imagen: {e}')
+                mascota.foto = foto
         
         mascota.save()
         foto_text = " con foto" if foto else ""

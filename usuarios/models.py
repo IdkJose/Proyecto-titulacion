@@ -277,9 +277,9 @@ class Mascota(models.Model):
     TIPO_CHOICES = [
         ('perro', 'Perro'),
         ('gato', 'Gato'),
-        ('pajaro', 'PÃ¡jaro'),
+        ('pajaro', 'Pájaro'),
         ('conejo', 'Conejo'),
-        ('hamster', 'HÃ¡mster'),
+        ('hamster', 'Hámster'),
         ('otro', 'Otro'),
     ]
     
