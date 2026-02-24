@@ -534,3 +534,95 @@ def crear_vehiculo(request):
         messages.error(request, f'❌ Error al registrar el vehículo: {str(e)}')
     
     return redirect('usuarios:dashboard')
+
+
+@login_required(login_url='usuarios:login')
+@require_http_methods(["GET"])
+def obtener_vehiculo(request, vehiculo_id):
+    """
+    Vista para obtener los datos de un vehículo en formato JSON para el modal de edición.
+    """
+    try:
+        vehiculo = Vehiculo.objects.get(id=vehiculo_id)
+        
+        # Validar permisos: solo propietario o administrador
+        if vehiculo.usuario != request.user and not request.user.es_administrador():
+            return JsonResponse({'error': 'No tienes permiso para ver este vehículo.'}, status=403)
+            
+        data = {
+            'id': vehiculo.id,
+            'numero_casa': vehiculo.numero_casa,
+            'dueno': vehiculo.dueno,
+            'placa': vehiculo.placa,
+            'marca': vehiculo.marca,
+            'modelo': vehiculo.modelo,
+            'color': vehiculo.color,
+        }
+        return JsonResponse(data)
+    except Vehiculo.DoesNotExist:
+        return JsonResponse({'error': 'Vehículo no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required(login_url='usuarios:login')
+@require_http_methods(["POST"])
+def editar_vehiculo(request, vehiculo_id):
+    """
+    Vista para editar un vehículo existente.
+    """
+    try:
+        vehiculo = Vehiculo.objects.get(id=vehiculo_id)
+        
+        # Validar permisos: solo propietario o administrador
+        if vehiculo.usuario != request.user and not request.user.es_administrador():
+            messages.error(request, 'No tienes permiso para editar este vehículo.')
+            return redirect('usuarios:dashboard')
+        
+        placa_nueva = request.POST.get('placa', '').strip()
+        
+        # Validar que si cambia de placa, no exista ya en otro vehículo
+        if placa_nueva and placa_nueva != vehiculo.placa and Vehiculo.objects.filter(placa=placa_nueva).exists():
+            messages.error(request, f'❌ Ya existe otro vehículo con la placa {placa_nueva}.')
+            return redirect('usuarios:dashboard')
+            
+        vehiculo.numero_casa = request.POST.get('numero_casa', '').strip() or vehiculo.numero_casa
+        vehiculo.dueno = request.POST.get('dueno', '').strip() or vehiculo.dueno
+        vehiculo.placa = placa_nueva or vehiculo.placa
+        vehiculo.marca = request.POST.get('marca', '').strip() or vehiculo.marca
+        vehiculo.modelo = request.POST.get('modelo', '').strip() or vehiculo.modelo
+        vehiculo.color = request.POST.get('color', '').strip() or vehiculo.color
+        
+        vehiculo.save()
+        messages.success(request, f'✅ Vehículo "{vehiculo.marca} {vehiculo.modelo}" actualizado exitosamente.')
+    except Vehiculo.DoesNotExist:
+        messages.error(request, 'El vehículo no fue encontrado.')
+    except Exception as e:
+        messages.error(request, f'Error al actualizar el vehículo: {str(e)}')
+    
+    return redirect('usuarios:dashboard')
+
+
+@login_required(login_url='usuarios:login')
+@require_http_methods(["POST"])
+def eliminar_vehiculo(request, vehiculo_id):
+    """
+    Vista para eliminar un vehículo.
+    """
+    try:
+        vehiculo = Vehiculo.objects.get(id=vehiculo_id)
+        
+        # Validar permisos: solo propietario o administrador
+        if vehiculo.usuario != request.user and not request.user.es_administrador():
+            messages.error(request, 'No tienes permiso para eliminar este vehículo.')
+            return redirect('usuarios:dashboard')
+            
+        placa = vehiculo.placa
+        vehiculo.delete()
+        messages.success(request, f'✅ Vehículo con placa "{placa}" eliminado exitosamente.')
+    except Vehiculo.DoesNotExist:
+        messages.error(request, 'El vehículo no fue encontrado.')
+    except Exception as e:
+        messages.error(request, f'Error al eliminar el vehículo: {str(e)}')
+    
+    return redirect('usuarios:dashboard')

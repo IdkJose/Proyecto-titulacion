@@ -167,10 +167,12 @@
                         <div class="badge">{{ vehiculos.count }}</div>
                         {% endif %}
                         <div class="card-content" id="vehiculos-content" style="display: none;">
-                            <div style="margin-top: 20px;">
-                                <button class="btn-opcion" onclick="abrirModalVerVehiculosAdmin(event)"
-                                    style="width: 100%; background: #667eea; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
-                                    📋 Ver Todos los Vehículos
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                                <button class="btn-opcion" onclick="abrirModalVerVehiculosAdmin(event)">
+                                    📋 Administrar
+                                </button>
+                                <button class="btn-opcion" onclick="abrirModalNuevaVehiculo(event)">
+                                    ➕ Registrar
                                 </button>
                             </div>
                         </div>
@@ -843,6 +845,16 @@
                                 {{ vehiculo.usuario.get_full_name|default:vehiculo.usuario.username }}
                             </div>
                         </div>
+
+                        <!-- Botones de Acción (Editar/Eliminar) -->
+                        <div class="vehiculo-actions">
+                            <button type="button" class="vehiculo-btn vehiculo-btn-edit" title="Editar" onclick="abrirModalEditarVehiculoAdmin({{ vehiculo.id }})">
+                                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">edit</i>
+                            </button>
+                            <button type="button" class="vehiculo-btn vehiculo-btn-delete" title="Eliminar" data-id="{{ vehiculo.id }}" data-nombre="{{ vehiculo.marca }} {{ vehiculo.modelo }}" data-placa="{{ vehiculo.placa }}" onclick="confirmarEliminarVehiculoAdmin(event, this)">
+                                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">delete</i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
@@ -861,6 +873,100 @@
         </div>
     </div>
 
+    <!-- MODAL EDITAR VEHÍCULO ADMIN -->
+    <div id="modal-editar-vehiculo-admin" class="formulario-modal" onclick="if(event.target === this) cerrarModalEditarVehiculoAdmin();">
+        <div class="formulario-contenido" onclick="event.stopPropagation();">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid #667eea;">
+                <h2 style="color: #667eea; margin: 0; font-size: 1.4rem;">🚗 Editar Vehículo</h2>
+                <span class="cerrar" onclick="cerrarModalEditarVehiculoAdmin()">&times;</span>
+            </div>
+            <form method="POST" action="" id="form-editar-vehiculo-admin">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="edit-numero-casa-vehiculo">🏠 Casa / Dpto</label>
+                    <input type="text" name="numero_casa" id="edit-numero-casa-vehiculo" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-dueno-vehiculo">👤 Dueño del Vehículo</label>
+                    <input type="text" name="dueno" id="edit-dueno-vehiculo" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-placa-vehiculo">🔢 Placa del Vehículo</label>
+                    <input type="text" name="placa" id="edit-placa-vehiculo" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-marca-vehiculo">🏷️ Marca del Vehículo</label>
+                    <input type="text" name="marca" id="edit-marca-vehiculo" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-modelo-vehiculo">📌 Modelo</label>
+                    <input type="text" name="modelo" id="edit-modelo-vehiculo" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-color-vehiculo">🎨 Color</label>
+                    <input type="text" name="color" id="edit-color-vehiculo" required>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn-enviar">✓ Guardar Cambios</button>
+                    <button type="button" class="btn-cancelar" onclick="cerrarModalEditarVehiculoAdmin()">✕ Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL NUEVO VEHÍCULO ADMIN -->
+    <div id="modal-nueva-vehiculo" class="formulario-modal" onclick="if(event.target === this) cerrarModalNuevaVehiculo();">
+        <div class="formulario-contenido" onclick="event.stopPropagation();">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid #667eea;">
+                <h2 style="color: #667eea; margin: 0; font-size: 1.4rem;">🚗 Registrar Nuevo Vehículo</h2>
+                <span class="cerrar" onclick="cerrarModalNuevaVehiculo()">&times;</span>
+            </div>
+            <form method="POST" action="{% url 'usuarios:crear_vehiculo' %}" enctype="multipart/form-data" id="form-crear-vehiculo">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="numero-casa-vehiculo">🏠 Número de Casa</label>
+                    <input type="text" name="numero_casa" id="numero-casa-vehiculo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dueno-vehiculo">👤 Dueño del Vehículo</label>
+                    <input type="text" name="dueno" id="dueno-vehiculo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="placa-vehiculo">🔢 Placa del Vehículo</label>
+                    <input type="text" name="placa" id="placa-vehiculo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="marca-vehiculo">🏷️ Marca del Vehículo</label>
+                    <input type="text" name="marca" id="marca-vehiculo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="modelo-vehiculo">📌 Modelo</label>
+                    <input type="text" name="modelo" id="modelo-vehiculo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="color-vehiculo">🎨 Color</label>
+                    <input type="text" name="color" id="color-vehiculo" required>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="btn-enviar">✓ Registrar Vehículo</button>
+                    <button type="button" class="btn-cancelar" onclick="cerrarModalNuevaVehiculo()">✕ Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Formulario oculto para eliminar vehículos -->
+    <form id="form-eliminar-vehiculo-admin" method="POST" action="" style="display: none;">
+        {% csrf_token %}
+    </form>
+
     <script>
         // --- FUNCIONES DE VEHÍCULOS ADMIN ---
         function abrirModalVerVehiculosAdmin(event) {
@@ -870,6 +976,73 @@
 
         function cerrarModalVerVehiculosAdmin() {
             document.getElementById('modal-ver-vehiculos-admin').style.display = 'none';
+        }
+
+        function abrirModalEditarVehiculoAdmin(id) {
+            cerrarModalVerVehiculosAdmin(); // Cierra el modal de la lista de vehículos
+
+            // Obtener los datos del vehículo desde el backend
+            const url = `{% url 'usuarios:obtener_vehiculo' vehiculo_id=0 %}`.replace('0', id);
+            
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error('Error de red');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    
+                    // Rellenar formulario con los datos actuales
+                    document.getElementById('edit-numero-casa-vehiculo').value = data.numero_casa || '';
+                    document.getElementById('edit-dueno-vehiculo').value = data.dueno || '';
+                    document.getElementById('edit-placa-vehiculo').value = data.placa || '';
+                    document.getElementById('edit-marca-vehiculo').value = data.marca || '';
+                    document.getElementById('edit-modelo-vehiculo').value = data.modelo || '';
+                    document.getElementById('edit-color-vehiculo').value = data.color || '';
+                    
+                    // Actualizar URL del formulario y mostrar modal
+                    const formAction = `{% url 'usuarios:editar_vehiculo' vehiculo_id=0 %}`.replace('0', id);
+                    document.getElementById('form-editar-vehiculo-admin').action = formAction;
+                    
+                    document.getElementById('modal-editar-vehiculo-admin').style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error('Error fetching vehiculo:', error);
+                    alert('Hubo un error al intentar cargar los datos del vehículo.');
+                });
+        }
+
+        function cerrarModalEditarVehiculoAdmin() {
+            document.getElementById('modal-editar-vehiculo-admin').style.display = 'none';
+        }
+
+        function confirmarEliminarVehiculoAdmin(event, btn) {
+            // Prevenir cualquier comportamiento por defecto del botón o propagación del click
+            if(event) {
+                event.stopPropagation();
+            }
+            
+            const id = btn.getAttribute('data-id');
+            const nombre = btn.getAttribute('data-nombre');
+            const placa = btn.getAttribute('data-placa');
+            
+            if (confirm(`¿Estás sumamente seguro que deseas eliminar el vehículo ${nombre} con placa ${placa}? Esta acción no se puede deshacer y borrará el registro para siempre.`)) {
+                const form = document.getElementById('form-eliminar-vehiculo-admin');
+                form.action = `{% url 'usuarios:eliminar_vehiculo' vehiculo_id=0 %}`.replace('0', id);
+                form.submit();
+            }
+        }
+
+        function abrirModalNuevaVehiculo(event) {
+            if (event) event.stopPropagation();
+            document.getElementById('modal-nueva-vehiculo').style.display = 'flex';
+        }
+
+        function cerrarModalNuevaVehiculo() {
+            document.getElementById('modal-nueva-vehiculo').style.display = 'none';
         }
         // --- FUNCIONES DE MENSAJES ADMINISTRADOR ---
         function abrirModalSeleccionarVecino(event) {
@@ -1182,6 +1355,7 @@
                 cerrarModalGestionarReportes();
                 cerrarModalEditarPublicacion();
                 if (typeof cerrarModalVerVehiculosAdmin === "function") cerrarModalVerVehiculosAdmin();
+                if (typeof cerrarModalEditarVehiculoAdmin === "function") cerrarModalEditarVehiculoAdmin();
             }
         });
     </script>
