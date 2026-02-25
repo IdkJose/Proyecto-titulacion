@@ -63,9 +63,9 @@
     right: 0;
     margin: 0;
     padding: 10px;
-    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
     color: white;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .mascota-card-icon {
@@ -76,9 +76,12 @@
 }
 
 @keyframes mascotaFloat {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0px);
     }
+
     50% {
         transform: translateY(-8px);
     }
@@ -147,6 +150,12 @@
     word-wrap: break-word;
 }
 
+@media (max-width: 600px) {
+    .mascota-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Descripción */
 .mascota-card-descripcion {
     margin-top: 12px;
@@ -188,48 +197,18 @@
 }
 
 /* Botones de acción */
-.mascota-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 15px;
+.mascota-btn-delete .material-icons {
+    color: #000000;
 }
 
-.mascota-btn {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
+@media (max-width: 600px) {
+    .mascota-actions {
+        grid-template-columns: 1fr;
+    }
 
-.mascota-btn-edit {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.mascota-btn-edit:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: scale(1.05);
-}
-
-.mascota-btn-delete {
-    background: rgba(255, 59, 48, 0.3);
-    color: #ffcccc;
-    border: 1px solid rgba(255, 59, 48, 0.5);
-}
-
-.mascota-btn-delete:hover {
-    background: rgba(255, 59, 48, 0.5);
-    color: white;
-    border-color: rgba(255, 59, 48, 0.8);
-    transform: scale(1.05);
+    .mascota-btn {
+        width: 100%;
+    }
 }
 
 /* Estado vacío */
@@ -247,9 +226,12 @@
 }
 
 @keyframes mascotaBounce {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-15px);
     }

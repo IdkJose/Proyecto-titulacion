@@ -655,6 +655,7 @@ header h1 {
     gap: 10px;
     justify-content: flex-end;
     margin-top: 20px;
+    flex-wrap: wrap;
 }
 
 .btn-enviar,
@@ -1127,9 +1128,12 @@ input[type="file"]:focus {
 }
 
 @keyframes float {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0px);
     }
+
     50% {
         transform: translateY(-8px);
     }
@@ -1265,9 +1269,12 @@ input[type="file"]:focus {
 }
 
 @keyframes bounce {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-15px);
     }
@@ -1336,7 +1343,7 @@ input[type="file"]:focus {
 /* Estilos para los botones del formulario */
 #form-crear-vehiculo .form-buttons {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 12px;
     margin-top: 30px;
 }
@@ -1378,4 +1385,51 @@ input[type="file"]:focus {
     background: #e8e8e8;
     border-color: #d0d0d0;
     color: #333;
+}
+
+/* Responsividad para Modales */
+@media (max-width: 600px) {
+    .formulario-contenido {
+        padding: 15px;
+        width: 95%;
+        margin: 20px auto;
+    }
+
+    .form-buttons {
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .form-buttons button,
+    .form-buttons .btn-enviar,
+    .form-buttons .btn-cancelar {
+        width: 100%;
+        margin-bottom: 8px;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    #form-crear-vehiculo .form-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .solicitud-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .solicitud-estado {
+        align-self: flex-start;
+    }
+
+    .user-info-row {
+        grid-template-columns: 1fr;
+    }
+
+    .user-info-label {
+        border-right: none;
+        border-bottom: 2px solid #D4A574;
+    }
 }

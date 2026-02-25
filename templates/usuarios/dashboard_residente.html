@@ -96,7 +96,7 @@
                         {% endif %}
 
                         <div class="card-content" id="solicitudes-content" style="display: none;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; margin-top: 20px;">
                                 <button class="btn-opcion" onclick="abrirModalVerSolicitudes(event)">
                                     📋 Ver Solicitudes
                                 </button>
@@ -150,7 +150,7 @@
                         <div class="badge">{{ mascotas.count }}</div>
                         {% endif %}
                         <div class="card-content" id="mascotas-content" style="display: none;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; margin-top: 20px;">
                                 <button class="btn-opcion" onclick="abrirModalVerMascotas(event)">
                                     📋 Ver Mascotas
                                 </button>
@@ -168,7 +168,7 @@
                         <div class="badge">{{ vehiculos.count }}</div>
                         {% endif %}
                         <div class="card-content" id="vehiculos-content" style="display: none;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; margin-top: 20px;">
                                 <button class="btn-opcion" onclick="abrirModalVerVehiculos(event)">
                                     📋 Ver Vehículos
                                 </button>
