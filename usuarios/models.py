@@ -108,6 +108,7 @@ class Usuario(AbstractUser):
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
         ordering = ['casa_departamento', 'last_name']
+        db_table = 'usuarios'
     
     def __str__(self):
         """Representación en string del usuario"""
@@ -187,6 +188,7 @@ class Evento(models.Model):
         verbose_name = 'Evento'
         verbose_name_plural = 'Eventos'
         ordering = ['fecha_inicio']
+        db_table = 'eventos'
     
     def __str__(self):
         return f"{self.titulo} - {self.fecha_inicio.date()}"
@@ -263,6 +265,7 @@ class Solicitud(models.Model):
         verbose_name = 'Solicitud'
         verbose_name_plural = 'Solicitudes'
         ordering = ['-fecha_creacion']
+        db_table = 'solicitudes'
     
     def __str__(self):
         return f"{self.get_tipo_display()} - {self.titulo} ({self.get_estado_display()})"
@@ -341,6 +344,7 @@ class Mascota(models.Model):
         verbose_name = 'Mascota'
         verbose_name_plural = 'Mascotas'
         ordering = ['numero_casa', 'nombre']
+        db_table = 'mascotas'
     
     def __str__(self):
         return f"{self.nombre} ({self.get_tipo_display()}) - {self.numero_casa}"
@@ -382,6 +386,7 @@ class Mensaje(models.Model):
         verbose_name = 'Mensaje'
         verbose_name_plural = 'Mensajes'
         ordering = ['fecha_envio']
+        db_table = 'mensajes'
     
     def __str__(self):
         return f"De: {self.remitente} Para: {self.destinatario} - {self.fecha_envio.strftime('%d/%m/%Y %H:%M')}"
@@ -438,6 +443,7 @@ class Vehiculo(models.Model):
         verbose_name = 'Vehículo'
         verbose_name_plural = 'Vehículos'
         ordering = ['-fecha_registro']
+        db_table = 'vehiculos'
     
     def __str__(self):
         return f"{self.marca} {self.modelo} - {self.placa}"
@@ -494,6 +500,7 @@ class Publicacion(models.Model):
         verbose_name = 'Publicación'
         verbose_name_plural = 'Publicaciones'
         ordering = ['-fecha_publicacion']
+        db_table = 'publicaciones'
 
     def __str__(self):
         return self.titulo
