@@ -492,7 +492,7 @@
 
                         <!-- Creador del Registro -->
                         <div class="mascota-creator">
-                            <span>Registrado por:</span>
+                            <span style="font-size: 1rem;">Registrado por:</span>
                             <div class="mascota-creator-badge">
                                 👤 {{ mascota.usuario.get_full_name|default:mascota.usuario.username }}
                             </div>
@@ -501,10 +501,10 @@
                         <!-- Botones de Acción -->
                         <div class="mascota-actions">
                             <button type="button" class="mascota-btn mascota-btn-edit" title="Editar" onclick="abrirModalEditarMascota({{ mascota.id }})">
-                                ✏️
+                                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">edit</i>
                             </button>
                             <button type="button" class="mascota-btn mascota-btn-delete" title="Eliminar" onclick="eliminarMascota({{ mascota.id }}, '{{ mascota.nombre }}')">
-                                🗑️
+                                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">delete</i>
                             </button>
                         </div>
                     </div>
@@ -518,6 +518,10 @@
                 <p>Ningún usuario ha registrado mascotas en el sistema todavía.</p>
             </div>
             {% endif %}
+
+            <div class="form-buttons" style="margin-top: 20px;">
+                <button type="button" class="btn-cancelar" onclick="cerrarModalVerMascotas()">Cerrar</button>
+            </div>
         </div>
     </div>
 
@@ -595,12 +599,14 @@
                                     tipo: '{{ pub.tipo }}',
                                     contenido: '{{ pub.contenido|escapejs }}'
                                 })" style="background: #667eea; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
-                                    ✏️
+                                    <i class="material-icons" style="font-size: 16px; vertical-align: middle;">edit</i>
                                 </button>
                                 <form method="POST" action="{% url 'usuarios:eliminar_publicacion' pub.id %}"
                                     onsubmit="return confirm('¿Seguro quieres borrar este anuncio?');">
                                     {% csrf_token %}
-                                    <button type="submit" style="background: #ff6b6b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">🗑️</button>
+                                    <button type="submit" style="background: #ff6b6b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                                        <i class="material-icons" style="font-size: 16px; vertical-align: middle;">delete</i>
+                                    </button>
                                 </form>
                             </td>
                         </tr>
@@ -847,7 +853,7 @@
 
                         <!-- Creador del Registro (Exclusivo Administrador) -->
                         <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: space-between;">
-                            <span style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.8);">Registrado por:</span>
+                            <span style="font-size: 1rem; color: rgba(255, 255, 255, 0.8);">Registrado por:</span>
                             <div style="display: inline-flex; align-items: center; gap: 5px; background: rgba(255, 255, 255, 0.2); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; border: 1px solid rgba(255, 255, 255, 0.3);">
                                 <i class="material-icons" style="font-size: 14px;">person</i>
                                 {{ vehiculo.usuario.get_full_name|default:vehiculo.usuario.username }}

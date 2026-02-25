@@ -589,10 +589,10 @@
                         <div class="mascota-actions">
                             {% if mascota.usuario == usuario or usuario.es_administrador %}
                             <button type="button" class="mascota-btn mascota-btn-edit" title="Editar" onclick="abrirModalEditarMascota({{ mascota.id }})">
-                                ✏️
+                                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">edit</i>
                             </button>
                             <button type="button" class="mascota-btn mascota-btn-delete" title="Eliminar" onclick="eliminarMascota({{ mascota.id }}, '{{ mascota.nombre }}')">
-                                🗑️
+                                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">delete</i>
                             </button>
                             {% else %}
                             <p class="mascota-card-no-access">
@@ -612,6 +612,10 @@
             <p>¡Sé el primero en registrar una mascota!</p>
         </div>
         {% endif %}
+
+        <div class="form-buttons" style="margin-top: 20px;">
+            <button type="button" class="btn-cancelar" onclick="cerrarModalVerMascotas()">Cerrar</button>
+        </div>
     </div>
     </div>
 
