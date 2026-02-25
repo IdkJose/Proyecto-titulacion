@@ -110,20 +110,20 @@ class Usuario(AbstractUser):
         ordering = ['casa_departamento', 'last_name']
     
     def __str__(self):
-        """RepresentaciÃ³n en string del usuario"""
+        """Representación en string del usuario"""
         if self.casa_departamento:
             return f"{self.get_full_name()} - {self.casa_departamento}"
         return self.get_full_name() or self.username
     
     def es_administrador(self):
-        """MÃ©todo helper para verificar si el usuario es administrador"""
+        """Método helper para verificar si el usuario es administrador"""
         return self.rol == 'admin' or self.is_superuser
 
 
 class Evento(models.Model):
     """
     Modelo para guardar eventos del calendario.
-    Cada evento pertenece a un usuario especÃ­fico.
+    Cada evento pertenece a un usuario específico.
     """
     usuario = models.ForeignKey(
         Usuario,
@@ -134,13 +134,13 @@ class Evento(models.Model):
     
     titulo = models.CharField(
         max_length=200,
-        help_text='TÃ­tulo del evento'
+        help_text='Título del evento'
     )
     
     descripcion = models.TextField(
         blank=True,
         null=True,
-        help_text='DescripciÃ³n detallada del evento'
+        help_text='Descripción detallada del evento'
     )
     
     fecha_inicio = models.DateTimeField(
@@ -151,10 +151,10 @@ class Evento(models.Model):
         help_text='Fecha y hora de fin del evento'
     )
     
-    # Choices para categorÃ­as de eventos
+    # Choices para categorías de eventos
     CATEGORIAS = [
         ('minga', 'Minga'),
-        ('reunion', 'ReuniÃ³n'),
+        ('reunion', 'Reunión'),
         ('mantenimiento', 'Mantenimiento'),
         ('evento_social', 'Evento Social'),
         ('otro', 'Otro'),
@@ -164,7 +164,7 @@ class Evento(models.Model):
         max_length=20,
         choices=CATEGORIAS,
         default='otro',
-        help_text='CategorÃ­a del evento'
+        help_text='Categoría del evento'
     )
     
     color = models.CharField(
@@ -175,12 +175,12 @@ class Evento(models.Model):
     
     creado_en = models.DateTimeField(
         auto_now_add=True,
-        help_text='Fecha de creaciÃ³n del evento'
+        help_text='Fecha de creación del evento'
     )
     
     actualizado_en = models.DateTimeField(
         auto_now=True,
-        help_text='Ãšltima actualizaciÃ³n del evento'
+        help_text='Última actualización del evento'
     )
     
     class Meta:
@@ -195,7 +195,7 @@ class Evento(models.Model):
 class Solicitud(models.Model):
     """
     Modelo para gestionar solicitudes de residentes.
-    Los vecinos pueden crear solicitudes para diferentes trÃ¡mites.
+    Los vecinos pueden crear solicitudes para diferentes trámites.
     """
     
     ESTADO_CHOICES = [
@@ -233,7 +233,7 @@ class Solicitud(models.Model):
     )
     
     descripcion = models.TextField(
-        help_text='DescripciÃ³n detallada de la solicitud'
+        help_text='Descripción detallada de la solicitud'
     )
     
     estado = models.CharField(
@@ -245,12 +245,12 @@ class Solicitud(models.Model):
     
     fecha_creacion = models.DateTimeField(
         auto_now_add=True,
-        help_text='Fecha de creaciÃ³n de la solicitud'
+        help_text='Fecha de creación de la solicitud'
     )
     
     fecha_actualizacion = models.DateTimeField(
         auto_now=True,
-        help_text='Ãšltima actualizaciÃ³n de la solicitud'
+        help_text='Última actualización de la solicitud'
     )
     
     respuesta_admin = models.TextField(
@@ -271,7 +271,7 @@ class Solicitud(models.Model):
 class Mascota(models.Model):
     """
     Modelo para registrar mascotas que habitan en el conjunto.
-    Cada mascota estÃ¡ asociada a una casa/departamento.
+    Cada mascota está asociada a una casa/departamento.
     """
     
     TIPO_CHOICES = [
@@ -294,7 +294,7 @@ class Mascota(models.Model):
     
     numero_casa = models.CharField(
         max_length=14,
-        help_text='NÃºmero de casa o departamento donde reside la mascota'
+        help_text='Número de casa o departamento donde reside la mascota'
     )
     
     nombre = models.CharField(
@@ -304,7 +304,7 @@ class Mascota(models.Model):
     
     dueno = models.CharField(
         max_length=200,
-        help_text='Nombre del dueÃ±o de la mascota'
+        help_text='Nombre del dueño de la mascota'
     )
     
     tipo = models.CharField(
@@ -317,7 +317,7 @@ class Mascota(models.Model):
     descripcion = models.TextField(
         blank=True,
         null=True,
-        help_text='DescripciÃ³n adicional de la mascota (color, caracterÃ­sticas, etc)'
+        help_text='Descripción adicional de la mascota (color, características, etc)'
     )
     
     fecha_registro = models.DateTimeField(
@@ -327,7 +327,7 @@ class Mascota(models.Model):
     
     activo = models.BooleanField(
         default=True,
-        help_text='Indica si el registro de la mascota estÃ¡ activo'
+        help_text='Indica si el registro de la mascota está activo'
     )
     
     foto = models.ImageField(
@@ -348,13 +348,13 @@ class Mascota(models.Model):
 
 class Mensaje(models.Model):
     """
-    Modelo para los mensajes del chat entre AdministraciÃ³n y Residentes.
+    Modelo para los mensajes del chat entre Administración y Residentes.
     """
     remitente = models.ForeignKey(
         Usuario,
         on_delete=models.CASCADE,
         related_name='mensajes_enviados',
-        help_text='Usuario que envÃ­a el mensaje'
+        help_text='Usuario que envía el mensaje'
     )
     
     destinatario = models.ForeignKey(
@@ -370,12 +370,12 @@ class Mensaje(models.Model):
     
     leido = models.BooleanField(
         default=False,
-        help_text='Indica si el mensaje ha sido leÃ­do por el destinatario'
+        help_text='Indica si el mensaje ha sido leído por el destinatario'
     )
     
     fecha_envio = models.DateTimeField(
         auto_now_add=True,
-        help_text='Fecha y hora en que se enviÃ³ el mensaje'
+        help_text='Fecha y hora en que se envió el mensaje'
     )
     
     class Meta:
