@@ -604,19 +604,18 @@
                 </div>
                 {% endfor %}
             </div>
-        </div>
-        {% else %}
-        <div class="mascota-empty-state">
-            <div class="mascota-empty-icon">🐾</div>
-            <h3>Sin Mascotas Registradas</h3>
-            <p>¡Sé el primero en registrar una mascota!</p>
-        </div>
-        {% endif %}
+            {% else %}
+            <div class="mascota-empty-state">
+                <div class="mascota-empty-icon">🐾</div>
+                <h3>Sin Mascotas Registradas</h3>
+                <p>¡Sé el primero en registrar una mascota!</p>
+            </div>
+            {% endif %}
 
-        <div class="form-buttons" style="margin-top: 20px;">
-            <button type="button" class="btn-cancelar" onclick="cerrarModalVerMascotas()">Cerrar</button>
+            <div class="form-buttons">
+                <button type="button" class="btn-cancelar" onclick="cerrarModalVerMascotas()">Cerrar</button>
+            </div>
         </div>
-    </div>
     </div>
 
     <!-- MODAL EDITAR MASCOTA -->
