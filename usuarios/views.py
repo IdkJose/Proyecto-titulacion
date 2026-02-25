@@ -4,11 +4,11 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
 from .forms import UsuarioCreationForm, UsuarioChangeForm, EventoForm
 from django.contrib import messages
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 from datetime import datetime
 from django.utils import timezone
 import calendar
-from .models import Evento, Solicitud, Usuario, Mascota, Publicacion, Vehiculo
+from .models import Evento, Solicitud, Usuario, Mascota, Publicacion, Vehiculo, ReaccionSolicitud
 
 
 @require_http_methods(["GET", "POST"])
@@ -102,9 +102,11 @@ def dashboard_view(request):
         solicitudes = Solicitud.objects.all().order_by('-fecha_creacion')
         # Contador de solicitudes pendientes para el administrador
         solicitudes_pendientes_count = solicitudes.filter(estado='pendiente').count()
+        todas_las_solicitudes = solicitudes
     else:
         solicitudes = Solicitud.objects.filter(usuario=request.user).order_by('-fecha_creacion')
         solicitudes_pendientes_count = 0
+        todas_las_solicitudes = Solicitud.objects.all().order_by('-fecha_creacion')
     
     # Obtener mascotas registradas
     mascotas = Mascota.objects.filter(activo=True)
@@ -127,6 +129,7 @@ def dashboard_view(request):
         'calendario': cal,
         'eventos_por_dia': eventos_por_dia,
         'solicitudes': solicitudes,
+        'todas_las_solicitudes': todas_las_solicitudes,
         'solicitudes_pendientes_count': solicitudes_pendientes_count,
         'mascotas': mascotas,
         'vehiculos': vehiculos,
@@ -148,6 +151,40 @@ def dashboard_view(request):
         template = 'usuarios/dashboard_residente.html'
     
     return render(request, template, context)
+
+
+@login_required
+@require_POST
+def reaccionar_solicitud(request, solicitud_id):
+    """
+    Vista para manejar las reacciones a las solicitudes vía AJAX.
+    """
+    try:
+        solicitud = get_object_or_404(Solicitud, id=solicitud_id)
+        
+        reaccion, creada = ReaccionSolicitud.objects.get_or_create(
+            usuario=request.user,
+            solicitud=solicitud
+        )
+        
+        if not creada:
+            # Si ya existía, la quitamos (toggle)
+            reaccion.delete()
+            accion = 'quitada'
+        else:
+            accion = 'añadida'
+            
+        total_reacciones = solicitud.reacciones.count()
+        
+        return JsonResponse({
+            'status': 'success',
+            'accion': accion,
+            'total_reacciones': total_reacciones
+        })
+    except Solicitud.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Solicitud no encontrada'}, status=404)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
 def logout_view(request):

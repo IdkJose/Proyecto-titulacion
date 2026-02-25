@@ -1433,3 +1433,48 @@ input[type="file"]:focus {
         border-bottom: 2px solid #D4A574;
     }
 }
+
+/* --- ESTILOS PARA REACCIONES EN SOLICITUDES --- */
+.reaccion-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.btn-reaccion {
+    background: none;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 5px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.btn-reaccion:hover {
+    background: #f0f2f5;
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.btn-reaccion.activa {
+    background: #eef2ff;
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.btn-reaccion.activa i {
+    color: #ff4757;
+}
+
+.reacciones-count {
+    font-weight: bold;
+    color: #444;
+}

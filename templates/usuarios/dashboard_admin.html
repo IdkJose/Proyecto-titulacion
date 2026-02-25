@@ -266,34 +266,33 @@
             {% if solicitudes %}
             <div class="solicitudes-lista" style="display: flex; flex-direction: column; gap: 15px;">
                 {% for solicitud in solicitudes %}
-                <div class="solicitud-card" onclick="expandirSolicitud(this)"
-                    style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s; background: #f9f9f9;">
-                    <div class="solicitud-header"
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div class="solicitud-card" onclick="expandirSolicitud(this)">
+                    <div class="solicitud-header">
                         <div class="solicitud-info">
-                            <h3 style="margin: 0; color: #333; font-size: 1.1em;">{{ solicitud.titulo }}</h3>
-                            <span class="solicitud-tipo"
-                                style="font-size: 0.8em; color: #666; background: #eee; padding: 2px 8px; border-radius: 10px;">{{ solicitud.get_tipo_display }}</span>
-                            <span style="font-size: 0.8em; color: #667eea; font-weight: bold; margin-left: 10px;">🏠
-                                Casa: {{ solicitud.usuario.casa_departamento|default:"N/A" }}</span>
+                            <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                                {{ solicitud.titulo }}
+                                <span style="font-size: 0.75rem; color: #667eea; background: #eef2ff; padding: 2px 8px; border-radius: 10px;">
+                                    🏠 Casa {{ solicitud.usuario.casa_departamento|default:"N/A" }}
+                                </span>
+                            </h3>
+                            <span class="solicitud-tipo">{{ solicitud.get_tipo_display }}</span>
                         </div>
-                        <div class="solicitud-estado estado-{{ solicitud.estado }}" style="
-                            padding: 5px 12px;
-                            border-radius: 20px;
-                            font-size: 0.85em;
-                            font-weight: bold;
-                            {% if solicitud.estado == 'pendiente' %}background: #fff3cd; color: #856404;
-                            {% elif solicitud.estado == 'en_proceso' %}background: #d1ecf1; color: #0c5460;
-                            {% elif solicitud.estado == 'aprobada' %}background: #d4edda; color: #155724;
-                            {% elif solicitud.estado == 'rechazada' %}background: #f8d7da; color: #721c24;
-                            {% endif %}
-                        ">
+                        <div class="solicitud-estado estado-{{ solicitud.estado }}">
                             {{ solicitud.get_estado_display }}
                         </div>
                     </div>
-                    <div class="solicitud-fecha" style="font-size: 0.8em; color: #999; margin-bottom: 10px;">
-                        De: <strong>{{ solicitud.usuario.get_full_name|default:solicitud.usuario.username }}</strong> |
-                        {{ solicitud.fecha_creacion|date:"d/m/Y H:i" }}
+                    <div class="solicitud-fecha">
+                        Por: <strong>{{ solicitud.usuario.get_full_name|default:solicitud.usuario.username }}</strong> | {{ solicitud.fecha_creacion|date:"d/m/Y H:i" }}
+                    </div>
+
+                    <!-- Sistema de Reacciones -->
+                    <div class="reaccion-container" onclick="event.stopPropagation();">
+                        <button type="button" 
+                                class="btn-reaccion {% if solicitud|user_reacted:usuario %}activa{% endif %}"
+                                onclick="reaccionarSolicitud(this, {{ solicitud.id }})">
+                            <i class="material-icons" style="font-size: 18px;">favorite</i>
+                            <span class="reacciones-count">{{ solicitud.reacciones.count }}</span>
+                        </button>
                     </div>
                     <div class="solicitud-body"
                         style="display: none; border-top: 1px solid #eee; padding-top: 15px; margin-top: 10px;">
@@ -1394,6 +1393,41 @@
                 if (typeof cerrarModalEditarVehiculoAdmin === "function") cerrarModalEditarVehiculoAdmin();
             }
         });
+
+        function reaccionarSolicitud(btn, solicitudId) {
+            fetch(`/solicitudes/reaccionar/${solicitudId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const countSpan = btn.querySelector('.reacciones-count');
+                    countSpan.textContent = data.total_reacciones;
+                    
+                    if (data.accion === 'añadida') {
+                        btn.classList.add('activa');
+                    } else {
+                        btn.classList.remove('activa');
+                    }
+                    
+                    // Sincronizar todos los botones de la misma solicitud
+                    document.querySelectorAll(`button[onclick*="reaccionarSolicitud(this, ${solicitudId})"]`).forEach(otherBtn => {
+                        const otherSpan = otherBtn.querySelector('.reacciones-count');
+                        if (otherSpan) otherSpan.textContent = data.total_reacciones;
+                        if (data.accion === 'añadida') {
+                            otherBtn.classList.add('activa');
+                        } else {
+                            otherBtn.classList.remove('activa');
+                        }
+                    });
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
     </script>
 </body>
 

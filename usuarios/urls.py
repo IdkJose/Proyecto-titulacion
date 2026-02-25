@@ -10,6 +10,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('solicitudes/crear/', views.crear_solicitud, name='crear_solicitud'),
     path('solicitudes/gestionar/<int:solicitud_id>/', views.gestionar_solicitud, name='gestionar_solicitud'),
+    path('solicitudes/reaccionar/<int:solicitud_id>/', views.reaccionar_solicitud, name='reaccionar_solicitud'),
     path('crear_usuario/', views.crear_usuario, name='crear_usuario'),
     path('lista_usuarios/', views.lista_usuarios, name='lista_usuarios'),
     path('editar_usuario/<int:user_id>/', views.editar_usuario, name='editar_usuario'),

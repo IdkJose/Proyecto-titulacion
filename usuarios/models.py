@@ -504,3 +504,36 @@ class Publicacion(models.Model):
 
     def __str__(self):
         return self.titulo
+
+
+class ReaccionSolicitud(models.Model):
+    """
+    Modelo para gestionar las reacciones (likes) en las solicitudes.
+    Cada usuario puede reaccionar una sola vez a una solicitud.
+    """
+    usuario = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='reacciones_solicitud',
+        help_text='Usuario que reacciona'
+    )
+    solicitud = models.ForeignKey(
+        Solicitud,
+        on_delete=models.CASCADE,
+        related_name='reacciones',
+        help_text='Solicitud a la que se reacciona'
+    )
+    fecha_creacion = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Fecha de la reacción'
+    )
+
+    class Meta:
+        verbose_name = 'Reacción de Solicitud'
+        verbose_name_plural = 'Reacciones de Solicitud'
+        db_table = 'reacciones_solicitud'
+        # Unicidad: un usuario solo puede reaccionar una vez por solicitud
+        unique_together = ('usuario', 'solicitud')
+
+    def __str__(self):
+        return f"{self.usuario.username} reaccionó a {self.solicitud.titulo}"
