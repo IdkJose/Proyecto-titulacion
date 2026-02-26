@@ -217,7 +217,7 @@ def crear_publicacion(request):
             imagen=imagen,
             archivo_pdf=archivo_pdf
         )
-        messages.success(request, '¡Publicación creada con éxito, pana! 🚀')
+        messages.success(request, '¡Publicación creada con éxito 🚀')
     except Exception as e:
         messages.error(request, f'Chuta, algo salió mal: {str(e)}')
         
